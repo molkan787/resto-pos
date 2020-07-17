@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Resto POS - Initial Setup</title>
+    <script>
+        const electron = require('electron');
+        const remote = electron.remote;
+        window.alert = text => remote.dialog.showMessageBoxSync(remote.BrowserWindow.getFocusedWindow(), {title: 'Resto POS', message: text})
+        function getVal(elId){
+            return document.getElementById(elId).value;
+        }
+        function toggleDimmer(visible){
+            document.getElementById('dimmer').style.display = visible ? 'block' : 'none';
+        }
+        function loginClick(){
+            const vendor_id = getVal('vendor_id');
+            const password = getVal('password');
+            if(vendor_id.length < 2 || password.length < 2){
+                alert('Please enter all login details.');
+                return;
+            }
+            toggleDimmer(true);
+            electron.ipcRenderer.send('login', {
+                vendor_id,
+                password,
+            });
+        }
+        function loginFailed(){
+            toggleDimmer(false);
+            alert('Login failed, Please make sure both Vendor ID and Password are correctly typed.');
+        }
+        function loginError(){
+            toggleDimmer(false);
+            alert('An error occured, Please make sure you are connected to the internet and try again.');
+        }
+    </script>
+  </head>
+  <body>
+    <style>
+        html, body{
+            padding: 0;
+            margin: 0;
+            height: 100%;
+        }
+      .loadingPanel{
+        /* display: none; */
+        position: fixed;
+        z-index: 200;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: white;
+        text-align: center;
+        transition: opacity 0.5s;
+        text-transform: uppercase;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(to right, #FDFBFB, #EBEDEE 70%);
+        font-weight: bold;
+
+      }
+      .loadingPanel span{
+        font-family: sans-serif;
+        font-weight: normal;
+        text-transform: none;
+      }
+      .loadingPanel span.slogo {
+        font-family: Arial, sans-serif !important;
+        text-transform: uppercase;
+        background: linear-gradient(to right, #30CFD0 0%, #330867 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        transition: margin 0.5s;
+        font-size: 53px;
+        /* transition-timing-function: ease-out; */
+      }
+      .loadingPanel > span.shifted-up{
+        margin-top: -260px;
+      }
+      .lds-ring {
+        display: inline-block;
+        position: relative;
+        width: 80px;
+        height: 80px;
+        zoom: 0.5;
+        margin-bottom: 25px;
+      }
+      .lds-ring div {
+        box-sizing: border-box;
+        display: block;
+        position: absolute;
+        width: 64px;
+        height: 64px;
+        margin: 8px;
+        border: 8px solid #2c77b1;
+        border-radius: 50%;
+        animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        border-color: #2c77b1 transparent transparent transparent;
+      }
+      .lds-ring div:nth-child(1) {
+        animation-delay: -0.45s;
+      }
+      .lds-ring div:nth-child(2) {
+        animation-delay: -0.3s;
+      }
+      .lds-ring div:nth-child(3) {
+        animation-delay: -0.15s;
+      }
+      @keyframes lds-ring {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .myform{
+        display: grid;
+        grid-template-columns: 90px auto;
+        row-gap: 10px;
+        width: 350px;
+        margin: auto;
+        align-items: center;
+      }
+      .myform label{
+        text-align: left;
+      }
+      .myform button{
+        grid-column: 2 span;
+        padding: 4px;
+      }
+      .myform input{
+        padding: 4px;
+        border-radius: 2px;
+        border: 1px solid #b7b7b7;
+      }
+      #dimmer{
+        position: fixed;
+        z-index: 1000;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #ffffffa6;
+        padding-top: 50vh;
+        text-align: center;
+      }
+    </style>
+    
+    <div id="loadingPanel" class="loadingPanel">
+        <div class="content">
+            <span class="slogo">Resto POS</span> <br> <br>
+            <br>
+            <span>
+                <h3>Login into admin account to setup Resto POS</h3>
+                <div class="myform">
+                    <label for="vendor_id">Vendor ID</label>
+                    <input type="text" id="vendor_id" placeholder="Vendor ID">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" value="admin" disabled>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Password">
+                    <button onclick="loginClick()">Login</button>
+                </div>
+            </span>
+        </div>
+    </div>
+    <div id="dimmer" style="display: none;">
+        <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+    </div>
+  </body>
+</html>

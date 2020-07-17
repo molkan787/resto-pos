@@ -1,0 +1,1 @@
+module.exports.sleep = time => new Promise(r => setTimeout(r, time));

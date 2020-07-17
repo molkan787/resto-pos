@@ -1,0 +1,78 @@
+html, body{
+    height: 100% !important;
+    overflow: hidden !important;
+}
+* {
+    font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
+}
+*:not(.can-select){
+    user-select: none !important;
+}
+img, h1, h2, h3, h4, label.ui.label{
+    user-select: none;
+}
+img {
+    pointer-events: none;
+}
+.page{
+    height: 100vh;
+}
+.ui.input{
+    font-size: 1rem;
+}
+.full-h{
+    height: 100%;
+}
+.no-margin{
+    margin: 0 !important;
+}
+.no-padding{
+    padding: 0 !important;
+}
+.padding-2{
+    padding: 2px !important;
+}
+
+.vm-normal{
+    margin: 0.3rem 0 0.3rem 0;
+}
+
+.row1-block{
+    height: calc(100vh - 4rem - #{$block2-height});
+}
+.row2-block{
+    height: $block2-height;
+}
+.col-block{
+    height: calc(100vh - 4rem);
+}
+
+h3{
+    font-size: 1.2rem;
+}
+
+hr{
+    border: none;
+    border-bottom: 1px solid rgb(185, 185, 185);
+}
+
+.segment{
+    box-shadow: none !important;
+}
+
+.emptyMsg {
+    text-align: center;
+    margin-top: 9rem;
+    color: #999;
+    font-size: 1.2rem;
+    font-weight: normal;
+    font-style: italic;
+}
+
+.toastr.message{
+    background-color: #30bf16 !important;
+    color: white !important;
+    .header, p{
+        color: white !important;
+    }
+}
