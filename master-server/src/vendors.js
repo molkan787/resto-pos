@@ -8,6 +8,16 @@ const TABLE_VENDORS = 'vendors';
 
 module.exports = class Vendors{
 
+    static async getTotalVendorsCount(){
+        const result = await db.count('*').from(TABLE_VENDORS);
+        return result[0]['count(*)'];
+    }
+
+    static getVendors(offset, limit){
+        if(typeof offset != 'number' || typeof limit != 'number') throw new Error('Parameters `offset` or `limit` is not a number or was not provided');
+        return db.select('*').from(TABLE_VENDORS).orderBy('created_at', 'desc').offset(offset).limit(limit);
+    }
+
     static async authVendorAdmin(vendor_id, password){
         if(!areNoneEmptyString(vendor_id, password)) throw Error('Invalid input arguments');
         const valid = await this._checkVendorAdminPassword(vendor_id, password);
@@ -23,6 +33,11 @@ module.exports = class Vendors{
         if(rows.length != 1) throw new Error('Couldn\'t find admin user in vendor\'s databases');
         const { password: hashed_password } = rows[0];
         return md5(password) === hashed_password; 
+    }
+
+    static async getVendorById(vendor_id){
+        const items = await db.select('*').from(TABLE_VENDORS).where({ vendor_id });
+        return items[0] || null;
     }
 
     static async createVendor(data){
