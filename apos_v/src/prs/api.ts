@@ -1,6 +1,5 @@
 import config from '@/config';
 console.log(config.devMode);
-const ApiBase = 'http://142.93.43.100';
 let ApiBaseURI = 'http://localhost:8085/';
 let ApiBaseURIDemo = 'http://localhost:8085/';
 // if (config.devMode) {

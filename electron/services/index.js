@@ -5,6 +5,7 @@ const { sleep } = require('./utils');
 const FileExtractor = require('./file-extractor');
 const MysqlServer = require('./mysql-server');
 const RemoteData = require('./remote-data');
+const Updater = require('./updater');
 
 const DATA_BASE_DIR = app.getPath('userData');
 const CHECK_FILENAME = path.join(DATA_BASE_DIR, 'setup_done');
@@ -15,6 +16,7 @@ async function init(){
     FileExtractor.init(DATA_BASE_DIR);
     MysqlServer.init(mysqlBaseDir);
     RemoteData.init(DATA_BASE_DIR);
+    Updater.init(DATA_BASE_DIR);
 }
 
 async function setup(){

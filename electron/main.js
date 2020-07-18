@@ -2,12 +2,15 @@ const package = require('./package.json');
 const DEV = !!package.build;
 console.log('DEV', DEV)
 global.DEV = DEV;
+global.APP_VERSION = package.version;
 
+const config = require('./config');
 const { app, BrowserWindow, dialog, remote } = require('electron')
 const DownloadManager = require("electron-download-manager")
 const server = require('./server');
 const services = require('./services');
 const backendServer = require('./server/index');
+const updater = require('./services/updater');
 
 const port = DEV ? 8080 : 8083;
 
@@ -51,7 +54,6 @@ function createSetupWindow(){
   });
   win.setMenu(null);
   win.webContents.on('did-finish-load', () => win.show());
-  win.webContents.on('ipc-message', (event, channel, data) => handleUserLogin(data));
   win.loadFile('login.html')
   if (DEV) win.webContents.openDevTools()
 }
@@ -62,7 +64,7 @@ function init() {
     backendServer({
       localMysqlServerPort: services.MysqlServer.PORT,
       remoteDBConfig: {
-        host: DEV ? '192.168.1.4' : '142.93.43.100',
+        host: config.master_host,
         user: remoteDB.user,
         password: remoteDB.password,
         database: remoteDB.name
@@ -75,17 +77,19 @@ function init() {
 function showUI(showSetupWindow){
   if(showSetupWindow){
     createSetupWindow();
-    return;
-  }
-  if (DEV) {
-    createWindow();
-  } else {
-    server.on('error', err => console.error(err));
-    server.listen(port, function () {
-      console.log('Views Server listening at %s', server.name, server.url);
+  }else{
+    if (DEV) {
       createWindow();
-    });
+    } else {
+      server.on('error', err => console.error(err));
+      server.listen(port, function () {
+        console.log('Views Server listening at %s', server.name, server.url);
+        createWindow();
+      });
+    }
+    updater.setUiWindow(win);
   }
+  win.webContents.on('ipc-message', (event, channel, data) => handleWindowIpcMessage(channel, data));
 }
 
 async function startServices(){
@@ -114,6 +118,15 @@ async function doSetup(){
     })
   }finally{
     app.exit(0);
+  }
+}
+
+function handleWindowIpcMessage(channel, data){
+  console.log('ipc message:', channel, data);
+  if(channel == 'login'){
+    handleUserLogin(data);
+  }else if(channel == 'update'){
+    updater.handle(data);
   }
 }
 

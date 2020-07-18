@@ -21,3 +21,7 @@ if(electron){
         return {}
     }
 }
+
+function getGlobal(name){
+    return electron.remote.getGlobal(name);
+}

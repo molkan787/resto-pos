@@ -5,6 +5,10 @@
             <sui-icon name="clock" /> <strong style="margin-right: 20px">{{currentTime}}</strong>
             <sui-icon name="user circle"/> <strong class="">{{user.username}}</strong>
             <sui-label class="logout-btn" icon="power off" @click="logout">Logout</sui-label>
+            <span v-if="showingDownloadStatus" class="download-status">
+                <i class="download icon"></i>
+                Downloading update{{ downloadStatusDots }}
+            </span>
         </span>
         
         <div class="right-side">
@@ -78,6 +82,9 @@ import PhoneInput from '../pre/PhoneInput.vue';
 })
 export default class Header extends Vue {
     private statusCallback!: Function;
+
+    private showingDownloadStatus: Boolean = false;
+    private downloadStatusDots: String = '';
 
     private message = {
         visible: false,
@@ -227,6 +234,23 @@ export default class Header extends Vue {
         }
     }
 
+    showDownloadStatus(){
+        this.showingDownloadStatus = true;
+        this.downloadStatusDotsTimer = setInterval(() => {
+            if(this.downloadStatusDots == '...'){
+                this.downloadStatusDots = '';
+            }else{
+                this.downloadStatusDots += '.';
+            }
+        }, 500);
+    }
+    hideDownloadStatus(){
+        this.showingDownloadStatus = false;
+        if(this.downloadStatusDotsTimer){
+            clearInterval(this.downloadStatusDotsTimer);
+        }
+    }
+
     // ========================================
 
     logout(){
@@ -251,6 +275,8 @@ export default class Header extends Vue {
             this.statusCallback = callback;
             this.searchLoyaltyCard(barcode);
         });
+        window.showDownloadStatus = () => this.showDownloadStatus();
+        window.hideDownloadStatus = () => this.hideDownloadStatus();
     }
 
 }
@@ -355,5 +381,9 @@ div.message{
 }
 .ml1{
     margin-left: 1rem;
+}
+.download-status{
+    font-size: 1.1rem;
+    padding-left: 1rem;
 }
 </style>

@@ -62,6 +62,8 @@ function launchElectron(){
         path('electron', 'services'),
         path('electron', 'main.js'),
         path('electron', 'server.js'),
+        path('electron', 'config.js'),
+        path('electron', 'updater.js'),
     ];
     watch(toWatch, { recursive: true }, async (event, name) => {
         if(nodePath.extname(name) == '.js'){

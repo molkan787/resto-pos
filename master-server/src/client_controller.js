@@ -2,6 +2,7 @@ const Vendors = require('./vendors');
 const VendorsDBs = require('./vendors_dbs');
 const Security = require('./security');
 const { sleep } = require('./utils');
+const fs = require('fs').promises;
 
 module.exports.auth = async function(req, res, next){
     try {
@@ -37,5 +38,17 @@ module.exports.get_db_dump = async function(req, res, next){
             error: 'Internal error'
         });
         next();
+    }
+}
+
+module.exports.get_updates = async (req, res, next) => {
+    try {
+        const currentAppVersion = await fs.readFile('./current-app-version.txt', 'utf-8');
+        res.json({
+            currentAppVersion,
+        })
+    } catch (error) {
+        console.error(error)
+        res.status(500).send('Internal error');
     }
 }

@@ -1,4 +1,5 @@
-// @ts-ignore
+// @ts-nocheck
+// const electron = require('electron');
 const DEV = electron.remote.getGlobal('DEV');
 const config = {
     debug: DEV,
