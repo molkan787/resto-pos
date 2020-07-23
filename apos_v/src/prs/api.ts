@@ -1,15 +1,17 @@
+// @ts-nocheck
 import config from '@/config';
-console.log(config.devMode);
+import findHost from './hostFinder';
+const SERVER_PORT = 8085;
 let ApiBaseURI = 'http://localhost:8085/';
 let ApiBaseURIDemo = 'http://localhost:8085/';
-// if (config.devMode) {
-//   ApiBaseURI = 'http://localhost:8081/';
-//   ApiBaseURIDemo = 'http://localhost:8081/';
-// }else{
-//   ApiBaseURI = ApiBase + '/';
-//   ApiBaseURIDemo = ApiBase + ':81/';
-  
-// }
+
+async function prepare(){
+  const slaveMode = getGlobal('slave_mode');
+  if(!slaveMode) return;
+  const host = await findHost(SERVER_PORT);
+  ApiBaseURI = `http://${host}:${SERVER_PORT}/`;
+  ApiBaseURIDemo = ApiBaseURI;
+}
 
 function _url(path: string) {
   if (config.demoMode) {
@@ -20,6 +22,8 @@ function _url(path: string) {
 }
 
 export default _url;
+export { prepare };
 
 // @ts-ignore
 window._url = _url;
+window.prepare_api = prepare;

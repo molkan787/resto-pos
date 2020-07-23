@@ -10,13 +10,16 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import { Component, Vue } from 'vue-property-decorator';
+import { mapState } from 'vuex';
 import Header from './Header.vue';
 import CBody from './CBody.vue';
 import PaymentModal from './Elements/PaymentModal.vue';
 import GiftCertificateModal from '../pre/GiftCertificateModal.vue';
 import ToolsModal from '../pre/ToolsModal.vue';
 import LoyaltyScanModal from '../pre/LoyaltyScanModal.vue';
+import CometCallerId from '../../drivers/CometCallerId';
 
 @Component({
     components: {
@@ -27,8 +30,26 @@ import LoyaltyScanModal from '../pre/LoyaltyScanModal.vue';
         ToolsModal,
         LoyaltyScanModal,
     },
+    computed: mapState({
+        app: state => state.app,
+        pos: state => state.pos,
+    }),
 })
 export default class Home extends Vue {
+    private callerId: CometCallerId = new CometCallerId();
 
+    handleGotCall(data){
+        this.pos.orderType = 'delivery';
+        this.app.showOrderTypeDetails = true;
+        this.pos.orderDetails.phone = (data.callingLineNumber || '').trim();
+    }
+
+    mounted(){
+        console.log('this.callerId', this.callerId)
+        const callerId = this.callerId;
+        callerId.on('error', err => console.error(err));
+        callerId.on('got-call', data => this.handleGotCall(data));
+        callerId.start(true);
+    }
 }
 </script>

@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-nocheck
 const edm = imp("electron-download-manager");
 import axios from 'axios';
 import _url from '@/prs/api';
@@ -107,9 +107,7 @@ export default class ReportsDownloader{
             case loyaltyPoints:
                 return `Loyalty Points (Manually) ${date_from} - ${date_to}.xlsx`;
             case balanceAdjust:
-                // @ts-ignore
-                const cardType = params.card_type == 'prepaid' ? 'Prepaid' : 'Loyalty';
-                return `${cardType} balances adjustment - ${date_from} - ${date_to}.xlsx`;
+                return `${params.card_type == 'prepaid' ? 'Prepaid' : 'Loyalty'} balances adjustment - ${date_from} - ${date_to}.xlsx`;
             default:
                 return 'Reports.xlsx';
         }

@@ -65,7 +65,7 @@ export default class DM{
         }else if(phone){
             return this._getClientData('phone', phone);
         }else{
-            return new Promise((resolve, reject) => reject());
+            return Promise.reject();
         }
     }
 

@@ -9,7 +9,7 @@
             </div>
         </template>
         <sui-form v-else class="my-form">
-            <ClientInfoForm :autoLoadClient="true" :data="details" :showAddress="type == 'delivery'" />
+            <ClientInfoForm @request-refresh="loadData" :autoLoadClient="true" :data="details" :showAddress="type == 'delivery'" />
         </sui-form>
 
         <div class="footer">
@@ -101,7 +101,7 @@ export default {
             return null;
         },
 
-        handleOpen(){
+        loadData(){
             this.details = JSON.parse(JSON.stringify(this.pos.orderDetails));
         },
 
@@ -113,7 +113,7 @@ export default {
         }
     },
     mounted(){
-        this.handleOpen();
+        this.loadData();
     }
 }
 </script>

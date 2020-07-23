@@ -272,7 +272,7 @@ CREATE TABLE IF NOT EXISTS `__sqlsyncer_tables` (
 -- Listage des données de la table restopos_template.__sqlsyncer_tables : ~7 rows (environ)
 /*!40000 ALTER TABLE `__sqlsyncer_tables` DISABLE KEYS */;
 INSERT INTO `__sqlsyncer_tables` (`name`, `last_id`, `last_update_time`) VALUES
-	('users', 0, 0),
+	('users', 1, 0),
 	('categories', 0, 0),
 	('products', 0, 0),
 	('actions', 0, 0),

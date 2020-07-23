@@ -1,5 +1,6 @@
 const path = require('path');
 const md5 = require('md5');
+const fs = require('fs').promises;
 const { exec } = require('./helpers');
 const Security = require('./security');
 const CMD_MYSQLDUMP = process.platform == 'win32' ? "C:\\xampp\\mysql\\bin\\mysqldump.exe" : 'mysqldump';
@@ -18,7 +19,7 @@ module.exports = class VendorsDatabases{
             `CREATE DATABASE \`${db_name}\``,
             `CREATE USER '${db_user}'@'%' IDENTIFIED BY '${db_password}'`,
             `GRANT ALL ON \`${db_name}\`.* TO '${db_user}'@'%'`,
-            `FLUSH	PRIVILEGES`,
+            `FLUSH PRIVILEGES`,
         ].join(';');
         const sql_script2 = [
             `USE \`${db_name}\``,
@@ -48,8 +49,10 @@ module.exports = class VendorsDatabases{
         }
     }
 
-    static execSQL(sql){
-        return exec(`${CMD_MYSQL} -u root -e "${sql}"`);
+    static async execSQL(sql){
+        const filename = 'tmp_script.sql';
+        await fs.writeFile(filename, sql);
+        await this.execSqlFile(filename);
     }
 
     static execSqlFile(filename, database){

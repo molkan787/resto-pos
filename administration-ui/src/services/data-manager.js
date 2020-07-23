@@ -1,9 +1,9 @@
 import axios from 'axios';
-const API_BASE_URL = 'http://localhost/admin'
+
 export default class DataManager{
 
     static get API_BASE_URL(){
-        return API_BASE_URL;
+        return window.DEV ? 'http://localhost:8095/admin' : 'http://api.ecomretail.co.uk/admin';;
     }
 
     static get cache(){
@@ -12,14 +12,14 @@ export default class DataManager{
     }
 
     static async loadVendors(offset, limit){
-        const url = `${API_BASE_URL}/vendors?offset=${offset}&limit=${limit}`;
+        const url = `${this.API_BASE_URL}/vendors?offset=${offset}&limit=${limit}`;
         const { data } = await axios.get(url);
         this.cacheVendors(data.items, offset, limit);
         return data;
     }
 
     static async editVendor(vendor_id, data){
-        const url = `${API_BASE_URL}/vendor/${vendor_id}`;
+        const url = `${this.API_BASE_URL}/vendor/${vendor_id}`;
         const resp = await axios.post(url, data);
         this.updateVendorCache(vendor_id, resp.data.vendor);
         return resp.data;

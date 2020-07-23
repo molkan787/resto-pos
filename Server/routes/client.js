@@ -1,6 +1,7 @@
 const errors = require('restify-errors');
 const resMaker = require('../utils/response');
 const Client = require('../models/Client');
+const Order = require('../models/Order');
 
 module.exports = async (req, res, next) => {
     try {

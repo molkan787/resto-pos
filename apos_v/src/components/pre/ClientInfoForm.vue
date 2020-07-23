@@ -70,7 +70,11 @@ export default class ClientInfoForm extends Vue{
     @Prop({default: () => ({
             phone: '',
             first_name: '',
-            last_name: ''
+            last_name: '',
+            address_1: '',
+            address_2: '',
+            postcode: '',
+            city: '',
         }) }) data!: any;
 
     @Prop({default: false})
@@ -85,8 +89,7 @@ export default class ClientInfoForm extends Vue{
         this.phoneInputLoading = true;
         try{
             const client = await ClientLoader.loadClient(this.data.phone, false);
-            this.data.first_name = client.first_name || '';
-            this.data.last_name = client.last_name || '';
+            this.$emit('request-refresh');
         }catch(error){
             
         }

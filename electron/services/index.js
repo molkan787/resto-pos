@@ -9,6 +9,7 @@ const Updater = require('./updater');
 
 const DATA_BASE_DIR = app.getPath('userData');
 const CHECK_FILENAME = path.join(DATA_BASE_DIR, 'setup_done');
+const IS_SLAVE_FILENAME = path.join(DATA_BASE_DIR, 'slave_mode');
 
 async function init(){
     const mysqlBaseDir = path.join(DATA_BASE_DIR, 'mysql');
@@ -36,15 +37,26 @@ async function start(){
     await MysqlServer.start();
 }
 
+async function setupSlave(){
+    await fs.writeFile(IS_SLAVE_FILENAME, '1');
+    await fs.writeFile(CHECK_FILENAME, '1');
+}
+
 async function isFirstLaunch(){
     return !(await FileExtractor.fileExist(CHECK_FILENAME));
+}
+
+function isSlaveMode(){
+    return FileExtractor.fileExist(IS_SLAVE_FILENAME)
 }
 
 module.exports = {
     MysqlServer,
     init,
     setup,
+    setupSlave,
     start,
     isFirstLaunch,
     RemoteData,
+    isSlaveMode,
 }

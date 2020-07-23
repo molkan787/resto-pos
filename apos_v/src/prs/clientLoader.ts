@@ -17,6 +17,7 @@ export default class ClientLoader{
             axios.get(_url('clcref/phone/' + phone)).then(({data}) => {
                 if(data.status == 'OK'){
                     this.setClientData(data.clientData);
+                    console.log(data.clientData);
                     resolve(data.clientData);
                 }else{
                     reject(data.cause);

@@ -13,7 +13,7 @@ export default class Updater{
         try {
             const url = `${API_BASE_URL}/updates`;
             const { data } = await axios.get(url);
-            const { currentAppVersion } = data;
+            const currentAppVersion = data.currentAppVersion.trim();
             if(compareVersions(currentAppVersion, APP_VERSION) !== 0){
                 this.promptUpdateDownload(currentAppVersion);
             }
@@ -28,6 +28,9 @@ export default class Updater{
         e.hide();
         if(e.answer){
             this.downloadUpdate(updateVersion);
+            setTimeout(() => {
+                info('The update started downloading, You will get notified once it completes.').then(e => e.hide());
+            }, 1000);
         }
     }
 
@@ -57,4 +60,4 @@ export default class Updater{
 
 }
 window.Updater = Updater;
-setTimeout(() => Updater.checkForUpdates(), 1000 * 5);
+setTimeout(() => Updater.checkForUpdates(), 1000 * 20);

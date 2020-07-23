@@ -3,14 +3,13 @@ const axios = require('axios');
 const fs = require('fs').promises;
 const { downloadFile } = require('./utils');
 
-const HOST = global.DEV ? '127.0.0.1' : '142.93.43.100:85';
-const REMOTE_URL = `http://${HOST}/client/`;
+const REMOTE_URL = global.main_config.master_api_url;
 module.exports = class RemoteData{
 
     static init(dataDir){
         this.dataDir = dataDir;
-        this.authURL = REMOTE_URL + 'auth';
-        this.downloadURL = REMOTE_URL + 'get_db_dump';
+        this.authURL = REMOTE_URL + '/auth';
+        this.downloadURL = REMOTE_URL + '/get_db_dump';
         this.filename = '';
         this.remoteDbConfigFilename = path.join(dataDir, 'rdbconf');
     }

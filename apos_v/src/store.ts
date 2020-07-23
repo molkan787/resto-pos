@@ -251,9 +251,14 @@ export default new Vuex.Store({
         client.want_receipt = clientData.want_receipt || false;
         client.history = clientData.history || [];
 
-        orderDetails.first_name = clientData.first_name || '';
-        orderDetails.last_name = clientData.last_name || '';
-        orderDetails.phone = clientData.phone || '';
+        const { details } = clientData;
+        orderDetails.first_name = details.first_name || clientData.first_name || '';
+        orderDetails.last_name = details.last_name || clientData.last_name || '';
+        orderDetails.phone = details.phone || clientData.phone || '';
+        orderDetails.address_1 = details.address_1 || '';
+        orderDetails.address_2 = details.address_2 || '';
+        orderDetails.city = details.city || '';
+        orderDetails.postcode = details.postcode || '';
 
         if(!clientData.keepCards){
           const card = clientData.prepaid || {};

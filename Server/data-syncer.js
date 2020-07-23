@@ -31,7 +31,7 @@ module.exports = class DataSyncer{
 
                 await sleep(5 * 1000);
                 
-                totalUpdates = await this.syncer.pullChanges();
+                totalUpdates = await this.syncer.pullChanges(); 
                 console.log('Total updates received:', totalUpdates)
             } catch (error) {
                 console.error(error)

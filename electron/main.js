@@ -32,7 +32,7 @@ function createWindow() {
     win.setMinimumSize(1000, 600);
     win.show();
   });
-
+  win.webContents.on('ipc-message', (event, channel, data) => handleWindowIpcMessage(channel, data));
   if (DEV) win.webContents.openDevTools()
 
 
@@ -40,6 +40,8 @@ function createWindow() {
     win = null;
     app.quit();
   })
+  
+  updater.setUiWindow(win);
 }
 
 function createSetupWindow(){
@@ -55,23 +57,14 @@ function createSetupWindow(){
   win.setMenu(null);
   win.webContents.on('did-finish-load', () => win.show());
   win.loadFile('login.html')
+  win.webContents.on('ipc-message', (event, channel, data) => handleWindowIpcMessage(channel, data));
   if (DEV) win.webContents.openDevTools()
 }
 
 function init() {
-  startServices().then(async () => {
-    const remoteDB = await services.RemoteData.getRemoteDatabaseConfig();
-    backendServer({
-      localMysqlServerPort: services.MysqlServer.PORT,
-      remoteDBConfig: {
-        host: config.master_host,
-        user: remoteDB.user,
-        password: remoteDB.password,
-        database: remoteDB.name
-      }
-    })
-  })
-  DownloadManager.register({ downloadFolder: app.getPath("desktop") + "/POS REPORTS" })
+  global.slave_mode = false;
+  startServices();
+  DownloadManager.register({ downloadFolder: app.getPath("desktop") + "/POS REPORTS" });
 }
 
 function showUI(showSetupWindow){
@@ -87,25 +80,42 @@ function showUI(showSetupWindow){
         createWindow();
       });
     }
-    updater.setUiWindow(win);
   }
-  win.webContents.on('ipc-message', (event, channel, data) => handleWindowIpcMessage(channel, data));
 }
 
 async function startServices(){
   await services.init();
   const firstlaunch = await services.isFirstLaunch();
+  const isSlaveMode = await services.isSlaveMode();
+  global.slave_mode = isSlaveMode;
   showUI(firstlaunch);
-  if(!firstlaunch){
-    console.log('Starting services...');
-    await services.start();
-  }
+
+  console.log('firstlaunch:', firstlaunch);
+  console.log('isSlaveMode:', isSlaveMode);
+
+  if(firstlaunch || isSlaveMode) return;
+  console.log('Starting services...');
+  await services.start();
+  const remoteDB = await services.RemoteData.getRemoteDatabaseConfig();
+  backendServer({
+    localMysqlServerPort: services.MysqlServer.PORT,
+    remoteDBConfig: {
+      host: config.master_host,
+      user: remoteDB.user,
+      password: remoteDB.password,
+      database: remoteDB.name
+    }
+  })
 }
 
-async function doSetup(){
-  console.log('Setting up services...');
+async function doSetup(slaveMode){
+  console.log('Setting up services...' + (slaveMode ? ' (Slave Mode)' : ''));
   try {
-    await services.setup();
+    if(slaveMode){
+      await services.setupSlave();
+    }else{
+      await services.setup();
+    }
     console.log('Setup completed!');
     app.relaunch();
   } catch (error) {
@@ -121,12 +131,15 @@ async function doSetup(){
   }
 }
 
+
 function handleWindowIpcMessage(channel, data){
   console.log('ipc message:', channel, data);
   if(channel == 'login'){
     handleUserLogin(data);
   }else if(channel == 'update'){
     updater.handle(data);
+  }else if(channel == 'setup_slave'){
+    doSetup(true);
   }
 }
 

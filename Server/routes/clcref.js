@@ -42,7 +42,9 @@ async function getClient(ref){
     
     const clientData = await Client.query().findOne(filter).eager('[loyalty, prepaid]');
     if(clientData){
-        clientData.history = await Client.getClientHostory(clientData.id);
+        const { last_details, orders } = await Client.getClientHistory(clientData.id);
+        clientData.history = orders;
+        clientData.details = last_details;
     }
     return clientData;
 }

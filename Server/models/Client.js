@@ -71,10 +71,11 @@ module.exports = class Client extends Model{
         return client;
     }
 
-    static async getClientHostory(clientId){
+    static async getClientHistory(clientId){
         try {
             const result = [];
             const orders = await Order.query().where({client_id: clientId}).orderBy('id', 'DESC').limit(10);
+            let last_details = null;
             if(orders){
                 for(let i = 0; i < orders.length; i++){
                     const _order = orders[i];
@@ -83,9 +84,15 @@ module.exports = class Client extends Model{
                         amount: _order.total / 100,
                         receipt: _order.receipt,
                     });
+                    if(i == 0){
+                        last_details = _order.order_details;
+                    }
                 }
             }
-            return result;
+            return {
+                orders: result,
+                last_details,
+            };
         } catch (error) {
             throw new Error(error);
         }

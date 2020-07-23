@@ -1,3 +1,4 @@
+window.DEV = typeof window.webpackHotUpdate != 'undefined';
 import Vue from 'vue'
 import App from './App.vue'
 import Modal from './components/templates/Modal.vue';

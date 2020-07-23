@@ -29,6 +29,10 @@
             </sui-dimmer>
         </sui-segment>
 
+        <div v-if="initial_loading" class="ui inverted active dimmer">
+            <div class="ui loader"></div>
+        </div>
+
         <!-- <div class="fab">
             <i class="setting icon"></i>
         </div> -->
@@ -43,6 +47,7 @@
 </template>
 
 <script lang="ts">
+// @ts-nocheck
 import Vue from 'vue';
 import comu from '@/prs/comu';
 import Component from 'vue-class-component';
@@ -50,11 +55,13 @@ import Message from '../../ccs/Message';
 import LoginService from '@/prs/login';
 import { mapState } from 'vuex';
 import config from '@/config';
+import { prepare } from '@/prs/api';
 
 @Component({
     computed: mapState(['demoMode']),
 })
 export default class Login extends Vue{
+    private initial_loading: boolean = true;
     private loading: boolean = false;
     private username: string = '';
     private password: string = '';
@@ -96,12 +103,20 @@ export default class Login extends Vue{
         comu.switchMode(demo);
     }
 
-    mounted(){
+    async mounted(){
+        try{
+            await prepare();
+        }catch(error){
+            await info('We couldn\'t find master host (POS Host) on the local network, Please make sure it is running and open this app again.');
+            app.exit(0);
+        }
+        this.initial_loading = false;
         if(config.devMode){
             this.username = 'admin';
             this.password = 'password123';
             this.login();
         }
+        
     }
 }
 </script>

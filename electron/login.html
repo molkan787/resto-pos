@@ -7,6 +7,7 @@
         const electron = require('electron');
         const remote = electron.remote;
         window.alert = text => remote.dialog.showMessageBoxSync(remote.BrowserWindow.getFocusedWindow(), {title: 'Resto POS', message: text})
+        window.confirm = text => remote.dialog.showMessageBoxSync(remote.BrowserWindow.getFocusedWindow(), {type: 'question', title: 'Resto POS', message: text, buttons: ['Cancel', 'Ok']})
         function getVal(elId){
             return document.getElementById(elId).value;
         }
@@ -33,6 +34,13 @@
         function loginError(){
             toggleDimmer(false);
             alert('An error occured, Please make sure you are connected to the internet and try again.');
+        }
+        function setupSlaveClick(){
+          const question = 'Setup POS in Slave Mode? This mode require another instance of the app to be running in normal mode on the same local network as this PC';
+          if(confirm(question)){
+            toggleDimmer(true);
+            electron.ipcRenderer.send('setup_slave');
+          }
         }
     </script>
   </head>
@@ -166,6 +174,7 @@
                     <label for="password">Password</label>
                     <input type="password" id="password" placeholder="Password">
                     <button onclick="loginClick()">Login</button>
+                    <button onclick="setupSlaveClick()" style="margin-top: 90px">Setup in Slave Mode (Waitress mode)</button>
                 </div>
             </span>
         </div>
