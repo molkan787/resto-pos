@@ -371,6 +371,16 @@ export default new Vuex.Store({
       state.app.showOrderTypeDetails = false;
       state.app.showProductsSearch = false;
     },
+    clearOrderClientDetails({ state }){
+      const { orderDetails } = state.pos;
+      orderDetails.first_name = '';
+      orderDetails.last_name = '';
+      orderDetails.phone = '';
+      orderDetails.address_1 = '';
+      orderDetails.address_2 = '';
+      orderDetails.city = '';
+      orderDetails.postcode = '';
+    },
 
     setItemCount(context, { itemId, count }){
       setItemCount(context, itemId, count, true);

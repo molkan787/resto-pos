@@ -12,7 +12,7 @@
 <script lang="ts">
 // @ts-nocheck
 import { Component, Vue } from 'vue-property-decorator';
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import Header from './Header.vue';
 import CBody from './CBody.vue';
 import PaymentModal from './Elements/PaymentModal.vue';
@@ -34,12 +34,14 @@ import CometCallerId from '../../drivers/CometCallerId';
         app: state => state.app,
         pos: state => state.pos,
     }),
+    methods: mapActions(['clearOrderClientDetails'])
 })
 export default class Home extends Vue {
     private callerId: CometCallerId = new CometCallerId();
 
     handleGotCall(data){
         this.pos.orderType = 'delivery';
+        this.clearOrderClientDetails();
         this.app.showOrderTypeDetails = true;
         this.pos.orderDetails.phone = (data.callingLineNumber || '').trim();
     }
