@@ -82,6 +82,11 @@ button{
     padding-left: 0 !important;
     padding-right: 0 !important;
 }
+@media only screen and (max-width: 1050px) {
+    button{
+        font-size: 1rem !important;
+    }
+}
 .submit.single{
     grid-column: 2 span;
 }

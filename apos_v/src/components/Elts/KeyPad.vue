@@ -34,7 +34,7 @@ export default class KeyPad extends Vue{
 
 <style lang="scss" scoped>
 @import '@/scss/vars.scss';
-$root-width: 24rem;
+$root-width: 100%;
 div.root{
     width: $root-width;
     text-align: left;

@@ -8,8 +8,8 @@
         </sui-segment>
 
         <sui-segment attached class="bottom-side">
-            <Payments />
             <CoreControls />
+            <Payments />
             <GpoControls />
 
         </sui-segment>
@@ -81,6 +81,11 @@ $bot-side-height: 20.3rem;
     column-gap: 0;
     &.right{
         float: right;
+    }
+}
+@media only screen and (max-width: 1200px) {
+    .bottom-side{
+        display: flex;
     }
 }
 </style>

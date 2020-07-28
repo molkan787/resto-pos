@@ -24,8 +24,26 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .ot-button{
     height: 100%;
+}
+@media only screen and (max-width: 1320px){
+    .order-type button{
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+}
+@media only screen and (max-width: 1220px){
+    .order-type button{
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+}
+@media only screen and (max-width: 1100px){
+    .order-type button{
+        padding-left: 3px !important;
+        padding-right: 3px !important;
+    }
 }
 </style>

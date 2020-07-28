@@ -3,3 +3,6 @@ dist
 app
 server
 files/*
+
+package-lock.json
+yarn.lock

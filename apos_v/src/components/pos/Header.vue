@@ -308,7 +308,7 @@ div.m-el{
     margin-top: $root-h * 0.25;
 }
 .right-side{
-    width: 50rem;
+    width: 40rem;
     float: right;
     padding: 0.5rem;
     margin-right: 0rem;

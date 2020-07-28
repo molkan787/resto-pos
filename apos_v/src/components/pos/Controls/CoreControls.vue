@@ -169,9 +169,13 @@ export default class Adjustment extends Vue{
 @import '@/scss/vars.scss';
 button{
     font-size: 1.1rem !important;
-    // line-height: 1.3 !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
+}
+@media only screen and (max-width: 1050px) {
+    button{
+        font-size: 1rem !important;
+    }
 }
 .positive-color{
     color: $green;

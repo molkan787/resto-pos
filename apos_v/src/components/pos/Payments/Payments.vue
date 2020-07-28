@@ -18,10 +18,6 @@
         </div>
         <!-- <ButtonsGrid @buttonClick="buttonClicked" class="buttonsGrid" :buttons="cashButtons" /> -->
         <KeyPad @keyPressed="changePaid" :shadow="false" />
-        <!-- <sui-button onclick="window.PaymentsComponent.focusBRI()" color="grey" class="submit" :loading="loading" @click="submit" :disabled="pos.items.length == 0 || !pos.pay_method" >
-            Submit
-            <i class="arrow right icon"></i>
-        </sui-button> -->
 
         <div v-if="disabled" class="dimmer"></div>
     </div>
@@ -151,6 +147,7 @@ export default class Payments extends Vue{
 @import '@/scss/vars.scss';
 $width: 24rem;
 .payments-root{
+    position: relative;
     display: inline-block;
     width: $width;
 }
@@ -197,27 +194,24 @@ h3{
     margin-top: 1rem !important;
     margin-bottom: 0.5rem !important;
 }
-.submit{
-    width: 24rem;
-    margin: auto;
-    margin-top: 0.5rem;
-    height: 3.5rem;
-    box-shadow: 1px 1px 6px #ccc;
-    font-size: 1.3rem;
-    position: relative;
-    z-index: 10;
-    i{
-        padding-left: 0.5rem;
-        margin-right: -1rem !important;
-    }
-}
 .dimmer{
     position: absolute;
     top: 0;
-    left: calc((100% - #{$width}) / 2);
-    width: $width;
+    left: 0;
+    width: 100%;
     height: 100%;
     background-color: white;
     opacity: 0.8;
+}
+@media only screen and (max-width: 1200px){
+    .screen{
+        height: 5.4rem;
+    }
+    h3{
+        font-size: 1.1rem;
+    }
+    .payments-root{
+        margin-right: 5px;
+    }
 }
 </style>

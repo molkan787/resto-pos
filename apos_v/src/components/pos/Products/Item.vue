@@ -1,7 +1,9 @@
 <template>
     <sui-button class="root" @click="rootClick" :class="count > 0 ? 'blue' : 'greyligth'" >
-        <span>{{ item.name }}</span>
-        <div v-if="count > 0">
+        <div class="text">
+            <span>{{ item.name }}</span>
+        </div>
+        <div class="count" v-if="count > 0">
             <template v-if="item.product_type == 1">
                 <button @click="minusClick" class="ctrl" cancel-click="1">
                     <i class="minus icon" cancel-click="1"></i>
@@ -106,47 +108,64 @@ export default class Item extends Vue{
 <style lang="scss" scoped>
 @import '@/scss/vars.scss';
 button.root{
-    width: 100%;
-    height: 6rem;
-    padding-left: 0;
-    padding-right: 0;
     position: relative;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    min-height: 6rem;
+    padding: 0;
     margin: 0;
     font-size: 1.2rem;
     float: left;
+    
+    &.blue{
+        div.text span{
+            padding-bottom: calc(3rem + 5px);
+        }
+    }
 }
-button.blue > span{
-    position: relative;
-    top: 0.2rem;
-}
-div{
-    margin-top: 0.9rem;
+div.text{
+    display: table;
+    width: 100%;
     text-align: center;
+    span{
+        display: table-cell;
+        vertical-align: middle;
+        padding: 5px 0;
+        width: 100%;
+    }
 }
-div > button.ctrl{
-    width: calc(100% / 3);
+div.count{
+    position: absolute;
+    top: calc(100% - 3rem);
     height: 3rem;
-    color: white;
-    font-weight: bold;
-    border: none;
-    background-color: lighten($blue, 10);
-    outline: none;
-    &:active{
-        background-color: darken($blue, 20);
-    }
-    &:nth-child(1){
-        float: left;
-        border-bottom-left-radius: 0.3rem;
-    }
-    &:nth-child(3){
-        float: right;
-        border-bottom-right-radius: 0.3rem;
-    }
-    &.price{
-        width: calc(100% / 3 * 2);
-    }
-    &.edit{
-        border-bottom-right-radius: 0.3rem;
+    width: 100%;
+    text-align: center;
+    button.ctrl{
+        width: calc(100% / 3);
+        height: 3rem;
+        color: white;
+        font-weight: bold;
+        border: none;
+        background-color: lighten($blue, 10);
+        outline: none;
+        &:active{
+            background-color: darken($blue, 20);
+        }
+        &:nth-child(1){
+            float: left;
+            border-bottom-left-radius: 0.3rem;
+        }
+        &:nth-child(3){
+            float: right;
+            border-bottom-right-radius: 0.3rem;
+        }
+        &.price{
+            width: calc(100% / 3 * 2);
+        }
+        &.edit{
+            border-bottom-right-radius: 0.3rem;
+        }
     }
 }
 </style>

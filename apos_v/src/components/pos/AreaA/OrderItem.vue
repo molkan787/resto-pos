@@ -3,7 +3,8 @@
         <div class="gift button" @click="$emit('giftClick')" :title="isFree ? 'Remove free item' : 'Make this item free'">
             <i class="gift icon" :class="{active: isFree}"></i>
         </div>
-        {{ text }} <label v-if="label" class="label">{{ label }}</label>
+        <label class="item-name">{{ text }}</label>
+        <label v-if="label" class="label">{{ label }}</label>
         <span v-if="isFree">Free</span>
         <span v-else>{{ amount | price }}</span>
         <div class="count">
@@ -57,7 +58,14 @@ div{
 span{
     float: right;
 }
-label{
+.item-name{
+    width: 50%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+}
+label.label{
     opacity: 0.8;
     font-size: 0.8em;
 }
@@ -83,6 +91,7 @@ div.count{
 }
 .gift.button{
     display: inline-block;
+    float: left;
     width: 3rem;
     height: 2rem;
     margin-left: -0.5rem;
@@ -94,6 +103,14 @@ div.count{
             opacity: 1;
             color: #21BA45;
         }
+    }
+}
+@media only screen and (max-width: 1135px){
+    .item-name{
+        width: 35%;
+    }
+    div.count{
+        left: 50%;
     }
 }
 </style>
