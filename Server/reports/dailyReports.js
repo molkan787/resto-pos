@@ -2,6 +2,7 @@ const xlBuilder = require('../Helpers/xlBuilder')
 const Reconcile = require('./reconcile')
 const Sales = require('./sales')
 const utils = require('../utils/utils')
+const path = require('path')
 
 module.exports = class DailyReports{
 
@@ -12,7 +13,8 @@ module.exports = class DailyReports{
         xb.fontSize = 10
         Sales.put(xb, sales)
         const filename = utils.rndSlug('.xlsx')
-        await xb.writeFile('files/' + filename)
+        const fullpath = path.join(global.TempDir, 'files', filename);
+        await xb.writeFile(fullpath)
         return filename;
     }
 

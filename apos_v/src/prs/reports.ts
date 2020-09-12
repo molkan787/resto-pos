@@ -3,6 +3,7 @@ const edm = imp("electron-download-manager");
 import axios from 'axios';
 import _url from '@/prs/api';
 import utils from '@/utils';
+import store from '@/store';
 
 const dailySales = 'daily-sales';
 const dailySummary = 'daily-summary';
@@ -12,6 +13,22 @@ const balanceAdjust = 'balance-adjust';
 
 export default class ReportsDownloader{
 
+    static async loadDailyStats(){
+        try {
+            const day = utils.todaysTimestamp();
+            const resposne = await axios.get(_url('daily-stats/' + day));
+            const stats = resposne.data && resposne.data.stats;
+            if(stats){
+                store.state.dailyStats = stats;
+                return stats;
+            }else{
+                return null;
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     static async dailySales(date: any){
         try {
             const _date = utils.dateToTimestamp(date);
@@ -20,6 +37,7 @@ export default class ReportsDownloader{
             await this.downloadFile(response.data);
             return true;
         } catch (error) {
+            console.error(error);
             throw new Error('Unknow error at ReportsDownloader.dailySales');
         }
     }
@@ -31,6 +49,7 @@ export default class ReportsDownloader{
             await this.downloadFile(response.data);
             return true;
         } catch (error) {
+            console.error(error);
             throw new Error('Unknow error at ReportsDownloader.dailySummary');
         }
     }
@@ -43,6 +62,7 @@ export default class ReportsDownloader{
             await this.downloadFile(response.data);
             return true;
         } catch (error) {
+            console.error(error);
             throw new Error('Unknow error at ReportsDownloader.weeklySummary');
         }
     }
@@ -55,6 +75,7 @@ export default class ReportsDownloader{
             await this.downloadFile(response.data);
             return true;
         } catch (error) {
+            console.error(error);
             throw new Error('Unknow error at ReportsDownloader.loyaltyPoints');
         }
     }
@@ -70,6 +91,7 @@ export default class ReportsDownloader{
             await this.downloadFile(response.data);
             return true;
         } catch (error) {
+            console.error(error);
             throw new Error('Unknow error at ReportsDownloader.cardBalancesAdjust');
         }
     }

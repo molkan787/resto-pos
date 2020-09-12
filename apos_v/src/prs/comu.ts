@@ -20,6 +20,7 @@ import extUtils from '@/utils';
 import Receipt from './receipt';
 import LocalSettings from './localSettings';
 import Printers from './printers';
+import Reports from './reports';
 
 export default class Comu{
 
@@ -263,6 +264,7 @@ export default class Comu{
                     this.setToRecentOrders(data.orderId, total)
                     this.setTableState();
                     resolve(true);
+                    Reports.loadDailyStats();
                 }else{
                     reject(data.cause);
                 }

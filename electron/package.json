@@ -1,6 +1,6 @@
 {
     "name": "pl.dahmane.resto-pos",
-    "version": "1.0.1",
+    "version": "1.0.4",
     "author": {
         "name": "Seghier Dahmane",
         "email": "contact@dahmane.pl"
@@ -17,6 +17,7 @@
         "knex": "^0.21.1",
         "knex-list-db-table": "^0.2.1",
         "md5": "^2.2.1",
+        "mkdir": "^0.0.2",
         "mysql2": "^2.1.0",
         "node-thermal-printer": "^4.1.2",
         "objection": "^2.2.1",

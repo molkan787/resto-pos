@@ -24,9 +24,23 @@
             </sui-segments>
             <sui-segment>
                 <sui-segment class="no-border">
-                    <h3>Cash out</h3>
+                    <!-- <h3>Cash out</h3>
                     <hr>
-                    <sui-button @click="cashout">Cash out</sui-button>
+                    <sui-button @click="cashout">Cash out</sui-button> -->
+                    <h3>Daily Stats</h3>
+                    <hr>
+                    <table class="stats-table">
+                        <tbody>
+                            <tr>
+                                <th>Cash</th>
+                                <th>Credit/Debit Card</th>
+                            </tr>
+                            <tr>
+                                <td>{{ dailyStats.cash | price_m }}</td>
+                                <td>{{ dailyStats.card | price_m }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </sui-segment>
             </sui-segment>
         </sui-segments>
@@ -64,12 +78,14 @@ import LabeledDropdown from '../Elts/inputs/LabeledDropdown.vue';
 import Message from '@/ccs/Message';
 import Reports from '@/prs/reports';
 import MxHelper from '@/prs/MxHelper';
+import { mapState } from 'vuex';
 
 @Component({
     components: {
         LabeledInput,
         LabeledDropdown,
-    }
+    },
+    computed: mapState(['dailyStats'])
 })
 export default class ReportsTab extends Vue{
     private day: any = '';
@@ -87,6 +103,8 @@ export default class ReportsTab extends Vue{
     private dg_weeklySum = false;
     private dg_loyaltyPoints = false;
     private dg_balancesAdjust = false;
+
+    private key_press_handler: Function = null;
 
     async cashout(){
         try {
@@ -161,6 +179,41 @@ export default class ReportsTab extends Vue{
         .then((e: any) => e.hide());
     }
 
+    handleKeyPress(e){
+        if(e.key == 'F8' && e.ctrlKey){
+            this.cashout();
+        }
+    }
+
+    resume(){
+        window.addEventListener('keyup', this.key_press_handler);
+    }
+
+    pause(){
+        window.removeEventListener('keyup', this.key_press_handler);
+    }
+
+    activated(){
+        this.resume();
+    }
+
+    deactivated(){
+        this.pause();
+    }
+
+    mounted(){
+        Reports.loadDailyStats();
+    }
+
+    created(){
+        this.key_press_handler = e => this.handleKeyPress(e);
+        this.resume();
+    }
+
+    beforeDestroy(){
+        this.pause();
+    }
+
 }
 </script>
 
@@ -179,5 +232,21 @@ hr{
 }
 .no-border, .no-border .segment{
     border: none !important;
+}
+.stats-table{
+    border-collapse: collapse;
+    min-width: 302px;
+    th, td{
+        border: 1px solid #DEDEDF;
+        min-width: 150px;
+    }
+    th{
+        font-size: 17px;
+        padding: 10px 5px;
+    }
+    td{
+        font-size: 26px;
+        padding: 20px 5px;
+    }
 }
 </style>

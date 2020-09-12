@@ -57,6 +57,10 @@ export default class Utils {
         return yyyy + '/' + mm + '/' + dd;
     }
 
+    static todaysTimestamp(){
+            return this.dateToTimestamp(this.todaysDate());
+    }
+
     static getFilenameExtension(filename: string){
         const parts = filename.split('.');
         return parts[parts.length - 1];

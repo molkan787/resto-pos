@@ -4,6 +4,7 @@ import axios from 'axios';
 import _url from '@/prs/api';
 import FormData from 'form-data';
 import ProductsFactory from './productsFactory';
+import Utils from '@/utils';
 
 export default class DM{
 
@@ -49,7 +50,8 @@ export default class DM{
     }
 
     public static async recordCashout(amount: any){
-        const { data } = await axios.post(_url('cashout'), { amount });
+        const day = Utils.todaysTimestamp();
+        const { data } = await axios.post(_url('cashout'), { amount, day });
         if(data.status == 'OK'){
             return true;
         }else{

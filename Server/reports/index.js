@@ -10,8 +10,26 @@ const AC = require('../Actions/ActionConsts');
 const DailyReports = require('./dailyReports');
 const WeeklyReports = require('./weeklyReports');
 const Other = require('./other');
+const mkdirp = require('mkdirp');
+const path = require('path');
+
+mkdirp(path.join(global.TempDir, 'files'));
 
 module.exports = class Reports {
+
+    static async genDailyStats(day){
+        try {
+            const cond = wb.dateRange({date_from: day, date_to: day}, null, 'status = 1');
+            const orders = await Order.query().select(['total', 'pay_method']).whereRaw(cond);
+            const cashouts = await Action.getBulkByTypeDateRange(AC.TYPE_CASHOUT, day, day);
+            const data = this.prepareDailyStats(orders, cashouts);
+
+            return data;
+        } catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
 
     static async genDailyReports(day){
         try {
@@ -76,6 +94,21 @@ module.exports = class Reports {
         } catch (error) {
             console.log(error);
             return false;
+        }
+    }
+
+    static prepareDailyStats(orders, cashouts){
+        // const cashout = cashouts.reduce((current, co) => current + co.s1, 0);
+        let cash = 0, card = 0;
+        for(let i = 0; i < orders.length; i++){
+            const { total, pay_method } = orders[i];
+            if(pay_method == 'cash') cash += total;
+            else if(pay_method == 'card') card += total;
+        }
+        // cash -= cashout;
+        return {
+            cash,
+            card
         }
     }
 

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const errors = require('restify-errors');
 const security = require('../security');
+const path = require('path');
 
 module.exports = async (req, res, next) => {
     try {
@@ -21,7 +22,8 @@ module.exports = async (req, res, next) => {
 };
 
 function sendFile(filename, res, returnFilename){
-    const readStream = fs.createReadStream(`${appRoot}/files/${filename}`);
+    const fullpath = path.join(global.TempDir, 'files', filename);
+    const readStream = fs.createReadStream(fullpath);
     res.writeHead(200, {
         "Content-Type": 'application/octet-stream',
         "Content-Disposition": "attachment; filename=" + returnFilename,

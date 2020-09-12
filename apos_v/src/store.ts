@@ -143,6 +143,10 @@ export default new Vuex.Store({
     companies: [],
 
     stats: {cw: 0, pp: 0,  rpp: 0, dt: 0, cs: 0, cc: 0, cxc: 0, cxv: 0},
+    dailyStats: {
+      cash: 0,
+      card: 0
+    },
 
     areaAView: 'order',
 

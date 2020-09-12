@@ -1,5 +1,5 @@
 const daySeconds = 3600 * 24;
-const tz_offset = 3600 * 4;
+const tz_offset = 0;
 
 class TimeHelper{
 

@@ -11,9 +11,9 @@ module.exports = class WhereBuilder{
         const colName = dateProp || 'date_added';
         let q = '';
         if(params.date_from)
-            q = colName + ' >= ' + ci(params.date_from + time.tzOffset, ctdk);
+            q = colName + ' >= ' + ci(parseInt(params.date_from) + time.tzOffset, ctdk);
         if(params.date_to)
-            q = _add(q, colName + ' < ' + ci( time.addDay(params.date_to + time.tzOffset), ctdk ) );
+            q = _add(q, colName + ' < ' + ci( time.addDay(parseInt(params.date_to) + time.tzOffset), ctdk ) );
 
         if(extra)
             q = _add(q, extra);

@@ -7,8 +7,8 @@ module.exports = class Reconcile {
         ws.cell(1, 2).string(data.date);
         ws.cell(4, 2).number(data.totals.cash);
         ws.cell(5, 2).number(data.totals.card);
-        ws.cell(6, 2).number(0);
-        ws.cell(6, 3).number(data.totalCashout);
+        // ws.cell(6, 2).number(0);
+        // ws.cell(6, 3).number(data.totalCashout);
         // ws.cell(6, 2).number(data.totals.prepaid);
         // ws.cell(7, 2).number(data.totals.loyalty);
         // ws.cell(8, 2).number(data.totals.invoice_ari);
@@ -47,7 +47,7 @@ module.exports = class Reconcile {
 
         ws.cell(4, 1).string('Cash');
         ws.cell(5, 1).string('Credit/Debit Card');
-        ws.cell(6, 1).string('Cash takeout');
+        // ws.cell(6, 1).string('Cash takeout');
         // ws.cell(7, 1).string('Loyalty Card ( K )');
         // ws.cell(8, 1).string('Invoice / Ari ( I )');
         // ws.cell(9, 1).string('Free / Other payments ( J )');
@@ -62,12 +62,12 @@ module.exports = class Reconcile {
 
         ws.cell(4, 4).formula('C4-B4').style(sl.price);
         ws.cell(5, 4).formula('C5-B5').style(sl.price);
-        ws.cell(6, 4).formula('C6-B6').style(sl.price);
+        // ws.cell(6, 4).formula('C6-B6').style(sl.price);
         ws.cell(7, 4).formula('C7-B7').style(sl.price);
 
         ws.cell(4, 2).style(sl.price);
         ws.cell(5, 2).style(sl.price);
-        ws.cell(6, 2).style(sl.price);
+        // ws.cell(6, 2).style(sl.price);
         ws.cell(7, 2).style(sl.price);
         ws.cell(7, 2).formula('SUM(B4:B6)').style(sl.price);
         ws.cell(7, 3).formula('SUM(C4:C6)').style(sl.price);

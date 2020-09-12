@@ -6,6 +6,9 @@ global.APP_VERSION = package.version;
 
 const config = require('./config');
 const { app, BrowserWindow, dialog, remote } = require('electron')
+const path = require('path');
+
+global.TempDir = path.join(app.getPath('temp'), 'resto-pos')
 const DownloadManager = require("electron-download-manager")
 const server = require('./server');
 const services = require('./services');

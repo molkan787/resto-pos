@@ -16,6 +16,7 @@ import Modal from '../Elts/Modal.vue';
 import MxHelper from '@/prs/MxHelper';
 import ModalDialog from '@/ccs/ModalDialog';
 import CashDrawer from '@/prs/cashdrawer';
+import Reports from '@/prs/reports';
 import DM from '@/prs/dm';
 export default {
     components: {
@@ -51,6 +52,7 @@ export default {
                 await DM.recordCashout(amount)
                 if(this.resolve) this.resolve();
                 this.open = false;
+                Reports.loadDailyStats();
             } catch (error) {
                 console.error(error);
                 this.dialog.show('An error occured, Please try again.');
