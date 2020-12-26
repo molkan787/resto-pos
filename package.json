@@ -6,7 +6,12 @@
   "repository": "null",
   "author": "Dahmane Seghier <worw787@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "dev": "node serve.js",
+    "build": "node build.js"
+  },
   "dependencies": {
+    "debounce": "^1.2.0",
     "ncp": "^2.0.0",
     "node-watch": "^0.6.4",
     "nodemon": "^2.0.4",

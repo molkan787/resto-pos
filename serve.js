@@ -1,6 +1,7 @@
 const { spawnLiveOutput, path, sleep, cp, rimraf } = require('./helpers');
 const watch = require('node-watch');
 const nodePath = require('path');
+const debounce = require('debounce');
 
 let electronLaunched = false;
 async function run(){
@@ -64,12 +65,17 @@ function launchElectron(){
         path('electron', 'server.js'),
         path('electron', 'config.js'),
     ];
-    watch(toWatch, { recursive: true }, async (event, name) => {
+
+    const restart = debounce(async () => {
+        console.log('Restarting Electron...')
+        electron.kill();
+        await sleep(500);
+        electron = spawnElectron();
+    }, 1000);
+
+    watch(toWatch, { recursive: true }, (event, name) => {
         if(nodePath.extname(name) == '.js'){
-            console.log('Restarting Electron...')
-            electron.kill();
-            await sleep(100);
-            electron = spawnElectron();
+            restart();
         }
     })
     return new Promise(() => 0);

@@ -21,18 +21,20 @@ import Receipt from './receipt';
 import LocalSettings from './localSettings';
 import Printers from './printers';
 import Reports from './reports';
+import { services } from '../services';
 
-export default class Comu{
+export default class Comu {
 
     private static context: any;
     private static objectsToReset: any[];
     private static prevState: any;
     private static interval: Number;
     private static apiToken: string = '';
+    public static services = services;
 
     public static settings: typeof LocalSettings;
 
-    static setup(context: any){
+    static setup(context: any) {
         this.context = context;
         this.objectsToReset = [];
         ProductsFactory.setup(context);
@@ -46,7 +48,7 @@ export default class Comu{
 
         this.settings = LocalSettings;
         this.settings.load();
-        
+
         Printers.load();
 
         this.updateTime();
@@ -54,7 +56,7 @@ export default class Comu{
             this.updateTime();
         }, 15000);
 
-        if(config.debug){
+        if (config.debug) {
             // @ts-ignore
             window.$store = context;
             // @ts-ignore
@@ -74,29 +76,32 @@ export default class Comu{
             window.comu = this;
         }
         this.reset();
+
+        services.init()
+            .then(() => console.log('Services initiated!'));
     }
 
-    static setToken(token: string){
+    static setToken(token: string) {
         this.apiToken = token;
         axios.defaults.headers.common['Authorization'] = token;
     }
 
-    static setPaymentDetails(data: any){
+    static setPaymentDetails(data: any) {
         this.context.state.payment = data;
     }
 
-    static activatePrepaidCard(barcode: string, clientData: any, balance: number){
+    static activatePrepaidCard(barcode: string, clientData: any, balance: number) {
         return new Promise((resolve, reject) => {
             const _data = {
                 barcode,
                 clientData,
                 balance: Utils.preparePrice(balance),
             };
-            axios.post(_url('prepaid/add'), _data).then(({data}) => {
-                if(data.status == 'OK'){
+            axios.post(_url('prepaid/add'), _data).then(({ data }) => {
+                if (data.status == 'OK') {
                     this.context.state.actions.push(data.actionId);
                     resolve(true);
-                }else{
+                } else {
                     reject(data.cause);
                 }
             }).catch(error => {
@@ -105,17 +110,17 @@ export default class Comu{
         });
     }
 
-    static reloadPrepaidCard(barcode: string, amount: number){
+    static reloadPrepaidCard(barcode: string, amount: number) {
         return new Promise((resolve, reject) => {
             const data = {
                 barcode,
                 amount: Utils.preparePrice(amount),
             };
-            axios.post(_url('prepaid/reload'), data).then(({data}) => {
-                if(data.status == 'OK'){
+            axios.post(_url('prepaid/reload'), data).then(({ data }) => {
+                if (data.status == 'OK') {
                     this.context.state.actions.push(data.actionId);
                     resolve(true);
-                }else{
+                } else {
                     reject(data.cause);
                 }
             }).catch(error => {
@@ -124,16 +129,16 @@ export default class Comu{
         });
     }
 
-    static activateLoyaltyCard(barcode: string, clientData: any){
+    static activateLoyaltyCard(barcode: string, clientData: any) {
         return new Promise((resolve, reject) => {
             const data = {
                 barcode,
                 clientData,
             };
-            axios.post(_url('loyalty/add'), data).then(({data}) => {
-                if(data.status == 'OK'){
+            axios.post(_url('loyalty/add'), data).then(({ data }) => {
+                if (data.status == 'OK') {
                     resolve(data);
-                }else{
+                } else {
                     reject(data.cause);
                 }
             }).catch(error => {
@@ -142,11 +147,11 @@ export default class Comu{
         });
     }
 
-    static getInvoiceId(){
+    static getInvoiceId() {
         return this.context.state.nextOrderId;
     }
 
-    static loadData(){
+    static loadData() {
         return new Promise((resolve, reject) => {
             axios.get(_url('asd')).then(response => {
                 const data = response.data;
@@ -168,51 +173,51 @@ export default class Comu{
         });
     }
 
-    static reset(){
+    static reset() {
         this.context.dispatch('resetPOS');
         this.resetObjects();
     }
 
-    static canRequestPayment(){
+    static canRequestPayment() {
         return (!this.context.state.pos.paid && !this.context.state.pos.finished && this.context.state.postingOrder);
     }
 
-    static resetStatus(){
+    static resetStatus() {
         const state = this.context.state;
         state.pos.paid = false;
         state.pos.finished = false;
         state.postingOrder = false;
     }
 
-    static getOrderTotal(){
+    static getOrderTotal() {
         return Utils.preparePrice(this.context.state.pos.values.total);
     }
 
-    static getUser(userId: any){
+    static getUser(userId: any) {
         const users = this.context.state.data.users.filter((user: any) => user.id == userId);
         return users.length ? users[0] : null;
     }
 
-    public static putSettings(settings: any){
+    public static putSettings(settings: any) {
         const state = this.context.state;
-        if(settings.gst) state.taxes.gst = settings.gst;
-        if(settings.qst) state.taxes.qst = settings.qst;
-        if(settings.vat_number) state.vat_number = settings.vat_number;
-        if(settings.receipt_msg) state.receipt_msg = settings.receipt_msg;
-        if(settings.order_types) state.order_types = settings.order_types;
+        if (settings.gst) state.taxes.gst = settings.gst;
+        if (settings.qst) state.taxes.qst = settings.qst;
+        if (settings.vat_number) state.vat_number = settings.vat_number;
+        if (settings.receipt_msg) state.receipt_msg = settings.receipt_msg;
+        if (settings.order_types) state.order_types = settings.order_types;
         state.tables_count = parseInt(settings.tables_count) || 10;
     }
 
     // ==================================
 
-    static startSubmission(finalizeOrder){
+    static startSubmission(finalizeOrder) {
         this.context.state.postingOrder = true;
         this.context.state.finalizeOrder = finalizeOrder;
         // @ts-ignore
         MxHelper.openPayment();
     }
 
-    static postOrder(){
+    static postOrder() {
         return new Promise((resolve, reject) => {
             const state = this.context.state;
             const { items, itemsCount, orderId } = state.pos;
@@ -255,8 +260,8 @@ export default class Comu{
                 taxes: state.taxes,
             }
             const endpoint = orderId ? `pos/edit_order/${orderId}` : 'order';
-            axios.post(_url(endpoint), data).then(({data}) => {
-                if(data.status == 'OK'){
+            axios.post(_url(endpoint), data).then(({ data }) => {
+                if (data.status == 'OK') {
                     state.lastOrderDate = data.date_added;
                     state.loyaltyPoints = data.loyaltyPoints;
                     this.setCardsBalances(data.balances);
@@ -265,7 +270,7 @@ export default class Comu{
                     this.setTableState();
                     resolve(true);
                     Reports.loadDailyStats();
-                }else{
+                } else {
                     reject(data.cause);
                 }
             }).catch(error => {
@@ -274,38 +279,135 @@ export default class Comu{
         });
     }
 
-    static setTableState(){
+    static async postOnlineOrder(order) {
+        // const { items, itemsCount, orderId } = state.pos;
+        const paymentMethod = 'cod';
+        const { type, total: _total, products, id: onlineOrderId, owner: client } = order;
+        const items = {
+            products: [],
+            counts: {}
+        };
+        for(let p of products){
+            items.products.push({
+                id: p.id,
+                name: p.name,
+                price: p.price,
+                note: p.note,
+                product_type: 1,
+                date_modified: 0,
+            });
+            items.counts[p.id] = p.quantity;
+        }
+        const [first_name, last_name] = client.fullname.split(' ');
+        const total = Utils.preparePrice(_total);
+        const orderData = {
+            order_type: type,
+            order_details: {
+                address_1: "",
+                address_2: "",
+                city: "",
+                first_name: first_name,
+                kitchenMessage: last_name,
+                last_name: "",
+                paid: false,
+                phone: "",
+                postcode: "",
+                table: "",
+            },
+            user_id: state.user.id,
+            client_id: 0,
+            total,
+            totals: {
+                changeDue: 0,
+                discount: 0,
+                drinksTotal: 0,
+                extraCharge: 0,
+                foodTotal: _total,
+                fullDiscount: false,
+                itemsTotal: _total,
+                paidCash: _total,
+                percentDiscount: 0,
+                percentDiscountCType: 1,
+                subTotal: _total,
+                taxGST: NaN,
+                taxQST: NaN,
+                tips: 0,
+                total: _total,
+            },
+            items: items,
+            other_data: {
+                onlineOrderId: onlineOrderId,
+                ticket: '',
+                reasons: {
+                    discount: '',
+                    extra: '',
+                    free: '',
+                },
+                taxes: state.taxes,
+            },
+            pay_method: paymentMethod,
+            receipt: 0,
+        };
+        const postOrderData = {
+            orderData,
+            stats: {},
+            payment: paymentMethod,
+            invoiceData: {},
+            loyaltyCardId: 0,
+            actions: [],
+            cards: {
+                prepaid: 0,
+                loyalty: 0,
+            },
+            taxes: state.taxes,
+        }
+        // const endpoint = orderId ? `pos/edit_order/${orderId}` : 'order';
+        const { data } = await axios.post(_url('order'), postOrderData);
+        if (data.status == 'OK') {
+            state.lastOrderDate = data.date_added;
+            state.loyaltyPoints = data.loyaltyPoints;
+            this.setCardsBalances(data.balances);
+            this.backupState();
+            this.setToRecentOrders(data.orderId, total, type)
+            // this.setTableState();
+            Reports.loadDailyStats();
+        } else {
+            throw data.cause;
+        }
+    }
+
+    static setTableState() {
         const { tablesState, pos, finalizeOrder } = this.context.state;
         const { orderDetails, orderType, orderId } = pos;
-        if(orderType != 'table') return;
-        if(!orderDetails.table) return;
+        if (orderType != 'table') return;
+        if (!orderDetails.table) return;
         tablesState[orderDetails.table] = !finalizeOrder;
     }
 
-    static setToRecentOrders(orderId, total){
+    static setToRecentOrders(orderId, total, orderType) {
         const { pos, recentOrders, finalizeOrder } = this.context.state;
         const index = recentOrders.findIndex(o => o.id == orderId);
-        if(finalizeOrder){
-            if(index >= 0){
+        if (finalizeOrder) {
+            if (index >= 0) {
                 recentOrders.splice(index, 1);
             }
-        }else{
-            if(index == -1){
+        } else {
+            if (index == -1) {
                 recentOrders.unshift({
                     id: orderId,
                     total: total / 100,
-                    type: pos.orderType,
+                    type: orderType || pos.orderType,
                     details: this._getOrderTypeDetailsText(pos),
                 });
             }
         }
     }
 
-    static _getOrderTypeDetailsText(pos){
+    static _getOrderTypeDetailsText(pos) {
         const { orderDetails } = pos;
-        if(pos.orderType == 'table'){
+        if (pos.orderType == 'table') {
             return `#${pos.orderDetails.table}`;
-        }else{
+        } else {
             const { first_name, last_name, phone } = orderDetails;
             const fullname = first_name + ' ' + (last_name || '');
             const phone_f = Utils.formatPhoneNumber(phone);
@@ -313,17 +415,17 @@ export default class Comu{
         }
     }
 
-    static setCardsBalances(cards: any){
+    static setCardsBalances(cards: any) {
         const state = this.context.state;
-        if(typeof cards.prepaid == 'number'){
+        if (typeof cards.prepaid == 'number') {
             state.prepaidCard.balance = cards.prepaid;
         }
-        if(typeof cards.loyalty == 'number'){
+        if (typeof cards.loyalty == 'number') {
             state.loyaltyCard.balance = cards.loyalty;
         }
     }
 
-    static resetStats(){
+    static resetStats() {
         const stats = this.context.state.stats;
         stats.cw = 0;
         stats.pp = 0;
@@ -336,10 +438,10 @@ export default class Comu{
         stats.day = time.today();
     }
 
-    static updateStats(newStats: any, substract?: boolean){
+    static updateStats(newStats: any, substract?: boolean) {
         const dir = substract ? -1 : 1;
         const stats = this.context.state.stats;
-        if(stats.day == newStats.day){
+        if (stats.day == newStats.day) {
             stats.cw += newStats.cw * dir;
             stats.pp += newStats.pp * dir;
             stats.rpp += newStats.rpp * dir;
@@ -351,55 +453,55 @@ export default class Comu{
         }
     }
 
-    static markAsPaid(){
+    static markAsPaid() {
         this.context.dispatch('markAsPaid');
         // @ts-ignore
-        MxHelper.payment({state: 'posting'});
+        MxHelper.payment({ state: 'posting' });
         this.postOrder().then(() => {
             this.markAsFinished();
             this.printReceipt();
             // @ts-ignore
-            MxHelper.payment({state: 'success'});
+            MxHelper.payment({ state: 'success' });
         }).catch(error => {
             this.resetStatus();
             // @ts-ignore
-            MxHelper.payment({state: 'fail', error});
+            MxHelper.payment({ state: 'fail', error });
         });
     }
-    static markAsFinished(){
+    static markAsFinished() {
         this.context.dispatch('markAsFinished');
     }
 
-    static setFreeOrderReason(reason: string){
+    static setFreeOrderReason(reason: string) {
         this.context.state.freeOrderReason = reason;
     }
 
-    static setInvoiceData(payload: any){
+    static setInvoiceData(payload: any) {
         this.context.state.invoiceData.clientName = payload.clientName || '';
     }
 
     // ==================================
 
-    static async printReceiptInAllPrinters(receipt){
+    static async printReceiptInAllPrinters(receipt) {
         const printers = Printers.list;
         const posPrinters = printers.filter(p => p.used_for == 'pos');
         const kitchenPrinters = printers.filter(p => p.used_for == 'kitchen');
         const barPrinters = printers.filter(p => p.used_for == 'bar');
-        for(let printer of posPrinters){
+        for (let printer of posPrinters) {
             Printers.use(printer);
             await Receipt.print(receipt);
         }
-        for(let printer of kitchenPrinters){
+        for (let printer of kitchenPrinters) {
             Printers.use(printer);
             await Receipt.printKitchen(receipt);
         }
-        for(let printer of barPrinters){
+        for (let printer of barPrinters) {
             Printers.use(printer);
             await Receipt.printBar(receipt);
         }
     }
 
-    static printReceipt(_state?: any){
+    static printReceipt(_state?: any) {
         console.log('Printing receipt');
         const state = _state || this.context.state;
         const order_id = state.nextOrderId - 1;
@@ -423,11 +525,11 @@ export default class Comu{
         this.printReceiptInAllPrinters(receipt);
     }
 
-    static reprintReceipt(){
+    static reprintReceipt() {
         this.printReceipt(this.prevState);
     }
 
-    static backupState(){
+    static backupState() {
         const state = this.context.state;
         const _state = {
             nextOrderId: state.nextOrderId,
@@ -443,20 +545,20 @@ export default class Comu{
         this.prevState = JSON.parse(JSON.stringify(_state));
     }
 
-    static registerToReset(obj: any){
+    static registerToReset(obj: any) {
         this.objectsToReset.push(obj);
     }
 
-    static resetObjects(){
-        for(let i = 0; i < this.objectsToReset.length; i++){
+    static resetObjects() {
+        for (let i = 0; i < this.objectsToReset.length; i++) {
             const obj = this.objectsToReset[i];
-            if(typeof obj.reset != 'undefined'){
+            if (typeof obj.reset != 'undefined') {
                 obj.reset();
             }
         }
     }
 
-    static switchMode(demo: boolean){
+    static switchMode(demo: boolean) {
         config.demoMode = demo;
         this.context.state.demoMode = demo;
     }
@@ -464,16 +566,16 @@ export default class Comu{
 
     // ---------------------------------
 
-    static updateTime(){
+    static updateTime() {
         this.context.state.currentTime = extUtils.getCurrentTime();
-        if(this.context.state.currentTime == '00:00'){
+        if (this.context.state.currentTime == '00:00') {
             this.resetStats();
         }
     }
 
     // ---------------------------------
 
-    private static getStats(items: any[], itemsCount: any, paym, total){
+    private static getStats(items: any[], itemsCount: any, paym, total) {
         const washesCats = [1, 2, 6, 7];
         const stats = {
             cw: 0,
@@ -483,23 +585,23 @@ export default class Comu{
             cs: paym == 'cash' ? total : 0,
             cc: paym == 'card' ? total : 0
         };
-        for(let i = 0; i < items.length; i++){
+        for (let i = 0; i < items.length; i++) {
             const item = items[i];
             const c = itemsCount[item.id];
-            if(item.id == consts.newPrepaidCardItemId){
+            if (item.id == consts.newPrepaidCardItemId) {
                 stats.pp += c;
-            }else if(item.id == consts.reloadPrepaidCardItemId){
+            } else if (item.id == consts.reloadPrepaidCardItemId) {
                 stats.rpp += c;
-            }else if(item.category_id == 3){
+            } else if (item.category_id == 3) {
                 stats.dt += c;
-            }else if(washesCats.includes(item.category_id)){
+            } else if (washesCats.includes(item.category_id)) {
                 stats.cw += c;
             }
         }
         return stats;
     }
 
-    public static setExactPaid(){
+    public static setExactPaid() {
         // @ts-ignore
         MxHelper.setExactPaid();
     }

@@ -21,6 +21,7 @@
     <CategoryModal />
     <CashoutModal />
     <RecentOrdersModal />
+    <OnlineOrderModal />
     
     <div class="demo-label" v-if="demoMode">
       DEMO / TESTING
@@ -53,6 +54,7 @@ import PrintersSetup from './components/pre/PrintersSetup.vue';
 import CategoryModal from './components/pre/CategoryModal.vue';
 import CashoutModal from './components/pre/CashoutModal.vue';
 import RecentOrdersModal from './components/pre/RecentOrdersModal.vue';
+import OnlineOrderModal from './components/pre/OnlineOrderModal.vue';
 
 export default Vue.extend({
   components: {
@@ -74,6 +76,7 @@ export default Vue.extend({
     CategoryModal,
     CashoutModal,
     RecentOrdersModal,
+    OnlineOrderModal,
   },
   methods: {
     ...mapActions(['setup'])
