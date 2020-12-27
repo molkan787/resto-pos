@@ -544,6 +544,10 @@ function setItemCount(context: any, itemId: number, amount: number, forceAmount:
   if(count < 0) count = 0;
   else if(count > 99) count = 99;
 
+  if(product.stock_enabled && count > product.stock){
+    count = product.stock;
+  }
+
   Vue.set(itemsCount, itemId, count);
 
   const itemIndex = items.indexOf(product);

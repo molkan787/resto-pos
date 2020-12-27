@@ -282,7 +282,7 @@ export default class Comu {
     static async postOnlineOrder(order) {
         // const { items, itemsCount, orderId } = state.pos;
         const paymentMethod = 'cod';
-        const { type, total: _total, products, id: onlineOrderId, owner: client } = order;
+        const { type, total: _total, products, id: onlineOrderId, owner } = order;
         const items = {
             products: [],
             counts: {}
@@ -298,7 +298,13 @@ export default class Comu {
             });
             items.counts[p.id] = p.quantity;
         }
-        const [first_name, last_name] = client.fullname.split(' ');
+        const [first_name, last_name] = owner.fullname.split(' ');
+        const client = {
+            first_name,
+            last_name,
+            email: owner.email,
+            phone: owner.phone
+        };
         const total = Utils.preparePrice(_total);
         const orderData = {
             order_type: type,
@@ -307,8 +313,8 @@ export default class Comu {
                 address_2: "",
                 city: "",
                 first_name: first_name,
-                kitchenMessage: last_name,
-                last_name: "",
+                last_name: last_name,
+                kitchenMessage: '',
                 paid: false,
                 phone: "",
                 postcode: "",
@@ -336,6 +342,7 @@ export default class Comu {
             },
             items: items,
             other_data: {
+                client,
                 onlineOrderId: onlineOrderId,
                 ticket: '',
                 reasons: {
@@ -349,6 +356,7 @@ export default class Comu {
             receipt: 0,
         };
         const postOrderData = {
+            skipStockAdjustement: order.menu == 'online',
             orderData,
             stats: {},
             payment: paymentMethod,
@@ -371,9 +379,32 @@ export default class Comu {
             this.setToRecentOrders(data.orderId, total, type)
             // this.setTableState();
             Reports.loadDailyStats();
+            return orderData;
         } else {
             throw data.cause;
         }
+    }
+
+    static printOrderReceipt(orderData){
+        const od = orderData;
+        // axios.post(_url('setReceiptFlag'), {order_id}).catch(() => {});
+        const receipt = {
+            id: od.id,
+            order_type: od.order_type,
+            order_details: od.order_details,
+            date_added: state.lastOrderDate,
+            cashier: {},
+            client: od.other_data.client || {},
+            products: od.items.products,
+            counts: od.items.counts,
+            totals: od.totals,
+            pay_method: od.pay_method,
+            payment: {},
+            loyaltyCard: { id: 0 },
+            prepaidCard: { id: 0 },
+            taxes: state.taxes,
+        };
+        return this.printReceiptInAllPrinters(receipt);
     }
 
     static setTableState() {
@@ -487,6 +518,9 @@ export default class Comu {
         const posPrinters = printers.filter(p => p.used_for == 'pos');
         const kitchenPrinters = printers.filter(p => p.used_for == 'kitchen');
         const barPrinters = printers.filter(p => p.used_for == 'bar');
+        if(window.printToConsole){
+            await Receipt.print(receipt);
+        }
         for (let printer of posPrinters) {
             Printers.use(printer);
             await Receipt.print(receipt);

@@ -5,18 +5,16 @@
                 <label>Product Name</label>
                 <input v-model="p_name" placeholder="Product Name" >
             </sui-form-field>
-            <!-- <sui-form-field>
-                <label>Price type</label>
-                <sui-dropdown
-                    selection
-                    placeholder="Price type"
-                    :options="options"
-                    v-model="p_type"
-                />
-            </sui-form-field> -->
             <sui-form-field :disabled="p_type != '1'">
                 <label>Price ({{ currencySign }})</label>
                 <input v-model="p_price" placeholder="0.00" >
+            </sui-form-field>
+            <sui-form-field>
+                <label>
+                    Stock Management &nbsp;&nbsp;&nbsp;
+                    <sui-checkbox label="Enable on this product" v-model="p_stock_enabled"/>
+                </label>
+                <input v-if="p_stock_enabled" v-model="p_stock" type="number" min="0" placeholder="Stock (Quantity)" >
             </sui-form-field>
         </sui-form>
 
@@ -55,6 +53,8 @@ export default class ProductModal extends Vue{
     private p_type: any = '1';
     private p_name: any = '';
     private p_price: any = '';
+    private p_stock_enabled = false;
+    private p_stock = 0;
 
     private options: any[] = [
         {value: '1', text: 'Fixed Price'},
@@ -74,6 +74,8 @@ export default class ProductModal extends Vue{
             name: this.p_name,
             product_type: this.p_type,
             price: this.p_price,
+            stock: this.p_stock,
+            stock_enabled: this.p_stock_enabled ? 1 : 0,
         }
         this.loading = true;
         DS.editProduct(data).then(() => {
@@ -102,6 +104,8 @@ export default class ProductModal extends Vue{
             this.p_type = p.product_type + '';
             this.p_name = p.name;
             this.p_price = p.price;
+            this.p_stock_enabled = !!p.stock_enabled;
+            this.p_stock = p.stock;
 
             this.title = `Edit Product: ${p.name}`;
             this.open = true;

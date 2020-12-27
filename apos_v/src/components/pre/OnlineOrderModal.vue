@@ -106,14 +106,24 @@ export default {
         async handleOrderStatusChanged(data){
             const { id, status } = data;
             if(id == this.order.id){
+                const order = this.order;
+                this.order = { owner: {} };
                 if(status == 'accepted'){
-                    await Comu.postOnlineOrder(this.order);
-                    await this.dialog.show('Order successfully accepted!');
+                    try {
+                        this.submitOrder(order);
+                        await this.dialog.show('Order successfully accepted!');
+                    } catch (error) {
+                        await this.dialog.show('An error occured when submiting the order to local database.');
+                    }
                 }else if(status == 'declined'){
                     await this.dialog.show('Order declined.');
                 }
                 this.close();
             }
+        },
+        async submitOrder(order){
+            const orderData = await Comu.postOnlineOrder(order);
+            await Comu.printOrderReceipt(orderData);
         }
     },
 

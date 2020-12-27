@@ -1,7 +1,10 @@
 <template>
-    <sui-button class="root" @click="rootClick" :class="count > 0 ? 'blue' : 'greyligth'" >
+    <sui-button class="root" @click="rootClick" :class="count > 0 ? 'blue' : 'greyligth'" :disabled="outOfStock" >
         <div class="text">
-            <span>{{ item.name }}</span>
+            <span>
+                {{ item.name }}
+                <span v-if="outOfStock" class="outofstock">Out of stock</span>
+            </span>
         </div>
         <div class="count" v-if="count > 0">
             <template v-if="item.product_type == 1">
@@ -40,6 +43,9 @@ import MxHelper from '@/prs/MxHelper';
         ...mapState(['pos']),
         count(){
             return this.pos.itemsCount[this.item.id];
+        },
+        outOfStock(){
+            return !!this.item.stock_enabled && this.item.stock < 1;
         }
     },
     methods: mapActions(['incItemCount', 'decItemCount', 'setCustomPriceItem'])
@@ -167,5 +173,13 @@ div.count{
             border-bottom-right-radius: 0.3rem;
         }
     }
+}
+.outofstock{
+    display: block !important;
+    color: red;
+    position: relative;
+    top: 4px;
+    font-size: 15px;
+    text-decoration: underline;
 }
 </style>

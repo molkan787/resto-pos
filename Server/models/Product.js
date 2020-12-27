@@ -16,6 +16,8 @@ module.exports = class Product extends Model{
                 category_id: {type: 'integer'},
                 name: {type: 'string'},
                 price: {type: 'integer'},
+                stock_enabled: {type: 'integer'},
+                stock: {type: 'integer'},
                 can_exclude_taxes: {type: 'integer'},
                 product_type: {type: 'integer'},
                 date_modified: {type: 'integer'},
@@ -23,11 +25,26 @@ module.exports = class Product extends Model{
         }
     }
 
+    static async decrementStock(counts){
+        const allIds = Object.entries(counts).map(en => en[0]);
+        const products = await this.query().findByIds(allIds).andWhere('stock_enabled', 1);
+        const queries = products.map(p => {
+            let stock = p.stock - counts[p.id];
+            if(stock < 0) stock = 0;
+            return this.query().patch({
+                stock: stock
+            }).where('id', p.id);
+        })
+        await Promise.all(queries);
+    }
+
     static async put(data){
-        const {name, product_type, price} = data;
+        const {name, product_type, price, stock_enabled, stock } = data;
         let p = {
             name,
             price,
+            stock_enabled: parseInt(stock_enabled),
+            stock: parseInt(stock),
             product_type: parseInt(product_type),
             date_modified: time.now(),
         };

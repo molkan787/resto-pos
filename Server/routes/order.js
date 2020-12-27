@@ -11,9 +11,10 @@ const Action = require('../Actions/Action');
 const AC = require('../Actions/ActionConsts');
 const consts = require('../reports/consts');
 const utils = require('../utils/utils');
+const Product = require('../models/Product');
 
 module.exports = async (req, res, next) => {
-    const {orderData, stats, payment, invoiceData, loyaltyCardId, actions, cards, taxes} = req.body;
+    const {orderData, stats, payment, invoiceData, loyaltyCardId, actions, cards, taxes, skipStockAdjustement} = req.body;
     orderData.date_added = time.now();
 
     try {
@@ -23,6 +24,9 @@ module.exports = async (req, res, next) => {
 
         await Order.adjustClientId(orderData);
         const _order = await Order.query().insert(orderData);
+        if(!skipStockAdjustement){
+            await Product.decrementStock(orderData.items.counts);
+        }
         // await Stats.add(stats);
         // if(orderData.pay_method == 'invoice_ari'){
         //     await Invoice.addInvoice(_order);

@@ -65,6 +65,8 @@ export default class DS{
             const p = this.context.state.productsByIds[data.id];
             p.name = data.name;
             p.product_type = data.product_type;
+            p.stock_enabled = data.stock_enabled;
+            p.stock = data.stock;
             p.price = utils.mapPrice(data.price);
         }
     }
