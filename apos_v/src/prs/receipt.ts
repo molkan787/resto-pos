@@ -66,6 +66,7 @@ export default class Receipt{
         const { printKitchenMessage, itemsFilter } = options || {};
         if (frod) order = this.prepareROD(order);
         const [ date, _, time ] = utils.timestampToDate(order.date_added, 2, true).split(' ');
+        const { order_details, order_type } = order;
         const r = this.prb;
         r.clear();
         r.addHeader({
@@ -75,12 +76,13 @@ export default class Receipt{
                 "01708743006"
             ],
             orderId: order.id,
+            orderNo: order.no,
             order_type: order.order_type,
-            order_details: order.order_details,
+            order_details: order_details,
             date,
             time,
             cashier: order.cashier.first_name + ' ' + order.cashier.last_name,
-            client: (order.client && order.client.id) ? (order.client.first_name + ' ' + order.client.last_name) : 'WALKIN'
+            client: (order_details.first_name) ? (order_details.first_name + ' ' + order_details.last_name) : 'WALKIN'
         }, true);
         
         const items = typeof itemsFilter == 'function' ? order.products.filter(itemsFilter) : order.products;
@@ -150,8 +152,6 @@ export default class Receipt{
         }else if(paym == 'loyalty'){
             r.addTotalsItem({ name: 'Comptant', text: 'CARTE FIDELITE-' + order.payment.barcode.substr(-5) });
         }
-
-        const { order_details, order_type } = order;
 
         let paymText;
         if(paym == 'cash'){

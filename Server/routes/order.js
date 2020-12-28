@@ -12,9 +12,11 @@ const AC = require('../Actions/ActionConsts');
 const consts = require('../reports/consts');
 const utils = require('../utils/utils');
 const Product = require('../models/Product');
+const { generateOrderNumber } = require('../murew-core/utils/order');
 
 module.exports = async (req, res, next) => {
     const {orderData, stats, payment, invoiceData, loyaltyCardId, actions, cards, taxes, skipStockAdjustement} = req.body;
+    let { orderNo } = req.body;
     orderData.date_added = time.now();
 
     try {
@@ -22,8 +24,14 @@ module.exports = async (req, res, next) => {
         //     orderData.client_id = await Client.getCompanyIdByName(invoiceData.clientName);
         // }
 
+        orderData.no = orderNo || 'P';
         await Order.adjustClientId(orderData);
         const _order = await Order.query().insert(orderData);
+        if(!orderNo){
+            orderNo = generateOrderNumber(_order.id, 'P');
+            await Order.query().patch({ no: orderNo }).where('id', _order.id);
+        }
+        _order.no = orderNo;
         if(!skipStockAdjustement){
             await Product.decrementStock(orderData.items.counts);
         }
@@ -60,6 +68,7 @@ module.exports = async (req, res, next) => {
         res.send({
             status: 'OK',
             balances: {},
+            orderNo: orderNo,
             orderId: _order.id,
             date_added: orderData.date_added,
             loyaltyPoints: 0,

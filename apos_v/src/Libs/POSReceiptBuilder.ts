@@ -101,7 +101,7 @@ class POSReceiptBuilder {
 		if(ctr % 2 == 0) this._separator(this.lineLength);
 		this._emptyLine();
 
-		this._line(`Order ID: ${data.orderId}`);
+		this._line(`Order #: ${data.orderNo}`);
 		this._line(`Date: ${data.date}`);
 		this._line(`Time: ${data.time}`);
 		this._line(`Cashier: ${data.cashier}`);

@@ -8,9 +8,11 @@ module.exports = async (req, res, next) => {
     try {
         const offset = req.body.offset || 0;
         const id = (req.body.id || '').replace(/\s/g, '');
+        const no = (req.body.no || '').replace(/\s/g, '');
         const paym = req.body.pay_method;
         const conds = {};
         if(id) conds.id = id;
+        if(no) conds.no = no.toString().toUpperCase();
         if(paym) conds.pay_method = paym;
 
         const orders = await Order.query().eager('[client, cashier]')

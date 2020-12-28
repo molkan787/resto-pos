@@ -4,7 +4,8 @@ const pay_methods: any = {
     loyalty: 'Loyalty Card',
     invoice_ari: 'Invoice / Ari',
     card: 'Credit/Debit Card',
-    other: 'Other / Free'
+    other: 'Other / Free',
+    cod: 'Cash on Delivery',
 }
 export function paym(name: string){
     return pay_methods[name] || '';

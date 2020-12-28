@@ -24,7 +24,7 @@ export default class PredefinedFiltersSchema{
 
     static get orders(){
         return [
-            {name: 'id', type: 'text', text: 'Order Id', ph: '# 00', small: true},
+            {name: 'no', type: 'text', text: 'Order #', ph: 'NO', small: true},
             ...this.dateRange,
             {
                 name: 'pay_method',
@@ -33,6 +33,7 @@ export default class PredefinedFiltersSchema{
                 options: [
                     {value: '', text: 'All'},
                     {value: 'cash', text: 'Cash'},
+                    {value: 'cod', text: 'Cash on Delivery'},
                     {value: 'card', text: 'Credit/Debit Card'},
                     // {value: 'prepaid', text: 'Prepaid Card'},
                     // {value: 'loyalty', text: 'Loyalty Card'},

@@ -262,13 +262,14 @@ export default class Comu {
             const endpoint = orderId ? `pos/edit_order/${orderId}` : 'order';
             axios.post(_url(endpoint), data).then(({ data }) => {
                 if (data.status == 'OK') {
+                    orderData.no = data.orderNo;
                     state.lastOrderDate = data.date_added;
                     state.loyaltyPoints = data.loyaltyPoints;
                     this.setCardsBalances(data.balances);
                     this.backupState();
                     this.setToRecentOrders(data.orderId, total)
                     this.setTableState();
-                    resolve(true);
+                    resolve(orderData);
                     Reports.loadDailyStats();
                 } else {
                     reject(data.cause);
@@ -282,7 +283,7 @@ export default class Comu {
     static async postOnlineOrder(order) {
         // const { items, itemsCount, orderId } = state.pos;
         const paymentMethod = 'cod';
-        const { type, total: _total, products, id: onlineOrderId, owner } = order;
+        const { type, total: _total, products, id: onlineOrderId, owner, no } = order;
         const items = {
             products: [],
             counts: {}
@@ -307,6 +308,7 @@ export default class Comu {
         };
         const total = Utils.preparePrice(_total);
         const orderData = {
+            no: no,
             order_type: type,
             order_details: {
                 address_1: "",
@@ -357,6 +359,7 @@ export default class Comu {
         };
         const postOrderData = {
             skipStockAdjustement: order.menu == 'online',
+            orderNo: no,
             orderData,
             stats: {},
             payment: paymentMethod,
@@ -390,7 +393,8 @@ export default class Comu {
         // axios.post(_url('setReceiptFlag'), {order_id}).catch(() => {});
         const receipt = {
             id: od.id,
-            order_type: od.order_type,
+            no: orderData.no,
+            order_type: orderData.order_type,
             order_details: od.order_details,
             date_added: state.lastOrderDate,
             cashier: {},
@@ -488,9 +492,9 @@ export default class Comu {
         this.context.dispatch('markAsPaid');
         // @ts-ignore
         MxHelper.payment({ state: 'posting' });
-        this.postOrder().then(() => {
+        this.postOrder().then((orderData) => {
             this.markAsFinished();
-            this.printReceipt();
+            this.printReceipt(null, orderData.no);
             // @ts-ignore
             MxHelper.payment({ state: 'success' });
         }).catch(error => {
@@ -535,13 +539,14 @@ export default class Comu {
         }
     }
 
-    static printReceipt(_state?: any) {
+    static printReceipt(_state?: any, orderNo?: string) {
         console.log('Printing receipt');
         const state = _state || this.context.state;
         const order_id = state.nextOrderId - 1;
         // axios.post(_url('setReceiptFlag'), {order_id}).catch(() => {});
         const receipt = {
             id: order_id,
+            no: orderNo,
             order_type: state.pos.orderType,
             order_details: state.pos.orderDetails,
             date_added: state.lastOrderDate,

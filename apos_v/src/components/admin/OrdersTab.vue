@@ -30,7 +30,7 @@ export default class OrdersTab extends Vue{
     private loading: boolean = false;
 
     private tableSchema = [
-        {name: 'Id', prop: 'id'},
+        {name: 'Order #', prop: 'no'},
         {name: 'Type', prop: '@', filter: 'orderType'},
         {name: 'Client', prop: 'client', filter: 'joinnames', default: '---'},
         {name: 'Order Date', prop: 'date_added', filter: 'ts2datetime'},
