@@ -2,7 +2,7 @@
     <div>
         <h3 class="vm-normal">
             <sui-icon name="book" />
-            Order #: {{ pos.orderId || '---' }}
+            Order #: {{ pos.orderNo || '---' }}
             <!-- <span class="lbl clnl" :class="!loyaltyCard.id ? 'low-imp' : ''"><span>LOY BAL: </span>
                 <template v-if="loyaltyCard.id">
                     {{ loyaltyCard.balance | price_m }}

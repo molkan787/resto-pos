@@ -22,11 +22,12 @@ export default class DM{
 
     public static async loadOrder(orderId){
         const { data } = await axios.get(_url(`pos/get_order/${orderId}`));
-        const { id, client_id, order_details, order_type, pay_method, totals, items, other_data } = data.order;
+        const { id, no, client_id, order_details, order_type, pay_method, totals, items, other_data } = data.order;
         this.comu.reset();
         const { pos, client } = this.context.state;
         client.id = client_id;
         pos.orderId = id;
+        pos.orderNo = no;
         pos.pay_method = pay_method;
         pos.orderType = order_type;
         Object.patch(pos.orderDetails, order_details);

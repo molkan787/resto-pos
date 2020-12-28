@@ -4,7 +4,7 @@
         <table class="my-table">
             <thead>
                 <tr>
-                    <th class="first">ID</th>
+                    <th class="first">Order #</th>
                     <th>Value</th>
                     <th>{{ detailsHead }}</th>
                     <th> </th>
@@ -12,7 +12,7 @@
             </thead>
             <tbody>
                 <tr v-for="o in orders" :key="o.id">
-                    <td class="first">{{ o.id }}</td>
+                    <td class="first">{{ o.no }}</td>
                     <td style="color: red">{{ o.total | price }}</td>
                     <td style="white-space: pre-wrap">{{ o.details }}</td>
                     <td class="last">

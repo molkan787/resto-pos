@@ -267,7 +267,7 @@ export default class Comu {
                     state.loyaltyPoints = data.loyaltyPoints;
                     this.setCardsBalances(data.balances);
                     this.backupState();
-                    this.setToRecentOrders(data.orderId, total)
+                    this.setToRecentOrders(data.orderId, orderData)
                     this.setTableState();
                     resolve(orderData);
                     Reports.loadDailyStats();
@@ -379,7 +379,7 @@ export default class Comu {
             state.loyaltyPoints = data.loyaltyPoints;
             this.setCardsBalances(data.balances);
             this.backupState();
-            this.setToRecentOrders(data.orderId, total, type)
+            this.setToRecentOrders(data.orderId, orderData)
             // this.setTableState();
             Reports.loadDailyStats();
             return orderData;
@@ -419,8 +419,9 @@ export default class Comu {
         tablesState[orderDetails.table] = !finalizeOrder;
     }
 
-    static setToRecentOrders(orderId, total, orderType) {
+    static setToRecentOrders(orderId, orderData) {
         const { pos, recentOrders, finalizeOrder } = this.context.state;
+        const { total, no, order_type } = orderData;
         const index = recentOrders.findIndex(o => o.id == orderId);
         if (finalizeOrder) {
             if (index >= 0) {
@@ -430,20 +431,21 @@ export default class Comu {
             if (index == -1) {
                 recentOrders.unshift({
                     id: orderId,
+                    no: no,
                     total: total / 100,
-                    type: orderType || pos.orderType,
-                    details: this._getOrderTypeDetailsText(pos),
+                    type: order_type,
+                    details: this._getOrderTypeDetailsText(orderData),
                 });
             }
         }
     }
 
-    static _getOrderTypeDetailsText(pos) {
-        const { orderDetails } = pos;
-        if (pos.orderType == 'table') {
-            return `#${pos.orderDetails.table}`;
+    static _getOrderTypeDetailsText(orderData) {
+        const { order_type, order_details } = orderData;
+        if (order_type == 'table') {
+            return `#${order_details.table}`;
         } else {
-            const { first_name, last_name, phone } = orderDetails;
+            const { first_name, last_name, phone } = order_details;
             const fullname = first_name + ' ' + (last_name || '');
             const phone_f = Utils.formatPhoneNumber(phone);
             return `${fullname}\n${phone_f}`;

@@ -35,6 +35,7 @@ const edit = async (req, res, next) => {
             status: 'OK',
             balances: {},
             orderId: parseInt(orderId),
+            orderNo: oldOrderData.no,
             date_added: orderData.date_added,
             loyaltyPoints: 0,
             // loyaltyPoints: points,

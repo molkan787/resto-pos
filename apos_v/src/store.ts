@@ -45,6 +45,7 @@ export default new Vuex.Store({
     defaultExactPaid: true,
     pos: {
       orderId: 0,
+      orderNo: '',
       orderType: 'table',
       orderDetails: {
         paid: true,
@@ -305,6 +306,7 @@ export default new Vuex.Store({
       pos.finished = false;
       pos.catType = 1;
       pos.orderId = 0;
+      pos.orderNo = '';
       values.fullDiscount = false;
       values.itemsTotal = 0;
       values.discount = 0;
