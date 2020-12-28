@@ -169,14 +169,14 @@ export default class Receipt{
             const CENTER = 'center';
             const name = order_details.first_name + ' ' + (order_details.last_name || '');
             r._line('Customer Details:', CENTER);
-            r._line(name, CENTER);
-            if(order_details.phone) r._line(`Customer Phone: ${order_details.phone}`, CENTER);
+            r._line('Name: ' + name, CENTER);
+            if(order_details.phone) r._line(`Phone: ${order_details.phone}`, CENTER);
             if(order_type == 'delivery'){
                 r._line(`Delivery post code: ${order_details.postcode}`, CENTER);
                 const addr2 = order_details.address_2 ? ', ' + order_details.address_2 : '';
                 r._line(`Delivery Address:`, CENTER); 
                 r._line(order_details.address_1 + addr2, CENTER);
-                // r._line(order_details.city);
+                r._line(order_details.city, CENTER);
             }
         }
 

@@ -281,9 +281,8 @@ export default class Comu {
     }
 
     static async postOnlineOrder(order) {
-        // const { items, itemsCount, orderId } = state.pos;
         const paymentMethod = 'cod';
-        const { type, total: _total, products, id: onlineOrderId, owner, no } = order;
+        const { type, total: _total, products, id: onlineOrderId, owner, no, delivery_address } = order;
         const items = {
             products: [],
             counts: {}
@@ -311,15 +310,15 @@ export default class Comu {
             no: no,
             order_type: type,
             order_details: {
-                address_1: "",
-                address_2: "",
-                city: "",
                 first_name: first_name,
                 last_name: last_name,
+                phone: owner.phone,
+                address_1: delivery_address.line1 || '',
+                address_2: delivery_address.line2 || '',
+                postcode: delivery_address.postcode || '',
+                city: delivery_address.city || '',
                 kitchenMessage: '',
                 paid: false,
-                phone: "",
-                postcode: "",
                 table: "",
             },
             user_id: state.user.id,
@@ -420,7 +419,7 @@ export default class Comu {
     }
 
     static setToRecentOrders(orderId, orderData) {
-        const { pos, recentOrders, finalizeOrder } = this.context.state;
+        const { recentOrders, finalizeOrder } = this.context.state;
         const { total, no, order_type } = orderData;
         const index = recentOrders.findIndex(o => o.id == orderId);
         if (finalizeOrder) {
