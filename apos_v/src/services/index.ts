@@ -1,8 +1,13 @@
 import { MurewService } from './murew';
+import { MurewSyncService } from './murew-sync';
+
+const murewService = new MurewService();
+
 class Services{
 
     public readonly instances = {
-        murew: new MurewService(),
+        murew: murewService,
+        murewSync: new MurewSyncService(murewService)
     };
 
     public async init(): Promise<void[]>{

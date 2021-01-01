@@ -22,6 +22,9 @@ import LocalSettings from './localSettings';
 import Printers from './printers';
 import Reports from './reports';
 import { services } from '../services';
+import { mapPosMenuToMurewTreeMenu } from '@/dataMappers/menu';
+import { MurewStatus } from '@/services/murew';
+import { MurewActions } from '@/services/murew/constants';
 
 export default class Comu {
 
@@ -157,6 +160,7 @@ export default class Comu {
                 const data = response.data;
                 const state = this.context.state;
                 const cats = Categories.mapCategories(data.categories);
+                this.testAfterAsd(data)
                 state.categories = cats.list;
                 state.categoriesByIds = cats.byIds;
                 state.products = Products.mapByCategory(data.products, true);
@@ -171,6 +175,15 @@ export default class Comu {
                 reject(error);
             })
         });
+    }
+
+    static testAfterAsd(data){
+        const { murew } = services.instances;
+        const menu = mapPosMenuToMurewTreeMenu(data.categories, data.products);
+        console.log('menu', menu);
+        murew.on(MurewStatus.Connected, () => {
+            murew.sendAction(MurewActions.SetMenu, { store_id: '5feb746c6367001e74d73d7a', menu })
+        })
     }
 
     static reset() {
@@ -291,7 +304,7 @@ export default class Comu {
             items.products.push({
                 id: p.id,
                 name: p.name,
-                price: p.price,
+                price: p.unit_price || p.price,
                 note: p.note,
                 product_type: 1,
                 date_modified: 0,

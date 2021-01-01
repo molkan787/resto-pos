@@ -1,9 +1,14 @@
 import { Service } from "@/core/Service";
+import { MurewActions } from "./constants";
 
 export class MurewService extends Service{
 
     private _status: MurewStatus = MurewStatus.Disconnected;
-    private client: WebSocket;
+    private _client: WebSocket;
+
+    public get client(){
+        return this._client;
+    }
 
     public get status(){
         return this._status;
@@ -29,14 +34,16 @@ export class MurewService extends Service{
     // ----------------- Internal -----------------
 
     public async init(){
-        const client = this.client = new WebSocket('ws://localhost:1337', 'echo-protocol');
+        const client = this._client = new WebSocket('ws://localhost:1337', 'murew-protocol');
         client.onmessage = msg => this.onMessage(msg);
         client.onopen = () => {
             this._status = MurewStatus.Connected;
+            this.emit(MurewStatus.Connected);
             this.log('WebSocket connected!');
         }
         client.onclose = () => {
             this._status = MurewStatus.Disconnected;
+            this.emit(MurewStatus.Disconnected);
             this.log('WebSocket disconnected!');
         }
     }
@@ -45,25 +52,34 @@ export class MurewService extends Service{
         this.log('Received message:', message.data);
         try {
             const data = JSON.parse(message.data);
-            this.handleAction(data);
+            if(!this.handleAction(data)){
+                this.emit('message', message);
+            }
         } catch (error) {
             
         }
     }
 
-    private handleAction(_data){
+    /**
+     * Returns `true` if the action was handler, if not it returns `false`.
+     * @param _data 
+     */
+    private handleAction(_data): boolean{
         const { action, data } = _data;
         if(Object.values(MurewActions).includes(action)){
             this.emit(action, data);
+            return true;
+        }else{
+            return false;
         }
     }
 
-    private sendAction(actionName: string, data: any){
+    public sendAction(actionName: string, data: any){
         const _data = {
             action: actionName,
             data
         };
-        this.client.send(JSON.stringify(_data));
+        this._client.send(JSON.stringify(_data));
     }
 
 }
@@ -71,11 +87,4 @@ export class MurewService extends Service{
 export enum MurewStatus{
     Connected = 'connected',
     Disconnected = 'disconnected'
-}
-
-export enum MurewActions{
-    NewOrder = 'new-order',
-    OrderStatusChanged = 'order-status-changed',
-    AcceptOrder = 'accept-order',
-    DeclineOrder = 'decline-order'
 }
