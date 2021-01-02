@@ -9,8 +9,13 @@ const config = {
 
     app: {
         currencySign: '£'
-    }
+    },
+
+    syncStockInterval: 1000 * 60, // 1 minute
 };
+
+
+
 console.log('devMode', config.devMode);
 // @ts-ignore
 if(config.debug) window.printToConsole = true;

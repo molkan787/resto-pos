@@ -31,6 +31,7 @@ const category = require('./category');
 const cashout = require('./cashout');
 const pos = require('./pos');
 const dailyStats = require('./dailyStats');
+const stocks = require('./stocks');
 
 module.exports = server => {
     server.get('/stats', StatsWebPage);
@@ -79,4 +80,5 @@ module.exports = server => {
     server.post('/pos/edit_order/:id', pos.edit);
 
     server.get('/daily-stats/:day', dailyStats);
+    server.get('/stocks', stocks);
 };

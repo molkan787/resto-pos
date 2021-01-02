@@ -1,1 +1,1 @@
-export * from './murew-sync-service';
+export * from './murew-sync.service';

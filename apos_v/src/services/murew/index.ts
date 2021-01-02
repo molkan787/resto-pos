@@ -1,1 +1,2 @@
-export * from './murew-service';
+export * from './murew.service';
+export * from './constants';

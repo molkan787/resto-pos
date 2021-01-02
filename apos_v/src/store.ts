@@ -21,6 +21,7 @@ export default new Vuex.Store({
 
     categories: [],
     categoriesByIds: {},
+    allCategories: [],
     products: {},
     productsByIds: {},
     productsArray: [],

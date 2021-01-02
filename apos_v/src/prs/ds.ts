@@ -1,6 +1,7 @@
 import utils from './utils';
 import comu from './comu';
 import Vue from 'vue';
+import { services } from '@/services';
 const postData = utils.postData;
 const deleteData = utils.deleteData;
 
@@ -39,6 +40,7 @@ export default class DS{
             deleteData(`product/${product_id}`).then((res: any) => {
                 this.removeLocalProduct(product_id);
                 resolve(true);
+                services.onMenuChanged();
             }).catch(error => {
                 reject(error);
             });
@@ -51,6 +53,7 @@ export default class DS{
             postData('product', data).then((res: any) => {
                 this.updateLocalProduct(data, res.data);
                 resolve(true);
+                services.onMenuChanged();
             }).catch(error => {
                 reject(error);
             });
@@ -119,11 +122,13 @@ export default class DS{
                 cat.childs = [];
                 state.categories.push(cat);
             }
+            state.allCategories.push(cat);
         }else{
             const cat = state.categoriesByIds[srcId];
             cat.ctype = data.ctype;
             cat.name = data.name;
         }
+        services.onMenuChanged();
         return true;
     }
 
@@ -140,6 +145,9 @@ export default class DS{
             const index = state.categories.indexOf(data);
             state.categories.splice(index, 1);
         }
+        const index = state.allCategories.indexOf(data);
+        state.allCategories.splice(index, 1);
+        services.onMenuChanged();
         return true;
     }
 

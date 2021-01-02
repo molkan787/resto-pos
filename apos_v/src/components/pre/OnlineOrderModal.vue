@@ -1,5 +1,5 @@
 <template>
-    <Modal v-model="isOpen" title="New online order":dialog="dialog" >
+    <Modal v-model="isOpen" title="New online order" :dialog="dialog" >
 
         <div class="ui form">
             <h4>Customer</h4>

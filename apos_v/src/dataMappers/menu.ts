@@ -4,7 +4,7 @@ import { PosProduct } from "@/interfaces/pos/PosProduct";
 import { mapPosCategoriesToMurewCategories } from "./categories";
 import { mapPosProductsToMurewProducts } from "./products";
 
-export function mapPosMenuToMurewTreeMenu(categories: PosCategory[], products: PosProduct[]): MurewCategory[]{
+export function mapPosMenuToMurewTreeMenu(categories: PosCategory[], products: PosProduct[], mapPrices: boolean = false): MurewCategory[]{
     const posCatsParentsMap = new Map<number, number>();
     const murewCatsMap = new Map<number, MurewCategory>();
     const murewCats: MurewCategory[] = mapPosCategoriesToMurewCategories(categories);
@@ -23,7 +23,7 @@ export function mapPosMenuToMurewTreeMenu(categories: PosCategory[], products: P
 
     const posProductsToMurewCatsMap = new Map<number, MurewCategory>();
     products.forEach(p => posProductsToMurewCatsMap.set(p.id, murewCatsMap.get(p.category_id)));
-    const murewProducts = mapPosProductsToMurewProducts(products);
+    const murewProducts = mapPosProductsToMurewProducts(products, mapPrices);
     for(const p of murewProducts){
         const mCat = posProductsToMurewCatsMap.get(p.remote_id);
         if(mCat){

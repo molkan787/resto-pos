@@ -4,5 +4,6 @@ export enum MurewActions{
     AcceptOrder = 'accept-order',
     DeclineOrder = 'decline-order',
     SetMenu = 'set-menu',
-    SyncMenu = 'sync-menu'
+    SyncMenu = 'sync-menu',
+    SyncStock = 'sync-stock'
 }

@@ -160,9 +160,9 @@ export default class Comu {
                 const data = response.data;
                 const state = this.context.state;
                 const cats = Categories.mapCategories(data.categories);
-                this.testAfterAsd(data)
                 state.categories = cats.list;
                 state.categoriesByIds = cats.byIds;
+                state.allCategories = data.categories;
                 state.products = Products.mapByCategory(data.products, true);
                 state.productsByIds = Products.mapById(data.products, false);
                 state.productsArray = data.products;
@@ -170,20 +170,12 @@ export default class Comu {
                 state.nextOrderId = data.orderPtr;
                 state.companies = Clients.prepareData(data.companies);
                 this.putSettings(data.settings);
+                services.onDataLoaded(data);
                 resolve(true);
             }).catch(error => {
                 reject(error);
             })
         });
-    }
-
-    static testAfterAsd(data){
-        const { murew } = services.instances;
-        const menu = mapPosMenuToMurewTreeMenu(data.categories, data.products);
-        console.log('menu', menu);
-        murew.on(MurewStatus.Connected, () => {
-            murew.sendAction(MurewActions.SetMenu, { store_id: '5feb746c6367001e74d73d7a', menu })
-        })
     }
 
     static reset() {
@@ -280,10 +272,11 @@ export default class Comu {
                     state.loyaltyPoints = data.loyaltyPoints;
                     this.setCardsBalances(data.balances);
                     this.backupState();
-                    this.setToRecentOrders(data.orderId, orderData)
+                    this.setToRecentOrders(data.orderId, orderData);
                     this.setTableState();
                     resolve(orderData);
                     Reports.loadDailyStats();
+                    services.onOrderPosted(orderData);
                 } else {
                     reject(data.cause);
                 }
@@ -295,21 +288,23 @@ export default class Comu {
 
     static async postOnlineOrder(order) {
         const paymentMethod = 'cod';
-        const { type, total: _total, products, id: onlineOrderId, owner, no, delivery_address } = order;
+        const { type, total: _total, products, id: onlineOrderId, owner, no, delivery_address, menu } = order;
+        const isPOSMenu = menu == 'pos';
         const items = {
             products: [],
             counts: {}
         };
         for(let p of products){
+            const _id = isPOSMenu ? p.remote_id : p.pid;
             items.products.push({
-                id: p.id,
+                id: _id,
                 name: p.name,
                 price: p.unit_price || p.price,
                 note: p.note,
                 product_type: 1,
                 date_modified: 0,
             });
-            items.counts[p.id] = p.quantity;
+            items.counts[_id] = p.quantity;
         }
         const [first_name, last_name] = owner.fullname.split(' ');
         const client = {
@@ -370,7 +365,7 @@ export default class Comu {
             receipt: 0,
         };
         const postOrderData = {
-            skipStockAdjustement: order.menu == 'online',
+            skipStockAdjustement: !isPOSMenu,
             orderNo: no,
             orderData,
             stats: {},
@@ -394,6 +389,7 @@ export default class Comu {
             this.setToRecentOrders(data.orderId, orderData)
             // this.setTableState();
             Reports.loadDailyStats();
+            services.onOrderPosted(orderData);
             return orderData;
         } else {
             throw data.cause;

@@ -1,19 +1,40 @@
+import { Service } from '@/core/Service';
+import { ServiceHooks } from '@/core/ServiceHooks';
+import EventEmitter from 'eventemitter3';
 import { MurewService } from './murew';
 import { MurewSyncService } from './murew-sync';
+import { StockSyncService } from './stock-sync';
 
-const murewService = new MurewService();
-
-class Services{
+export class AppServices extends EventEmitter implements ServiceHooks{
 
     public readonly instances = {
-        murew: murewService,
-        murewSync: new MurewSyncService(murewService)
+        stockSync: new StockSyncService(this),
+        murew: new MurewService(this),
+        murewSync: new MurewSyncService(this),
     };
 
-    public async init(): Promise<void[]>{
-        return Promise.all(Object.values(this.instances).map(instance => instance.init()));
+    public allServices(): Service[]{
+        return Object.values(this.instances);
+    }
+
+    public init(): Promise<void[]>{
+        return Promise.all(this.allServices().map(instance => instance.init()));
+    }
+
+    // ---------- Hooks ----------
+
+    public async onDataLoaded(data){
+        return await Promise.all(this.allServices().map(instance => instance.onDataLoaded(data)));
+    }
+    
+    public async onMenuChanged() {
+        return await Promise.all(this.allServices().map(instance => instance.onMenuChanged()));
+    }
+    
+    public async onOrderPosted(order) {
+        return await Promise.all(this.allServices().map(instance => instance.onOrderPosted(order)));
     }
 
 }
 
-export const services = new Services();
+export const services = new AppServices();

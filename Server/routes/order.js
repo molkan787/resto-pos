@@ -20,9 +20,7 @@ module.exports = async (req, res, next) => {
     orderData.date_added = time.now();
 
     try {
-        // if(orderData.pay_method == 'invoice_ari' && invoiceData.clientName){
-        //     orderData.client_id = await Client.getCompanyIdByName(invoiceData.clientName);
-        // }
+        console.log(skipStockAdjustement)
 
         orderData.no = orderNo || 'P';
         await Order.adjustClientId(orderData);
@@ -35,35 +33,6 @@ module.exports = async (req, res, next) => {
         if(!skipStockAdjustement){
             await Product.decrementStock(orderData.items.counts);
         }
-        // await Stats.add(stats);
-        // if(orderData.pay_method == 'invoice_ari'){
-        //     await Invoice.addInvoice(_order);
-        // }
-        // if(payment){
-        //     await addTransaction(payment, _order);
-        // }
-        
-        // const exclude = getAmountToExclude(orderData);
-        // let points = utils.removeTaxes((orderData.total - exclude) / 10, taxes);
-        // points = Math.round(points);
-        // if (points < 0) points = 0;
-
-        // if(loyaltyCardId > 0){
-        //     if(!payment || (payment.type != 'loyalty')) {
-        //         // Adding 10% of the order value to loyalty points
-        //         LoyaltyCard.addValue(loyaltyCardId, points);
-        //         Action.add(AC.GROUP_ORDER, AC.TYPE_LOYALTY_POINT_ADD, {
-        //             ref1: _order.id,
-        //             ref2: loyaltyCardId,
-        //         }, Math.round(points));
-        //     }
-        // }
-
-        // if(actions && actions.length){
-        //     patchActions(_order.id, actions);
-        // }
-
-        // const balances = await getBalances(cards);
 
         res.send({
             status: 'OK',
