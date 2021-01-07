@@ -32,6 +32,10 @@
             <SettingTab />
         </sui-tab-pane>
 
+        <sui-tab-pane title="Sync" icon="sync" v-if="userType <= 2">
+            <MurewSyncTab />
+        </sui-tab-pane>
+
     </sui-tab>
 </template>
 
@@ -46,6 +50,7 @@ import ReportsTab from './ReportsTab.vue';
 import ProductsTab from './ProductsTab.vue';
 import UsersTab from './UsersTab.vue';
 import SettingTab from './SettingTab.vue';
+import MurewSyncTab from './MurewSyncTab.vue';
 import {mapGetters} from 'vuex';
 
 @Component({
@@ -58,6 +63,7 @@ import {mapGetters} from 'vuex';
         ProductsTab,
         UsersTab,
         SettingTab,
+        MurewSyncTab,
     },
     computed: mapGetters(['userType']),
 })

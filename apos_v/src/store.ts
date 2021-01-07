@@ -16,6 +16,9 @@ export default new Vuex.Store({
       showOrderTypeDetails: false,
       showProductsSearch: false,
     },
+    settings: {
+      murewSyncKey: null,
+    },
 
     tablesState: {},
 

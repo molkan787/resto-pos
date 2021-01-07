@@ -22,9 +22,6 @@ import LocalSettings from './localSettings';
 import Printers from './printers';
 import Reports from './reports';
 import { services } from '../services';
-import { mapPosMenuToMurewTreeMenu } from '@/dataMappers/menu';
-import { MurewStatus } from '@/services/murew';
-import { MurewActions } from '@/services/murew/constants';
 
 export default class Comu {
 
@@ -287,8 +284,8 @@ export default class Comu {
     }
 
     static async postOnlineOrder(order) {
-        const paymentMethod = 'cod';
-        const { type, total: _total, products, id: onlineOrderId, owner, no, delivery_address, menu } = order;
+        const { type, total: _total, products, id: onlineOrderId, owner, no, delivery_address, menu, payment_method } = order;
+        const paymentMethod = payment_method || 'cod';
         const isPOSMenu = menu == 'pos';
         const items = {
             products: [],

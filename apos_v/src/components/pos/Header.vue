@@ -10,7 +10,10 @@
                 Downloading update{{ downloadStatusDots }}
             </span>
         </span>
-        
+        <div class="murew-service-status" :class="murew.status" :title="murewConnected ? 'Connected to online ordering platform' : 'Not connected to online ordering platform'">
+            <i class="icon" :class="murewConnected ? 'check circle' : 'ban'"></i>
+            {{ murew.status | capitalize }}
+        </div>
         <div class="right-side">
             <sui-button @click="$router.push('admin')" :disabled="userType >= 5" title="Admin Panel" compact class="setting">
                 <i class="setting icon"></i>
@@ -63,6 +66,7 @@ import Message from '@/ccs/Message';
 import barcodeScanner from '@/prs/barcodeScanner';
 import ClientLoader from '@/prs/clientLoader';
 import PhoneInput from '../pre/PhoneInput.vue';
+import { services } from '@/services';
 
 @Component({
     components: {
@@ -71,6 +75,9 @@ import PhoneInput from '../pre/PhoneInput.vue';
     computed: {
         ...mapState(['user', 'currentTime', 'ticket', 'loyaltyCard', 'stats', 'app']),
         ...mapGetters(['userType']),
+        murewConnected(){
+            return this.murew.status == 'connected';
+        }
     },
     methods: mapActions(['setTicket']),
     watch: {
@@ -85,6 +92,8 @@ export default class Header extends Vue {
 
     private showingDownloadStatus: Boolean = false;
     private downloadStatusDots: String = '';
+
+    private murew = services.instances.murew;
 
     private message = {
         visible: false,
@@ -284,6 +293,19 @@ export default class Header extends Vue {
 
 <style lang="scss" scoped>
 $root-h: 4rem;
+
+.murew-service-status{
+    float: left;
+    margin: 12px;
+    background-color: #666;
+    padding: 10px 18px;
+    border-radius: 24px;
+    line-height: 1;
+    font-weight: bold;
+    &.connected{
+        background-color: #21BA45;
+    }
+}
 
 div.m-el{
     height: $root-h;

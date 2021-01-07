@@ -33,12 +33,14 @@ export class MurewSyncService extends Service{
     }
 
     public onStockSynced(stocks){
+        if(!this.murew.isConnected) return;
         this.log('Syncing remote stocks...');
         return this.murew.sendAction(MurewActions.SyncStock, stocks);
     }
 
 
     private syncMenu(){
+        if(!this.murew.isConnected) return;
         this.log('Syncing menu...');
         const categories = store.state.allCategories;
         const products = store.state.productsArray;
@@ -48,7 +50,6 @@ export class MurewSyncService extends Service{
 
     private sendMenu(menu: MurewCategory[]) {
         return this.murew.sendAction(MurewActions.SetMenu, {
-            store_id: '5feb746c6367001e74d73d7a',
             menu
         });
     }
