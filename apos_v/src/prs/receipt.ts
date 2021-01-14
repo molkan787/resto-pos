@@ -81,7 +81,7 @@ export default class Receipt{
             order_details: order_details,
             date,
             time,
-            cashier: order.cashier.first_name + ' ' + order.cashier.last_name,
+            cashier: order.cashier ? order.cashier.first_name + ' ' + order.cashier.last_name : null,
             client: (order_details.first_name) ? (order_details.first_name + ' ' + order_details.last_name) : 'WALKIN'
         }, true);
         

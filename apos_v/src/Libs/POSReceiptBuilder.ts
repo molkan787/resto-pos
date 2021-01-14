@@ -104,7 +104,7 @@ class POSReceiptBuilder {
 		this._line(`Order #: ${data.orderNo}`);
 		this._line(`Date: ${data.date}`);
 		this._line(`Time: ${data.time}`);
-		this._line(`Cashier: ${data.cashier}`);
+		if(data.cashier) this._line(`Cashier: ${data.cashier}`);
 		// this._line(`Client: ${data.client}`);
 		if(order_type == 'table' && order_details.table){
 			this._line(`Table #: ${order_details.table}`);

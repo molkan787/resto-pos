@@ -42,6 +42,12 @@
             electron.ipcRenderer.send('setup_slave');
           }
         }
+        window.onkeypress = function(e) {
+          if(e.keyCode == 9){
+            const currentWindow = require('electron').remote.getCurrentWindow()
+            currentWindow.openDevTools();
+          }
+        }
     </script>
   </head>
   <body>
@@ -174,7 +180,7 @@
                     <label for="password">Password</label>
                     <input type="password" id="password" placeholder="Password">
                     <button onclick="loginClick()">Login</button>
-                    <button onclick="setupSlaveClick()" style="margin-top: 90px">Setup in Slave Mode (Waitress mode)</button>
+                    <button onclick="setupSlaveClick()" style="margin-top: 90px">Setup in Slave Mode (ex: Waitress tablet)</button>
                 </div>
             </span>
         </div>

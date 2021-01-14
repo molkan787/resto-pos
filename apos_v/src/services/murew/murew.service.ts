@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Service } from "@/core/Service";
 import LocalSetting from "@/prs/localSettings";
 import { AppServices } from "..";

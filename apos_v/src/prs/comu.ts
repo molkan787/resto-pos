@@ -22,6 +22,9 @@ import LocalSettings from './localSettings';
 import Printers from './printers';
 import Reports from './reports';
 import { services } from '../services';
+import * as srv from '../services';
+
+console.log(Object.values(srv));
 
 export default class Comu {
 
@@ -284,6 +287,7 @@ export default class Comu {
     }
 
     static async postOnlineOrder(order) {
+        const state = this.context.state;
         const { type, total: _total, products, id: onlineOrderId, owner, no, delivery_address, menu, payment_method } = order;
         const paymentMethod = payment_method || 'cod';
         const isPOSMenu = menu == 'pos';
@@ -326,7 +330,7 @@ export default class Comu {
                 paid: false,
                 table: "",
             },
-            user_id: state.user.id,
+            user_id: 0,
             client_id: 0,
             total,
             totals: {
@@ -402,7 +406,7 @@ export default class Comu {
             order_type: orderData.order_type,
             order_details: od.order_details,
             date_added: state.lastOrderDate,
-            cashier: {},
+            cashier: null,
             client: od.other_data.client || {},
             products: od.items.products,
             counts: od.items.counts,

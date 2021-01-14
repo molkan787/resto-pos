@@ -86,7 +86,7 @@ module.exports = class MysqlServer{
     }
 
     static _getConfigFileContent(){
-        const dataDir = path.join(this.baseDir, 'data');
+        const dataDir = path.join(this.baseDir, 'db_data');
         const logsDir = path.join(this.baseDir, 'logs');
         return `
         [mysqld]
