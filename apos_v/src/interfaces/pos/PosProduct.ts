@@ -6,5 +6,6 @@ export interface PosProduct{
     stock_enabled: number;
     stock: number;
     product_type: number;
+    contains_allergens: boolean;
     date_modified: number;
 }

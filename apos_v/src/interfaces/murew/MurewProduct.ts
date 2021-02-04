@@ -6,6 +6,7 @@ export interface MurewProduct{
     remote_id: number;
     enable_stock: boolean;
     stock: number;
+    contains_allergens: boolean;
     extras: any[];
     store_id?: string;
 }

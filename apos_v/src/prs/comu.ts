@@ -59,7 +59,7 @@ export default class Comu {
             this.updateTime();
         }, 15000);
 
-        if (config.debug) {
+        if (config.debug || true) {
             // @ts-ignore
             window.$store = context;
             // @ts-ignore

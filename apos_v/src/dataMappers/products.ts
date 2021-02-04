@@ -10,6 +10,7 @@ export function mapPosProductsToMurewProducts(products: PosProduct[], mapPrices:
             remote_id: product.id,
             enable_stock: !!product.stock_enabled,
             stock: product.stock,
+            contains_allergens: product.contains_allergens,
             extras: []
         }
         result.push(mProduct);

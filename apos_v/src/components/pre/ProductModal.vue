@@ -10,6 +10,9 @@
                 <input v-model="p_price" placeholder="0.00" >
             </sui-form-field>
             <sui-form-field>
+                <sui-checkbox label="Contains allergens" v-model="p_contains_allergens"/>
+            </sui-form-field>
+            <sui-form-field>
                 <label>
                     Stock Management &nbsp;&nbsp;&nbsp;
                     <sui-checkbox label="Enable on this product" v-model="p_stock_enabled"/>
@@ -54,6 +57,7 @@ export default class ProductModal extends Vue{
     private p_name: any = '';
     private p_price: any = '';
     private p_stock_enabled = false;
+    private p_contains_allergens = false;
     private p_stock = 0;
 
     private options: any[] = [
@@ -76,6 +80,7 @@ export default class ProductModal extends Vue{
             price: this.p_price,
             stock: this.p_stock,
             stock_enabled: this.p_stock_enabled ? 1 : 0,
+            contains_allergens: this.p_contains_allergens ? 1 : 0
         }
         this.loading = true;
         DS.editProduct(data).then(() => {
@@ -105,6 +110,7 @@ export default class ProductModal extends Vue{
             this.p_name = p.name;
             this.p_price = p.price;
             this.p_stock_enabled = !!p.stock_enabled;
+            this.p_contains_allergens = !!p.contains_allergens;
             this.p_stock = p.stock;
 
             this.title = `Edit Product: ${p.name}`;
@@ -119,6 +125,9 @@ export default class ProductModal extends Vue{
         this.p_type = '1';
         this.p_name = '';
         this.p_price = '';
+        this.p_stock_enabled = false;
+        this.p_contains_allergens = false;
+        this.p_stock = 0;
         this.open = true;
     }
 

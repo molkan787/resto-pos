@@ -20,7 +20,8 @@ module.exports = class Product extends Model{
                 stock: {type: 'integer'},
                 can_exclude_taxes: {type: 'integer'},
                 product_type: {type: 'integer'},
-                date_modified: {type: 'integer'},
+                contains_allergens: {type: 'integer'},
+                date_modified: {type: 'integer'}
             }
         }
     }
@@ -39,13 +40,14 @@ module.exports = class Product extends Model{
     }
 
     static async put(data){
-        const {name, product_type, price, stock_enabled, stock } = data;
+        const {name, product_type, price, stock_enabled, stock, contains_allergens } = data;
         let p = {
             name,
             price,
             stock_enabled: parseInt(stock_enabled),
             stock: parseInt(stock),
             product_type: parseInt(product_type),
+            contains_allergens: parseInt(contains_allergens),
             date_modified: time.now(),
         };
         try {
