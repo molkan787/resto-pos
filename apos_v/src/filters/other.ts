@@ -20,8 +20,8 @@ export default {
     percent: (val: number) => {
         return (val + '').trim() + '%';
     },
-    capitalize(val: string){
-        return val.charAt(0).toUpperCase() + val.substr(1).toLowerCase();
+    capitalize(val: string | undefined){
+        return typeof val == 'string' ? val.charAt(0).toUpperCase() + val.substr(1).toLowerCase() : val;
     }
 }
 

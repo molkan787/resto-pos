@@ -4,7 +4,7 @@ import { MurewCategory } from "@/interfaces/murew/MurewCategory";
 import store from "@/store";
 import { AppServices } from "..";
 import { ServiceEvents } from "../events";
-import { MurewActions } from "../murew/constants";
+import { MurewActions } from "murew-core/dist/enums";
 import { MurewService, MurewStatus } from "../murew/murew.service";
 
 export class MurewSyncService extends Service{

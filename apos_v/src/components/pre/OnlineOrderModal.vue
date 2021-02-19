@@ -1,64 +1,99 @@
 <template>
-    <Modal v-model="isOpen" title="New online order" :dialog="dialog" >
+    <Modal v-model="isOpen" :title="title" :dialog="dialog" size="large">
 
-        <div class="ui form">
-            <h4>Customer</h4>
-            <div class="inline fields">
-                <div class="eight wide field">
-                    <sui-input v-model="order.owner.fullname" placeholder="Fullname" icon="user" readonly/>
+        <sui-segments horizontal>
+
+            <sui-segment>
+                <div class="ui form">
+                    <h4>Products</h4>
+                    <sui-table celled striped>
+                        <sui-table-header>
+                            <sui-table-row>
+                                <sui-table-headerCell>Name</sui-table-headerCell>
+                                <sui-table-headerCell collapsing text-align="right">Quantity</sui-table-headerCell>
+                                <sui-table-headerCell collapsing>Note</sui-table-headerCell>
+                            </sui-table-row>
+                        </sui-table-header>
+                        <sui-table-body>
+                            <sui-table-row v-for="p in order.products" :key="p.id">
+                                <sui-table-cell>
+                                    {{  itemText(p) }}
+                                </sui-table-cell>
+                                <sui-table-cell collapsing text-align="right">
+                                    {{ p.pid == 'discount' ? '-' : p.quantity }}
+                                </sui-table-cell>
+                                <sui-table-cell collapsing>{{ p.note || '---' }}</sui-table-cell>
+                            </sui-table-row>
+                        </sui-table-body>
+                    </sui-table>
+                    <sui-table celled striped>
+                        <sui-table-header>
+                            <sui-table-row>
+                                <sui-table-headerCell text-align="right">Products total</sui-table-headerCell>
+                                <sui-table-headerCell collapsing text-align="right">{{ order.total | price }}</sui-table-headerCell>
+                            </sui-table-row>
+                            <sui-table-row v-if="order.type == OrderType.Delivery">
+                                <sui-table-headerCell text-align="right">Delivery</sui-table-headerCell>
+                                <sui-table-headerCell collapsing text-align="right">{{ attrs.delivery_cost | price }}</sui-table-headerCell>
+                            </sui-table-row>
+                            <sui-table-row>
+                                <sui-table-headerCell text-align="right">Total</sui-table-headerCell>
+                                <sui-table-headerCell collapsing text-align="right">{{ order.total | price }}</sui-table-headerCell>
+                            </sui-table-row>
+                        </sui-table-header>
+                        <sui-table-body>
+                        </sui-table-body>
+                    </sui-table>
                 </div>
-                <div class="eight wide field">
-                    <sui-input v-model="order.owner.email" placeholder="Email" icon="at" readonly/>
+            </sui-segment>
+
+            <sui-segment>
+                <div class="ui form">
+                    <h4>Customer</h4>
+                    <div class="inline fields">
+                        <div class="eight wide field">
+                            <sui-input v-model="order.owner.fullname" placeholder="Fullname" icon="user" readonly/>
+                        </div>
+                        <div class="eight wide field">
+                            <sui-input v-model="order.owner.email" placeholder="Email" icon="at" readonly/>
+                        </div>
+                    </div>
+                    <h4>Order type: {{ order.type | capitalize }}</h4>
+                    <template v-if="order.type == OrderType.Delivery">
+                        <h4>Delivery Address</h4>
+                        <div class="inline fields">
+                            <div class="eight wide field">
+                                <sui-input v-model="delAddr.line1" placeholder="Line 1" readonly/>
+                            </div>
+                            <div class="eight wide field">
+                                <sui-input v-model="delAddr.postcode" placeholder="Postcode" readonly/>
+                            </div>
+                        </div>
+                        <div class="inline fields">
+                            <div class="eight wide field">
+                                <sui-input v-model="delAddr.line2" placeholder="Line 2" readonly/>
+                            </div>
+                            <div class="eight wide field">
+                                <sui-input v-model="delAddr.city" placeholder="City" readonly/>
+                            </div>
+                        </div>
+                    </template>
                 </div>
-            </div>
-            <h4>Products</h4>
-            <sui-table celled striped>
-                <sui-table-header>
-                    <!-- <sui-table-row>
-                        <sui-table-headerCell colspan="3">Products</sui-table-headerCell>
-                    </sui-table-row> -->
-                    <sui-table-row>
-                        <sui-table-headerCell>Name</sui-table-headerCell>
-                        <sui-table-headerCell collapsing text-align="right">Quantity</sui-table-headerCell>
-                        <sui-table-headerCell collapsing>Note</sui-table-headerCell>
-                    </sui-table-row>
-                </sui-table-header>
-                <sui-table-body>
-                    <sui-table-row v-for="p in order.products" :key="p.id">
-                        <sui-table-cell>{{ p.name }}</sui-table-cell>
-                        <sui-table-cell collapsing text-align="right">{{ p.quantity }}</sui-table-cell>
-                        <sui-table-cell collapsing>{{ p.note || '---' }}</sui-table-cell>
-                    </sui-table-row>
-                </sui-table-body>
-            </sui-table>
-            <sui-table celled striped>
-                <sui-table-header>
-                    <sui-table-row>
-                        <sui-table-headerCell text-align="right">Products total</sui-table-headerCell>
-                        <sui-table-headerCell collapsing text-align="right">{{ order.total | price }}</sui-table-headerCell>
-                    </sui-table-row>
-                    <sui-table-row>
-                        <sui-table-headerCell text-align="right">Delivery</sui-table-headerCell>
-                        <sui-table-headerCell collapsing text-align="right">{{ 0 | price }}</sui-table-headerCell>
-                    </sui-table-row>
-                    <sui-table-row>
-                        <sui-table-headerCell text-align="right">Total</sui-table-headerCell>
-                        <sui-table-headerCell collapsing text-align="right">{{ order.total | price }}</sui-table-headerCell>
-                    </sui-table-row>
-                </sui-table-header>
-                <sui-table-body>
-                    <!-- <sui-table-row >
-                        <sui-table-cell>{{ p.name }}</sui-table-cell>
-                        <sui-table-cell collapsing text-align="right">{{ p.quantity }}</sui-table-cell>
-                        <sui-table-cell collapsing>{{ p.note || '---' }}</sui-table-cell>
-                    </sui-table-row> -->
-                </sui-table-body>
-            </sui-table>
-        </div>
+            </sui-segment>
+
+        </sui-segments>
 
         <template v-slot:buttons>
             <button class="ui button" @click="close" style="float: left">CLOSE</button>
             <button :loading="loading == 'decline'" :disabled="loading" class="ui button" @click="decline">DECLINE</button>
+            <div class="accept-settings">
+                <sui-dropdown
+                    placeholder="Ready time"
+                    selection
+                    :options="readyTimeOptions"
+                    v-model="readyTime"
+                />
+            </div>
             <button :loading="loading == 'accept'" :disabled="loading" class="ui green button" @click="accept">ACCEPT</button>
         </template>
     </Modal>
@@ -67,13 +102,10 @@
 <script>
 // @ts-nocheck
 import Modal from '../Elts/Modal.vue';
-import MxHelper from '@/prs/MxHelper';
 import ModalDialog from '@/ccs/ModalDialog';
-import CashDrawer from '@/prs/cashdrawer';
-import Reports from '@/prs/reports';
-import DM from '@/prs/dm';
 import Comu from '@/prs/comu';
-import { MurewActions } from '@/services/murew';
+import { MurewActions } from 'murew-core/dist/enums';
+import { OrderType } from 'murew-core/dist/types';
 const { murew } = Comu.services.instances;
 export default {
     components: {
@@ -83,9 +115,28 @@ export default {
         isOpen: false,
         loading: false,
         dialog: new ModalDialog(),
-        order: { owner: {} }
+        order: { owner: {}, attrs: {} },
+        readyTime: 45,
+        OrderType: OrderType,
+        readyTimeOptions: [
+            { text: '30 Min', value: 30 },
+            { text: '45 Min', value: 45 },
+            { text: '60 Min', value: 60 },
+            { text: '1 Hour 15 Min', value: 75 },
+            { text: '1 Hour 30 Min', value: 90 },
+        ]
     }),
-
+    computed: {
+        title(){
+            return `New online order : ${this.order.no}`
+        },
+        attrs(){
+            return this.order.attrs;
+        },
+        delAddr(){
+            return this.order.delivery_address || {};
+        }
+    },
     methods: {
         close(){
             this.isOpen = false;
@@ -96,7 +147,7 @@ export default {
         },
         accept(){
             this.loading = 'accept';
-            murew.acceptOrder(this.order.id);
+            murew.acceptOrder(this.order.id, this.readyTime);
         },
         handleNewOrder(order){
             this.order = order;
@@ -107,7 +158,7 @@ export default {
             const { id, status } = data;
             if(id == this.order.id){
                 const order = this.order;
-                this.order = { owner: {} };
+                // this.order = { owner: {} };
                 if(status == 'accepted'){
                     try {
                         this.submitOrder(order);
@@ -124,6 +175,10 @@ export default {
         async submitOrder(order){
             const orderData = await Comu.postOnlineOrder(order);
             await Comu.printOrderReceipt(orderData);
+        },
+
+        itemText(p){
+            return p.pid == 'discount' ? `${p.name} (${this.$options.filters.price(p.unit_price)})` : p.name;
         }
     },
 
@@ -134,11 +189,50 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .input{
     width: 60%;
 }
 .input > input{
     font-size: 20px !important;
+}
+.ui.segments, .ui.segment{
+    border: none !important;
+    box-shadow: none;
+}
+.ui.segments{
+    margin: 0;
+}
+.ui.segment{
+    padding: 0;
+}
+.ui.segment:first-child{
+    padding-right: 1rem;
+}
+.ui.segment:last-child{
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+}
+.accept-options{
+    display: flex;
+    flex-direction: row;
+}
+.accept-settings{
+    display: inline-block;
+    margin-left: 2rem;
+    .dropdown{
+        height: 42.38px;
+        transform: translate(0, -3px);
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+}
+.modal-buttons.actions{
+    button:last-child{
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        margin: 0;
+    }
 }
 </style>

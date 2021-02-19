@@ -2,7 +2,7 @@
 import { Service } from "@/core/Service";
 import LocalSetting from "@/prs/localSettings";
 import { AppServices } from "..";
-import { MurewActions } from "./constants";
+import { MurewActions } from "murew-core/dist/enums";
 
 export const MUREW_SYNC_KEY_LSK = 'murew-sync-key';
 const MAX_RETRY_INTERVAL = 5 * 60 * 1000; // 5 minutes
@@ -43,9 +43,10 @@ export class MurewService extends Service{
     }
 
 
-    public acceptOrder(orderId: string){
+    public acceptOrder(orderId: string, readyTime: number){
         this.sendAction(MurewActions.AcceptOrder, {
-            id: orderId
+            id: orderId,
+            ready_time: readyTime
         });
     }
 
