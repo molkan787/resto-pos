@@ -7,6 +7,11 @@ import { StockSyncService } from './stock-sync';
 
 export class AppServices extends EventEmitter implements ServiceHooks{
 
+    private _dataLoaded: boolean = false;
+    public get dataLoaded(): boolean {
+        return this._dataLoaded;
+    }
+
     public readonly instances = {
         stockSync: new StockSyncService(this),
         murew: new MurewService(this),
@@ -24,6 +29,7 @@ export class AppServices extends EventEmitter implements ServiceHooks{
     // ---------- Hooks ----------
 
     public async onDataLoaded(data){
+        this._dataLoaded = true;
         return await Promise.all(this.allServices().map(instance => instance.onDataLoaded(data)));
     }
     

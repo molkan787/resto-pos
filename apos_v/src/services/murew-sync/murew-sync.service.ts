@@ -23,6 +23,7 @@ export class MurewSyncService extends Service{
     }
 
     public async onDataLoaded(){
+        this.log('data loaded');
         if(this.murew.status == MurewStatus.Connected){
             this.syncMenu();
         }
@@ -40,7 +41,7 @@ export class MurewSyncService extends Service{
 
 
     private syncMenu(){
-        if(!this.murew.isConnected) return;
+        if(!this.murew.isConnected || !this.services.dataLoaded) return;
         this.log('Syncing menu...');
         const categories = store.state.allCategories;
         const products = store.state.productsArray;
