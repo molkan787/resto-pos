@@ -95,6 +95,7 @@ export default class Receipt{
                 name: p.name,// + ' ' + this._getLabel(p),
                 price: this._getPriceWithoutTaxes(p, order.taxes),
                 q: c,
+                note: p.note
             });
         }
         if(order.totals.extraCharge){

@@ -108,6 +108,9 @@ class POSReceiptBuilder {
 		// this._line(`Client: ${data.client}`);
 		if(order_type == 'table' && order_details.table){
 			this._line(`Table #: ${order_details.table}`);
+		}else{
+			const otype = order_type.charAt(0).toUpperCase() + order_type.substr(1).toLowerCase();
+			this._line(`Type: ${otype}`);
 		}
 		this._emptyLine();
 		// this._item({name: 'PRODUCT', q: 'QTY', price: 'PRICE', total: 'TOTAL'});
@@ -125,6 +128,16 @@ class POSReceiptBuilder {
 			total: this._price(ltotal, true)
 		});
 		this._regularText();
+
+		const { note } = item;
+		if(typeof note == 'string' && note.length > 0){
+			this._item({
+				name: '*' + note,
+				q: '',
+				price: '',
+				total: '',
+			})
+		}
 	}
 
 	addTotalsItem(item: any){
