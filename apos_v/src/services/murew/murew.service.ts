@@ -140,10 +140,8 @@ export class MurewService extends Service{
         const { action, data } = _data;
         if(Object.values(MurewActions).includes(action)){
             this.emit(action, data);
-            console.log(`Action "${action}" handler.`);
             return true;
         }else{
-            console.log(`Action "${action}" not handler.`);
             return false;
         }
     }

@@ -4,6 +4,7 @@ import EventEmitter from 'eventemitter3';
 import { MurewService } from './murew';
 import { MurewSyncService } from './murew-sync';
 import { StockSyncService } from './stock-sync';
+import { BookingsService } from './bookings';
 
 export class AppServices extends EventEmitter implements ServiceHooks{
 
@@ -16,6 +17,7 @@ export class AppServices extends EventEmitter implements ServiceHooks{
         stockSync: new StockSyncService(this),
         murew: new MurewService(this),
         murewSync: new MurewSyncService(this),
+        bookingsService: new BookingsService(this)
     };
 
     public allServices(): Service[]{

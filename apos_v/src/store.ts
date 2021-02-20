@@ -160,6 +160,16 @@ export default new Vuex.Store({
       gst: 0,
       qst: 0,
     },
+
+    // =========================
+
+    bookings: {
+      todays: [],
+      other: [],
+      loading: false,
+      filterDate: '',
+    }
+
   },
   getters: {
     getCategory(state){

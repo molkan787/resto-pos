@@ -3,8 +3,8 @@
         <sui-button icon="write" @click="kitchenMessageClick" :color="kitchenMessage ? 'grey' : null" >
             <br>Kitchen Message
         </sui-button>
-        <sui-button icon="box" @click="discountClick(true)" disabled >
-            <br>--
+        <sui-button icon="calendar" @click="bookingsClick" >
+            <br>Bookings
         </sui-button>
 
         <sui-button icon="pound" @click="discountClick(false)" >
@@ -67,6 +67,10 @@ export default class Adjustment extends Vue{
                 console.error(error);
             }
         }
+    }
+
+    bookingsClick(){
+        MxHelper.openBookingListModal();
     }
 
     extraChargeClick(){

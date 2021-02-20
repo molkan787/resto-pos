@@ -23,6 +23,7 @@
     <RecentOrdersModal />
     <OnlineOrderModal />
     <OnlineOrdersModal />
+    <BookingListModal />
     
     <div class="demo-label" v-if="demoMode">
       DEMO / TESTING
@@ -57,6 +58,7 @@ import CashoutModal from './components/pre/CashoutModal.vue';
 import RecentOrdersModal from './components/pre/RecentOrdersModal.vue';
 import OnlineOrderModal from './components/pre/OnlineOrderModal.vue';
 import OnlineOrdersModal from './components/pre/OnlineOrdersModal.vue';
+import BookingListModal from './components/booking/BookingListModal.vue';
 
 export default Vue.extend({
   components: {
@@ -79,7 +81,8 @@ export default Vue.extend({
     CashoutModal,
     RecentOrdersModal,
     OnlineOrderModal,
-    OnlineOrdersModal
+    OnlineOrdersModal,
+    BookingListModal
   },
   methods: {
     ...mapActions(['setup'])
