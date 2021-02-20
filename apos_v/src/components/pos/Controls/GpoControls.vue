@@ -9,12 +9,12 @@
         <sui-button :color="paym == 'card' ? 'grey' : null" @click="setPayM('card')"
             icon="credit card">Credit/Debit Card</sui-button>
 
-        <sui-button class="submit" @click="submit(false)" :disabled="pos.items.length == 0 || !pos.pay_method" >
+        <sui-button class="submit" @click="submit(false)" :disabled="disableOrderUpdates || pos.items.length == 0 || !pos.pay_method" >
             {{ pos.orderId ? 'Update' : 'Submit' }}
             <i class="arrow right icon"></i>
         </sui-button>
         
-        <sui-button class="submit" @click="submit(true)" :disabled="pos.items.length == 0 || !pos.pay_method" >
+        <sui-button class="submit" @click="submit(true)" :disabled="disableOrderUpdates || pos.items.length == 0 || !pos.pay_method" >
             Finalize
             <i class="arrow right icon"></i>
         </sui-button>
@@ -34,6 +34,10 @@ export default {
         paym(){
             return this.pos.pay_method;
         },
+        disableOrderUpdates(){
+            const no = this.pos.orderNo || '';
+            return no.charAt(0) == 'N';
+        }
     },
     methods: {
         submit(finalize){

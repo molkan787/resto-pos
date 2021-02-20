@@ -1,7 +1,11 @@
 import utils from '@/prs/utils';
 
+const capitalize = (val: string | undefined) => {
+    return typeof val == 'string' ? val.charAt(0).toUpperCase() + val.substr(1).toLowerCase() : val;
+}
+
 export default {
-    joinnames: (person: any) => `${person.first_name} ${person.last_name}`,
+    joinnames: (person: any) => `${capitalize(person.first_name)} ${capitalize(person.last_name)}`,
     yesIfTrue: (val: any) => val ? 'Yes' : '',
     pol_barcode: (card: any) => {
         if(card && card.barcode && typeof card.barcode == 'string'){
@@ -20,9 +24,7 @@ export default {
     percent: (val: number) => {
         return (val + '').trim() + '%';
     },
-    capitalize(val: string | undefined){
-        return typeof val == 'string' ? val.charAt(0).toUpperCase() + val.substr(1).toLowerCase() : val;
-    }
+    capitalize: capitalize
 }
 
 // extractRawNumber(val: string){

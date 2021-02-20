@@ -46,6 +46,7 @@ export default new Vuex.Store({
 
     //=======================
     recentOrders: [],
+    onlineRecentOrders: [],
     defaultExactPaid: true,
     pos: {
       orderId: 0,

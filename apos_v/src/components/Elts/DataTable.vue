@@ -126,10 +126,12 @@ export default class DataTable extends Vue{
         return classes;
     }
 
-    applyFilter(filterName: string, data: any, prop: string){
+    applyFilter(filter: string | Function, data: any, prop: string){
         const value = prop == '@' ? data : data[prop];
-        if(filterName)
-            return Vue.filter(filterName)(value);
+        if(typeof filter == 'string')
+            return Vue.filter(filter)(value);
+        else if(typeof filter == 'function')
+            return filter(value);
         else
             return value;
     }

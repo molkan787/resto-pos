@@ -35,6 +35,10 @@
             <sui-button compact class="ml1 free-width" title="Search Products" @click="openRecentOrders">
                 <i class="boxes icon"></i>Recent Orders
             </sui-button>
+            <div class="vertical-divider"></div>
+            <sui-button compact class="ml1 free-width" title="Search Products" @click="openOnlineOrders">
+                <i class="globe icon"></i>Online Orders
+            </sui-button>
         </div>
         <!-- <div v-if="message.visible" class="ui icon message message1">
             <i :class="message.icon"></i>
@@ -114,6 +118,10 @@ export default class Header extends Vue {
 
     openRecentOrders(){
         MxHelper.openRecentOrders();
+    }
+
+    openOnlineOrders(){
+        MxHelper.openOnlineOrders();
     }
 
     openPrintersSetup(){
@@ -330,7 +338,7 @@ div.m-el{
     margin-top: $root-h * 0.25;
 }
 .right-side{
-    width: 40rem;
+    width: 48rem;
     float: right;
     padding: 0.5rem;
     margin-right: 0rem;

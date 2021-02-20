@@ -29,10 +29,17 @@ export default class OrdersTab extends Vue{
 
     private loading: boolean = false;
 
+    customerName(order: any){
+        const { client, order_details } = order;
+        const { first_name } = order_details;
+        const customer = client || (first_name ? order_details : null);
+        return customer ? Vue.filter('joinnames')(customer) : null;
+    }
+
     private tableSchema = [
         {name: 'Order #', prop: 'no'},
         {name: 'Type', prop: '@', filter: 'orderType'},
-        {name: 'Client', prop: 'client', filter: 'joinnames', default: '---'},
+        {name: 'Customer', prop: '@', filter: this.customerName, default: '---'},
         {name: 'Order Date', prop: 'date_added', filter: 'ts2datetime'},
         {
             name: 'Payment method',
