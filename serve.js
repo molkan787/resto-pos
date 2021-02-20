@@ -17,7 +17,8 @@ async function run(){
 }
 
 function startVueServe(){
-    const otherArgs = []; //['--mode', 'production'];
+    const otherArgs = [];
+    // const otherArgs = ['--mode', 'production'];
     return new Promise(resolve => {
         console.log('Compiling Vue App...');
         spawnLiveOutput({
@@ -38,7 +39,7 @@ async function copyServerFiles(){
     console.log('Copying Server files...');
     const src = path('Server');
     const dest = path('electron', 'server');
-    await rimraf(dest);
+    // await rimraf(dest);
     await cp(src, dest);
 
     console.log('Watching Server files...');
