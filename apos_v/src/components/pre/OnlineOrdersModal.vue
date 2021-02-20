@@ -1,8 +1,8 @@
 <template>
     <Modal size="large" v-model="open" title="Recent online orders" :loading="loading" :dialog="dialog" >
         <div class="items-wrapper">
-            <RecentOrdersColumn @itemEditClick="itemEditClick" title="Delivery Orders" detailsHead="Customer" :orders="items.delivery"/>
-            <RecentOrdersColumn @itemEditClick="itemEditClick" title="Collection Orders" detailsHead="Customer" :orders="items.collection"/>
+            <RecentOrdersColumn buttonText="Open" @itemEditClick="itemEditClick" title="Delivery Orders" detailsHead="Customer" :orders="items.delivery"/>
+            <RecentOrdersColumn buttonText="Open" @itemEditClick="itemEditClick" title="Collection Orders" detailsHead="Customer" :orders="items.collection"/>
         </div>        
         <template v-slot:buttons>
             <button class="ui button" @click="cancel">CLOSE</button>

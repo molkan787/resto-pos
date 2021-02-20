@@ -16,7 +16,9 @@
                     <td style="color: red">{{ o.total | price }}</td>
                     <td style="white-space: pre-wrap">{{ o.details }}</td>
                     <td class="last">
-                        <sui-button @click="$emit('itemEditClick', o)" tiny>Edit</sui-button>
+                        <sui-button @click="$emit('itemEditClick', o)" tiny>
+                            {{ buttonText }}
+                        </sui-button>
                     </td>
                 </tr>
                 <tr v-if="orders.length == 0">
@@ -41,6 +43,10 @@ export default {
         orders: {
             type: Array,
             default: () => []
+        },
+        buttonText: {
+            type: String,
+            default: 'Edit'
         }
     }
 }
