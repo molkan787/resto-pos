@@ -15,7 +15,7 @@ const Product = require('../models/Product');
 const { generateOrderNumber } = require('../murew-core/utils/order');
 
 module.exports = async (req, res, next) => {
-    const {orderData, stats, payment, invoiceData, loyaltyCardId, actions, cards, taxes, skipStockAdjustement} = req.body;
+    const {orderData, skipStockAdjustement} = req.body;
     let { orderNo } = req.body;
     orderData.date_added = time.now();
 
