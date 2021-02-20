@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "master-server"
+		},
+		{
+			"path": "."
 		}
 	],
 	"settings": {},
