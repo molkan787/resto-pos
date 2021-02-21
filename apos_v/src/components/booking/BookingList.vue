@@ -40,6 +40,17 @@
                         <sui-table-cell>{{ item.owner.fullname | customerName }}</sui-table-cell>
 
                     </sui-table-row>
+
+                    <sui-table-row v-if="shownItems.length == 0">
+                        <sui-table-cell colspan="5" style="text-align: center">
+                            <template v-if="bookings.loading">
+                                Loading...
+                            </template>
+                            <template v-else>
+                                There is no bookings for {{ selectedDateText }}
+                            </template>
+                        </sui-table-cell>
+                    </sui-table-row>
                     
                 </sui-table-body>
 
@@ -74,6 +85,9 @@ export default {
                 return this.items;
             }
         },
+        selectedDateText(){
+            return new Date(this.bookings.filterDate || Utils.todaysDate('-')).toLocaleDateString();
+        }
     },
     data: () => ({
         customerName: '',
