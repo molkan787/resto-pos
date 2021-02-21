@@ -28,6 +28,7 @@ export default new Vuex.Store({
     products: {},
     productsByIds: {},
     productsArray: [],
+    offers: [],
 
     data: {
       orders: [],
@@ -42,6 +43,7 @@ export default new Vuex.Store({
       clients: {},
       prepaid: {},
       loyalty: {},
+      offers: {}
     },
 
     //=======================

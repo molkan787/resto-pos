@@ -166,6 +166,7 @@ export default class Comu {
                 state.products = Products.mapByCategory(data.products, true);
                 state.productsByIds = Products.mapById(data.products, false);
                 state.productsArray = data.products;
+                state.offers = data.offers;
                 state.stats = data.stats;
                 state.nextOrderId = data.orderPtr;
                 state.companies = Clients.prepareData(data.companies);

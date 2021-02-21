@@ -24,6 +24,10 @@
             <ProductsTab />
         </sui-tab-pane>
 
+        <sui-tab-pane title="Offers" icon="gift" v-if="userType < 4">
+            <OffersTab />
+        </sui-tab-pane>
+
         <sui-tab-pane title="Users" icon="user circle" v-if="userType <= 2">
             <UsersTab />
         </sui-tab-pane>
@@ -48,6 +52,7 @@ import LoyaltyCardTab from './LoyaltyCardTab.vue';
 import ClientsTab from './ClientsTab.vue';
 import ReportsTab from './ReportsTab.vue';
 import ProductsTab from './ProductsTab.vue';
+import OffersTab from './OffersTab.vue';
 import UsersTab from './UsersTab.vue';
 import SettingTab from './SettingTab.vue';
 import MurewSyncTab from './MurewSyncTab.vue';
@@ -61,6 +66,7 @@ import {mapGetters} from 'vuex';
         ClientsTab,
         ReportsTab,
         ProductsTab,
+        OffersTab,
         UsersTab,
         SettingTab,
         MurewSyncTab,

@@ -13,3 +13,12 @@ Object.patch = (obj, patch) => {
         }
     }
 }
+
+Object.copy = (obj, props) => {
+    const result = {};
+    for(let i = 0; i < props.length; i++){
+        const p = props[i];
+        result[p] = obj[p];
+    }
+    return result;
+}
