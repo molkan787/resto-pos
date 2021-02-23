@@ -1,16 +1,18 @@
 <template>
     <div class="ui form">
 
-        <div class="field">
-            <div class="two fields">
-                <div class="field">
-                    <label>Name</label>
-                    <input v-model="data.name" type="text" placeholder="Offer name">
-                </div>
-                <div class="field">
-                    <label>Expire date</label>
-                    <input v-model="data.expires" type="date">
-                </div>
+        <div class="fields">
+            <div class="six wide field">
+                <label>Name</label>
+                <input v-model.trim="data.name" type="text" placeholder="Offer name">
+            </div>
+            <div class="six wide field">
+                <label>Expire date</label>
+                <input v-model="expiresDate" type="date">
+            </div>
+            <div class="four wide field">
+                <label>Expire time</label>
+                <input v-model="expiresTime" type="time">
             </div>
         </div>
 
@@ -50,7 +52,7 @@
                 </div>
                 <div v-if="data.activated_by_promo_code" class="field">
                     <label>Promo code</label>
-                    <input v-model="data.promo_code" type="text" placeholder="------">
+                    <input v-model.trim="data.promo_code" type="text" placeholder="------">
                 </div>
             </div>
         </div>
@@ -69,7 +71,7 @@
 
         <template v-if="benefit.type == 'percent_discount'">
             <div class="field">
-                <label>Percent amount</label>
+                <label>Percent amount (%)</label>
                 <input v-model.number="benefit.percent_amount" type="number" min="0" max="100" placeholder="ex: 10" />
             </div>
         </template>
@@ -109,6 +111,7 @@
 <script>
 import Vue from 'vue';
 import { mapState } from 'vuex';
+import Utils from '@/utils';
 export default {
     props: {
         data: {
@@ -135,12 +138,44 @@ export default {
     watch: {
         'benefit.type'(currentType, previousType){
             this.switchBenefitData(currentType, previousType);
+        },
+        expiresDate(){
+            this.updateExpiresDatetime();
+        },
+        expiresTime(){
+            this.updateExpiresDatetime();
+        },
+        'data.expires': {
+            immediate: true,
+            handler(){
+                this.parseExpiresDatetime();
+            }
         }
     },
     data: () => ({
-        benefitDataCache: {}
+        benefitDataCache: {},
+        expiresDate: '',
+        expiresTime: ''
     }),
     methods: {
+        updateExpiresDatetime(){
+            if(this.expiresDate && this.expiresTime){
+                this.data.expires = new Date(`${this.expiresDate} ${this.expiresTime}`).toJSON();
+            }else{
+                this.data.expires = '';
+            }
+        },
+        parseExpiresDatetime(){
+            const { expires } = this.data;
+            const d = typeof expires == 'string' && expires.length ? new Date(expires) : null;
+            if(d){
+                this.expiresDate = Utils.getDateValueFromDate(d);
+                this.expiresTime = Utils.getTimeValueFromDate(d);
+            }else{
+                this.expiresDate = '';
+                this.expiresTime = '';
+            }
+        },
         getBenefitData(data, type){
             const b = data;
             if(type == 'percent_discount'){

@@ -37,7 +37,7 @@ export default class ClientsTab extends Vue{
     ];
 
     private controlls = [
-        {icon: 'plus', text: 'NEW', handler: () => this.addClient() }
+        {icon: 'plus', text: 'NEW', handler: () => this.addOffer() }
     ];
 
     private filtersSchema = [
@@ -45,9 +45,9 @@ export default class ClientsTab extends Vue{
         { name: 'promo_code', type: 'text', text: 'Promo code' }
     ];
 
-    editClick(client: any){
+    editClick(offer: any){
         // @ts-ignore
-        MxHelper.editClient(client);
+        MxHelper.editOffer({ data: offer, id: offer.id });
     }
 
     async deleteClick(offer: any){
@@ -56,8 +56,9 @@ export default class ClientsTab extends Vue{
         .then((e: any) => {
             if(e.answer){
                 e.loading();
-                DM.deleteClient({id}).then((result: boolean) =>  e.hide())
+                DM.deleteOffer(id).then(() =>  e.hide())
                 .catch(err => {
+                    console.error(err);
                     e.dialog.show('We could not complete the current action.');
                 });
             }else{
@@ -66,9 +67,9 @@ export default class ClientsTab extends Vue{
         });
     }
 
-    addClient(){
+    addOffer(){
         // @ts-ignore
-        MxHelper.editClient({id: 'new', forceNew: true});
+        MxHelper.editOffer();
     }
 
 }

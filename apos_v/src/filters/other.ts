@@ -24,7 +24,11 @@ export default {
     percent: (val: number) => {
         return (val + '').trim() + '%';
     },
-    capitalize: capitalize
+    capitalize: capitalize,
+    date(date: any){
+        const d = typeof date == 'string' && date.length ? new Date(date) : date;
+        return d instanceof Date ? d.toLocaleDateString() : date;
+    }
 }
 
 // extractRawNumber(val: string){

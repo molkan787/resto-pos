@@ -18,7 +18,7 @@ import MxHelper from '@/prs/MxHelper';
 import ModalDialog from '@/ccs/ModalDialog';
 import DM from '@/prs/dm';
 import OfferForm from './OfferForm.vue';
-import utils from '@/prs/utils';
+import { OfferGetType } from 'murew-core/dist/interfaces/Offer';
 
 @Component({
     components: {
@@ -39,21 +39,31 @@ export default class ClientModal extends Vue{
     private payload!: any;
     private callback!: Function;
 
-    private offerId!: any;
+    private offerId: number = 0;
     private forceNew: boolean = false;
     private formData: any = null;
 
-    save(){
-        // if(this.validateForm()){
-        //     this.loading = true;
-            
-        // }
+    async save(){
         console.log(this.formData)
+        if(this.validateForm()){
+            this.loading = true;
+            try {
+                this.prepareFormData();
+                console.log(this.formData)
+                await DM.editOffer(this.formData);
+                await this.dialog.show('Changes were successfully saved!');
+                this.cancel(true);
+            } catch (error) {
+                console.error(error);
+                this.dialog.show('An error occured, Please try again');
+            }
+            this.loading = false;
+        }
     }
 
-    cancel(){
+    cancel(callbackValue?: any){
         this.open = false;
-        if(this.callback) this.callback(false);
+        if(this.callback) this.callback(callbackValue || false);
         setTimeout(() => {
             this.formData = null;
         }, 500)
@@ -68,7 +78,8 @@ export default class ClientModal extends Vue{
 
     setFormData(data: any){
         if(data){
-            this.formData = Object.assign({}, data);
+            // @ts-ignore
+            this.formData = Object.clone(data);
             return;
         }
         this.formData = {
@@ -90,17 +101,50 @@ export default class ClientModal extends Vue{
             activated_by_promo_code: 0,
             promo_code: '',
         }
-        console.log(this.formData)
+    }
+
+    prepareFormData(){
+        ['available_on_delivery',
+        'available_on_pickup',
+        'available_on_website',
+        'available_on_pos',
+        'activated_by_promo_code']
+        .forEach(p => this.formData[p] = Number(this.formData[p]));
     }
     
     validateForm(){
-        const d = this.formData;
-        if(d.phone.length != 11 || d.first_name.length < 2){
-            this.dialog.show('Please enter a valid phone number and first name');
+        const { name, activated_by_promo_code, promo_code, benefits } = this.formData;
+        const benefit = benefits[0];
+        const benefitError = this.validateBenefitData(benefit);
+        if(name.length < 2){
+            this.dialog.show('Offer name must be at least 2 characters long');
+        }else if(activated_by_promo_code && promo_code.length < 2){
+            this.dialog.show('Promo code must be at least 2 characters long');
+        }else if(benefitError){
+            this.dialog.show(benefitError);
         }else{
             return true;
         }
+        
         return false;
+    }
+
+    validateBenefitData(benefit){
+        const { type, percent_amount, all_items, items, max_items, max_value } = benefit;
+        if(type == OfferGetType.PercentDiscount){
+            if(typeof percent_amount != 'number'){
+                return 'Please specify discount amount in percent';
+            }
+        }else if(type == OfferGetType.FreeItems){
+            if(!all_items && items.length == 0){
+                return 'Please add at least one item to the offer benefit';
+            }else if(typeof max_items != 'number'){
+                return 'Please specify the maximum number of items';
+            }else if(typeof max_value != 'number'){
+                return 'Please specify the maximum value of selected items';
+            }
+        }
+        return null;
     }
 
     dialogAnswer(){
@@ -115,10 +159,10 @@ export default class ClientModal extends Vue{
             this.loadOffer(payload || {});
             this.open = true;
         }));
-        setTimeout(() => {
-            this.loadOffer({});
-            this.open = true;
-        }, 500)
+        // setTimeout(() => {
+        //     this.loadOffer({});
+        //     this.open = true;
+        // }, 500)
     }
 
 }

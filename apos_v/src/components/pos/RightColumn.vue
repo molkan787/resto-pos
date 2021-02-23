@@ -7,6 +7,10 @@
             <Products v-if="!app.showProductsSearch" />
         </sui-segment>
 
+        <sui-segment attached class="mid-side">
+            <OfferSelection />
+        </sui-segment>
+
         <sui-segment attached class="bottom-side">
             <CoreControls />
             <Payments />
@@ -21,11 +25,6 @@
 // @ts-nocheck
 import Vue from 'vue';
 import { mapState } from 'vuex';
-import Comu from '@/prs/comu';
-import App from '@/app_service';
-import Printer from '@/drivers/printer';
-import Message from '@/ccs/Message';
-import MxHelper from '@/prs/MxHelper';
 import Component from 'vue-class-component';
 import TripleButton from '../Elts/TripleButton.vue';
 import CoreControls from './Controls/CoreControls.vue';
@@ -35,6 +34,7 @@ import PaymentMethods from './PaymentMethods/PaymentMethods.vue';
 import Products from './Products/Products.vue';
 import OrderTypeDetails from './OrderTypeDetails.vue';
 import ProductsSearch from './Products/ProductsSearch.vue';
+import OfferSelection from './Controls/OfferSelection';
 
 @Component({
     components: {
@@ -46,6 +46,7 @@ import ProductsSearch from './Products/ProductsSearch.vue';
         Products,
         OrderTypeDetails,
         ProductsSearch,
+        OfferSelection,
     },
     computed: mapState(['app'])
 })
@@ -63,9 +64,13 @@ export default class RightColumn extends Vue{
     z-index: 1;
 }
 $bot-side-height: 20.3rem;
+$mid-side-height: 3rem;
 .top-side{
-    height: calc(100% - #{$bot-side-height});
+    height: calc(100% - #{$bot-side-height + $mid-side-height});
     overflow: hidden;
+}
+.mid-side{
+    height: $mid-side-height;
 }
 .bottom-side{
     height: $bot-side-height;

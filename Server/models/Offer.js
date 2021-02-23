@@ -13,7 +13,7 @@ module.exports = class Offer extends Model{
             properties: {
                 id: {type: 'integer'},
                 name: {type: 'string'},
-                expires: {type: 'date'},
+                expires: {type: 'string'},
                 condition: {
                     type: 'object',
                     properties: {
@@ -25,7 +25,7 @@ module.exports = class Offer extends Model{
                 available_on_pickup: {type: 'integer'},
                 available_on_website: {type: 'integer'},
                 available_on_pos: {type: 'integer'},
-                benefits: {type: 'object'},
+                benefits: {type: 'array'},
                 activated_by_promo_code: {type: 'integer'},
                 promo_code: {type: 'string'},
             }

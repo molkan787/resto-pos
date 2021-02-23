@@ -61,6 +61,22 @@ export default class Utils {
             return this.dateToTimestamp(this.todaysDate());
     }
 
+    static getDateValueFromDate(date){
+        const _date = typeof date == 'string' ? new Date(date) : date;
+        const dd = String(_date.getDate()).padStart(2, '0');
+        const mm = String(_date.getMonth() + 1).padStart(2, '0'); //January is 0!
+        const yyyy = _date.getFullYear();
+        return `${yyyy}-${mm}-${dd}`;
+    }
+    
+    static getTimeValueFromDate(date){
+        const _date: Date = typeof date == 'string' ? new Date(date) : date;
+        const hh = String(_date.getHours()).padStart(2, '0');
+        const mm = String(_date.getMinutes()).padStart(2, '0'); //January is 0!
+        return `${hh}:${mm}`;
+    }
+
+
     static getFilenameExtension(filename: string){
         const parts = filename.split('.');
         return parts[parts.length - 1];

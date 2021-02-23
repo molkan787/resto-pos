@@ -5,6 +5,8 @@ import _url from '@/prs/api';
 import FormData from 'form-data';
 import ProductsFactory from './productsFactory';
 import Utils from '@/utils';
+import { Offer } from 'murew-core/dist/interfaces';
+import store from '@/store';
 
 export default class DM{
 
@@ -18,6 +20,30 @@ export default class DM{
         this.comu = comu;
         this.cache = context.state.data;
         window.dm = this;
+    }
+
+    
+    public static async editOffer(offer: Offer){
+        const { offers } = store.state;
+        if(offer.id){
+            await axios.put(_url(`offers/${offer.id}`), offer);
+            const local = offers.find(o => o.id == offer.id);
+            if(local){
+                Object.patch(local, offer);
+            }
+        }else{
+            const { data } = await axios.post(_url(`offers`), offer);
+            offers.push(data.offer);
+        }
+    }
+
+    public static async deleteOffer(offerId: string){
+        await axios.delete(_url(`offers/${offerId}`));
+        const { offers } = store.state;
+        const index = offers.findIndex(o => o.id == offerId);
+        if(index >= 0){
+            offers.splice(index, 1);
+        }
     }
 
     public static async loadOrder(orderId){

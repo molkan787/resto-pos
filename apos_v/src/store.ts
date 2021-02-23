@@ -2,13 +2,15 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import Comu from './prs/comu';
-import things from './prs/things';
 import Utils from './utils';
 import consts from './prs/consts';
+import { OfferUtils } from 'murew-core';
+import { Cart } from 'murew-core/dist/interfaces';
+import { OrderType } from 'murew-core/dist/types';
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   state: {
     demoMode: false,
     currentTime: '00:00',
@@ -82,6 +84,10 @@ export default new Vuex.Store({
         total: 0,
         paidCash: 0,
         changeDue: 0,
+      },
+      selectedOffer: null,
+      offerOptions: {
+        selectedItems: []
       },
       items: [],
       itemsCount: {},
@@ -180,6 +186,26 @@ export default new Vuex.Store({
     },
     pos: state => state.pos,
     userType: state => state.user.user_type,
+    murewCart: (state) => {
+      const { itemsCount, orderType, selectedOffer } = state.pos;
+      const products = {};
+      for(let pid of Object.keys(itemsCount)){
+        products[pid] = {
+          qty: itemsCount[pid],
+          note: '', extras: []
+        }
+      }
+      const cart: Cart = {
+        products,
+        orderType: orderType == 'delivery' ? OrderType.Delivery : OrderType.Collection,
+        delivery: 0,
+        selectedOffer: selectedOffer
+      };
+      return cart;
+    },
+    eligibleOffers: (state, getters) => {
+      return OfferUtils.getEligibleOffers(state.offers, getters.murewCart, state.pos.values.itemsTotal);
+    }
   },
   actions: {
     setup(context){
@@ -580,3 +606,20 @@ function setItemCount(context: any, itemId: number, amount: number, forceAmount:
   context.dispatch('updateValues');
   context.dispatch('setAreaAView', 'order');
 }
+
+export default store;
+
+store.watch(
+  state => state.pos.selectedOffer,
+  () => store.state.pos.offerOptions.selectedItems = []
+);
+
+store.watch(
+  (s, getters) => getters.eligibleOffers,
+  (offers) => {
+    const { selectedOffer } = store.state.pos;
+    if(selectedOffer && !offers.find(o => o.id == selectedOffer)){
+      store.state.pos.selectedOffer = null;
+    }
+  }
+);
