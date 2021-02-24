@@ -9,11 +9,11 @@
 
         <sui-button icon="pound" @click="discountClick(false)" >
             <br>Discount<br>
-            <span v-if="customDiscount > 0" class="positive-color">({{ customDiscount | price }})</span>
+            <span v-if="isCustomDiscount" class="positive-color">({{ customDiscount | price }})</span>
         </sui-button>
         <sui-button icon="percent" @click="discountClick(true)" >
             <br>Discount<br>
-            <span v-if="percentDiscount > 0" class="positive-color">({{ percentDiscount | percent }})</span>
+            <span v-if="percentDiscount > 0" class="positive-color">(- {{ percentDiscount | percent }})</span>
         </sui-button>
 
         <sui-button icon="plus square" @click="extraChargeClick">
@@ -42,15 +42,18 @@ import Message from '@/ccs/Message';
         ...mapState(['pos', 'extraChargeReason', 'discountReason']),
         kitchenMessage(){
             return this.pos.orderDetails.kitchenMessage;
+        },
+        customDiscount: state => state.pos.values.discount,
+        percentDiscount: state => state.pos.values.percentDiscount,
+        fullDiscount: state => state.pos.values.fullDiscount,
+        isCustomDiscount(){
+            return this.customDiscount < 0 && !this.fullDiscount && this.percentDiscount == 0;
         }
     },
     methods: mapActions(['setDiscount', 'setPercentDiscount', 'setExtraCharge', 'setTips'])
 })
 export default class Adjustment extends Vue{
-    private currentDiscount: any = '';
     private tipAmount: number = 0;
-    private customDiscount = 0;
-    private percentDiscount = 0;
 
     async kitchenMessageClick(){
         try {
@@ -98,45 +101,20 @@ export default class Adjustment extends Vue{
         MxHelper.getCustomValue({
             title: percent ? 'Percentage Discount (Food only)' : 'Custom Discount',
             reason: true,
-            value: percent ? 0 : this.customDiscount,
+            value: percent ? this.percentDiscount : (this.isCustomDiscount ? -this.customDiscount : 0),
             inputType: percent ? 'percent' : 'money',
         }).then((result: any) => {
-            this.customDiscount = percent ? 0 : result.value;
-            this.percentDiscount = percent ? result.value : 0;
-            this.putDiscount(percent ? 'percent' : 'custom', result.reason);
+            this.putDiscount(result.value, percent ? 'percent' : 'custom', result.reason);
         }).catch(() => {});
     }
 
-    putDiscount(discount: string, reason?: string){
-        const prevDiscount = this.currentDiscount;
-        const prevCustom = this.customDiscount;
-        if(this.currentDiscount == discount && discount != 'custom')
-            this.currentDiscount = '';
-        else
-            this.currentDiscount = discount;
-
-        if(this.currentDiscount == ''){
-            this.setDiscount(0);
-        }else if(this.currentDiscount == 'percent'){
-            this.setPercentDiscount({value: this.percentDiscount, reason, ctype: 1});
-        }else if(this.currentDiscount == 'full'){
-            MxHelper.getReason({title: 'Reason of full discount'}).then((reason: string) => {
-                this.setDiscount({value: this.currentDiscount, reason});
-            }).catch((error: any) => {
-                this.currentDiscount = prevDiscount;
-                this.customDiscount = prevCustom;
-            });
-        }else if(this.currentDiscount == 'custom'){
-            this.setDiscount({value: this.customDiscount, reason});
+    putDiscount(amount: number, type: string, reason?: string){
+        if(type == 'custom'){
+            this.setDiscount({ value: amount, reason });
+        }else if(type == 'percent'){
+            this.setPercentDiscount({value: amount, reason, ctype: 1});
         }else{
-            this.setDiscount(parseInt(this.currentDiscount));
-        }
-
-        if(discount == 'custom'){
-            if(this.customDiscount <= 0)
-                this.currentDiscount = '';
-        }else{
-            this.customDiscount = 0;
+            this.setDiscount({ value: 0, reason: '' });
         }
             
     }
@@ -157,15 +135,6 @@ export default class Adjustment extends Vue{
         }
     }
 
-    reset(){
-        this.currentDiscount = '';
-        this.customDiscount = 0;
-        this.percentDiscount = 0;
-    }
-
-    created(){
-        Comu.registerToReset(this);
-    }
 }
 </script>
 

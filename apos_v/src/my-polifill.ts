@@ -22,3 +22,11 @@ Object.copy = (obj, props) => {
     }
     return result;
 }
+
+declare global{
+    interface Object{
+        clone: <T>(obj: T) => T
+    }
+}
+
+export {};

@@ -1,10 +1,17 @@
 <template>
     <div class="m-el">
         <sui-segment attached class="items">
+
             <OrderItem v-for="item in pos.items" :key="item.id" :text="item.name"
              :amount="item.price" :count="pos.itemsCount[item.id]" :isFree="item.isFree"
              :product_id="item.id" @giftClick="giftClick(item)"/>
+
             <div v-if="pos.items.length == 0" class="empty-text">No items added</div>
+
+            <OrderItem v-for="item in offerItems" :key="'offer-' + item.pid" :text="item.name"
+             :amount="0" :count="1" :isFree="true" :immutable="true"
+             :product_id="item.pid"/>
+
         </sui-segment>
         <Totals class="totals" />
     </div>
@@ -13,7 +20,7 @@
 <script lang="ts">
 // @ts-nocheck
 import Vue from 'vue';
-import {mapState, mapActions} from 'vuex';
+import { mapState, mapActions, mapGetters } from 'vuex';
 import Component from 'vue-class-component';
 import OrderItem from './OrderItem.vue';
 import Totals from './Totals.vue';
@@ -26,7 +33,8 @@ import ProductsFactory from '@/prs/productsFactory.ts';
         Totals,
     },
     computed: {
-        ...mapState(['pos'])
+        ...mapState(['pos']),
+        ...mapGetters(['offerItems'])
     },
     methods: {
         ...mapActions(['loadData', 'setItemCount'])

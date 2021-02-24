@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="gift button" @click="$emit('giftClick')" :title="isFree ? 'Remove free item' : 'Make this item free'">
+        <div class="gift button" @click="$emit('giftClick')" :class="{ immutable }" :title="isFree ? 'Remove free item' : 'Make this item free'">
             <i class="gift icon" :class="{active: isFree}"></i>
         </div>
         <label class="item-name">{{ text }}</label>
@@ -8,9 +8,9 @@
         <span v-if="isFree">Free</span>
         <span v-else>{{ amount | price }}</span>
         <div class="count">
-            <sui-icon @click="minus" name="minus" />
+            <sui-icon @click="minus" name="minus" :class="{ immutable }" />
             <label>{{ count }}</label>
-            <sui-icon @click="plus" name="plus" />
+            <sui-icon @click="plus" name="plus" :class="{ immutable }" />
         </div>
     </div>
 </template>
@@ -32,6 +32,7 @@ export default class OrderItem extends Vue{
     @Prop({default: 0}) amount!: number;
     @Prop({default: 1}) count!: number;
     @Prop({default: false}) isFree!: boolean;
+    @Prop({default: false}) immutable!: boolean;
     @Prop({required: true}) product_id: number;
 
     minus(){
@@ -104,6 +105,12 @@ div.count{
             color: #21BA45;
         }
     }
+}
+.immutable{
+    pointer-events: none;
+}
+i.immutable{
+    opacity: 0 !important;
 }
 @media only screen and (max-width: 1135px){
     .item-name{

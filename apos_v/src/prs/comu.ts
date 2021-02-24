@@ -225,9 +225,11 @@ export default class Comu {
 
     static postOrder() {
         return new Promise((resolve, reject) => {
-            const state = this.context.state;
-            const { items, itemsCount, orderId } = state.pos;
+            const { state, getters } = this.context;
+            const { orderId } = state.pos;
+            const { items, itemsCount } = getters.allOrderItems;
             const total = Utils.preparePrice(state.pos.values.total);
+            
             const orderData = {
                 order_type: state.pos.orderType,
                 order_details: state.pos.orderDetails,
@@ -236,8 +238,8 @@ export default class Comu {
                 total,
                 totals: state.pos.values,
                 items: {
-                    products: state.pos.items,
-                    counts: state.pos.itemsCount
+                    products: items,
+                    counts: itemsCount
                 },
                 other_data: {
                     ticket: state.ticket,
@@ -301,7 +303,7 @@ export default class Comu {
             items.products.push({
                 id: _id,
                 name: p.name,
-                price: p.unit_price || p.price,
+                price: p.unit_price,
                 note: p.note,
                 product_type: 1,
                 date_modified: 0,
@@ -556,7 +558,7 @@ export default class Comu {
         console.log('Printing receipt');
         const state = _state || this.context.state;
         const order_id = state.nextOrderId - 1;
-        // axios.post(_url('setReceiptFlag'), {order_id}).catch(() => {});
+        const { items, itemsCount } = _state ? _state.pos : this.context.getters.allOrderItems;
         const receipt = {
             id: order_id,
             no: orderNo,
@@ -565,8 +567,8 @@ export default class Comu {
             date_added: state.lastOrderDate,
             cashier: state.user,
             client: state.client,
-            products: state.pos.items,
-            counts: state.pos.itemsCount,
+            products: items,
+            counts: itemsCount,
             totals: state.pos.values,
             pay_method: state.pos.pay_method,
             payment: state.payment,

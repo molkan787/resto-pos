@@ -5,7 +5,7 @@ import Comu from './prs/comu';
 import Utils from './utils';
 import consts from './prs/consts';
 import { OfferUtils } from 'murew-core';
-import { Cart } from 'murew-core/dist/interfaces';
+import { Cart, OfferGetType } from 'murew-core/dist/interfaces';
 import { OrderType } from 'murew-core/dist/types';
 
 Vue.use(Vuex);
@@ -205,6 +205,32 @@ const store = new Vuex.Store({
     },
     eligibleOffers: (state, getters) => {
       return OfferUtils.getEligibleOffers(state.offers, getters.murewCart, state.pos.values.itemsTotal);
+    },
+    offerItems: (state) => {
+      const { productsByIds, pos: { offerOptions: { selectedItems } } } = state;
+      return selectedItems.map(pid => ({
+        pid: pid,
+        name: productsByIds[pid].name + ' (Offer)',
+      }))
+    },
+    allOrderItems: (state, getters) => {
+      const { items: pos_items, itemsCount: pos_itemsCount, orderId } = state.pos;
+      const items = Object.clone(pos_items), itemsCount = Object.clone(pos_itemsCount);
+      const offerItems = getters.offerItems;
+      offerItems.forEach(({ pid }) => {
+          const p = Object.clone(state.productsByIds[pid]);
+          const opid = 200000 + parseInt(pid);
+          p.id = opid;
+          p.price = 0;
+          p.isFree = true;
+          p.name += ' (Offer)';
+          items.push(p);
+          itemsCount[opid] = 1;
+      });
+      return {
+        items,
+        itemsCount
+      }
     }
   },
   actions: {
@@ -609,9 +635,19 @@ function setItemCount(context: any, itemId: number, amount: number, forceAmount:
 
 export default store;
 
+const OFFER_DISCOUNT_REASON = '%%%offer%%%';
+
 store.watch(
   state => state.pos.selectedOffer,
-  () => store.state.pos.offerOptions.selectedItems = []
+  (offerId) => {
+    store.state.pos.offerOptions.selectedItems = [];
+    const offer = offerId ? store.getters.eligibleOffers.find(o => o.id == offerId) : null;
+    if(offer && offer.benefits[0].type == OfferGetType.PercentDiscount){
+      store.dispatch('setPercentDiscount', { value: offer.benefits[0].percent_amount, reason: OFFER_DISCOUNT_REASON })
+    }else if(store.state.pos.values.percentDiscount > 0 && store.state.discountReason == OFFER_DISCOUNT_REASON){
+      store.dispatch('setPercentDiscount', { value: 0, reason: '' });
+    }
+  }
 );
 
 store.watch(

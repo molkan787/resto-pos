@@ -7,6 +7,7 @@ import ProductsFactory from './productsFactory';
 import Utils from '@/utils';
 import { Offer } from 'murew-core/dist/interfaces';
 import store from '@/store';
+import { services } from '@/services';
 
 export default class DM{
 
@@ -35,6 +36,7 @@ export default class DM{
             const { data } = await axios.post(_url(`offers`), offer);
             offers.push(data.offer);
         }
+        services.onMenuChanged();
     }
 
     public static async deleteOffer(offerId: string){

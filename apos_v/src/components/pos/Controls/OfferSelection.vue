@@ -13,6 +13,8 @@
                 <label class="select-offer-label low-importance">Select free items</label>
                 <sui-dropdown
                     multiple
+                    search
+                    :max-selections="benefit.max_items"
                     :placeholder="`${freeItemsOptions.length} items available`"
                     :options="freeItemsOptions"
                     v-model="pos.offerOptions.selectedItems"
@@ -26,6 +28,7 @@
 </template>
 
 <script>
+import { OfferGetType } from 'murew-core/dist/interfaces';
 import { mapGetters, mapState } from 'vuex';
 export default {
     computed: {
@@ -40,10 +43,10 @@ export default {
             return this.benefit && this.benefit.type;
         },
         eligibleOffersOptions(){
-            return this.eligibleOffers.map(({ id, name }) => ({
+            return this.eligibleOffers.map(({ id, name, benefits }) => ({
                 key: id,
                 value: id,
-                text: name
+                text: name + (benefits[0].type == OfferGetType.PercentDiscount ? ` (-${benefits[0].percent_amount}%)` : '')
             }))
         },
         freeItemsOptions(){
