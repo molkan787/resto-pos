@@ -12,6 +12,10 @@ async function run(){
 
     console.log('Preparing index.html ...')
     await replaceInTextFile(path('electron', 'app', 'index.html'), new RegExp('=/', 'g'), '=./');
+    
+    console.log('Copying server files...')
+    rm.sync(path('electron', 'server'))
+    await copy(path('server'), path('electron', 'server'))
 
     console.log('Building Electron app...')
     await exec('cd electron && yarn build')

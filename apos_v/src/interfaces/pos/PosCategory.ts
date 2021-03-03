@@ -6,6 +6,7 @@ export interface PosCategory{
     icon?: string;
     ctype: PosCategoryContentType;
     date_modified: number;
+    sort_no: number;
 }
 
 export enum PosCategoryContentType{

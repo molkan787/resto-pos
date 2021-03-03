@@ -22,6 +22,7 @@ module.exports = class Category extends Model{
                 name: {type: 'string'},
                 icon: {type: 'string'},
                 ctype: {type: 'integer'},
+                sort_no: {type: 'integer'},
                 date_modified: {type: 'integer'},
             }
         };

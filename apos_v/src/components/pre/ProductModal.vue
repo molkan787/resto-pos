@@ -17,7 +17,11 @@
                     Stock Management &nbsp;&nbsp;&nbsp;
                     <sui-checkbox label="Enable on this product" v-model="p_stock_enabled"/>
                 </label>
-                <input v-if="p_stock_enabled" v-model="p_stock" type="number" min="0" placeholder="Stock (Quantity)" >
+                <input v-if="p_stock_enabled" v-model.number="p_stock" type="number" min="0" placeholder="Stock (Quantity)" >
+            </sui-form-field>
+            <sui-form-field>
+                <label>Sort No</label>
+                <input v-model.number="p_sort_no" type="number" >
             </sui-form-field>
         </sui-form>
 
@@ -59,6 +63,7 @@ export default class ProductModal extends Vue{
     private p_stock_enabled = false;
     private p_contains_allergens = false;
     private p_stock = 0;
+    private p_sort_no = 0;
 
     private options: any[] = [
         {value: '1', text: 'Fixed Price'},
@@ -80,7 +85,8 @@ export default class ProductModal extends Vue{
             price: this.p_price,
             stock: this.p_stock,
             stock_enabled: this.p_stock_enabled ? 1 : 0,
-            contains_allergens: this.p_contains_allergens ? 1 : 0
+            contains_allergens: this.p_contains_allergens ? 1 : 0,
+            sort_no: this.p_sort_no || 0
         }
         this.loading = true;
         DS.editProduct(data).then(() => {
@@ -112,6 +118,7 @@ export default class ProductModal extends Vue{
             this.p_stock_enabled = !!p.stock_enabled;
             this.p_contains_allergens = !!p.contains_allergens;
             this.p_stock = p.stock;
+            this.p_sort_no = p.sort_no;
 
             this.title = `Edit Product: ${p.name}`;
             this.open = true;
@@ -128,6 +135,7 @@ export default class ProductModal extends Vue{
         this.p_stock_enabled = false;
         this.p_contains_allergens = false;
         this.p_stock = 0;
+        this.p_sort_no = 0;
         this.open = true;
     }
 

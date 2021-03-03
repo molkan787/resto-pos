@@ -10,6 +10,7 @@ export interface MurewCategory{
     children: MurewCategory[];
     remote_id: number;
     store_id?: string;
+    sort_no: number;
 }
 
 export enum MurewCategoryContentType{

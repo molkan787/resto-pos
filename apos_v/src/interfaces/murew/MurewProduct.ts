@@ -9,4 +9,5 @@ export interface MurewProduct{
     contains_allergens: boolean;
     extras: any[];
     store_id?: string;
+    sort_no: number;
 }

@@ -9,7 +9,7 @@ async function run(){
     if(!flags['skip-vue']){
         await startVueServe();
     }
-    await copyServerFiles();
+    // await copyServerFiles();
     await sleep(500);
     await launchElectron();
     console.log('DONE!');
@@ -60,7 +60,7 @@ function launchElectron(){
     });
     let electron = spawnElectron();
     const toWatch = [
-        path('electron', 'server'),
+        path('electron', '../server'),
         path('electron', 'services'),
         path('electron', 'main.js'),
         path('electron', 'server.js'),
@@ -70,7 +70,7 @@ function launchElectron(){
     const restart = debounce(async () => {
         console.log('Restarting Electron...')
         electron.kill();
-        await sleep(500);
+        await sleep(1000);
         electron = spawnElectron();
     }, 1000);
 

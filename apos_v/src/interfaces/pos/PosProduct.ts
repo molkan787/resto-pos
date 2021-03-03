@@ -8,4 +8,5 @@ export interface PosProduct{
     product_type: number;
     contains_allergens: boolean;
     date_modified: number;
+    sort_no: number;
 }

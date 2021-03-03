@@ -1,6 +1,6 @@
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
--- Server version:               10.4.17-MariaDB - mariadb.org binary distribution
+-- Server version:               8.0.20 - MySQL Community Server - GPL
 -- Server OS:                    Win64
 -- HeidiSQL Version:             11.1.0.6175
 -- --------------------------------------------------------
@@ -12,239 +12,261 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- Dumping structure for table restopos_template.actions
+-- Dumping structure for table restopos.actions
 CREATE TABLE IF NOT EXISTS `actions` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `date_added` int(11) NOT NULL,
-  `reversed` int(11) NOT NULL DEFAULT 0,
-  `ax_associated` int(11) NOT NULL DEFAULT 0,
-  `ax_group` int(11) NOT NULL DEFAULT 0,
-  `ax_type` int(11) NOT NULL DEFAULT 0,
-  `ref1` int(11) NOT NULL DEFAULT 0,
-  `ref2` int(11) NOT NULL DEFAULT 0,
-  `ref3` int(11) NOT NULL DEFAULT 0,
-  `s1` int(11) NOT NULL DEFAULT 0,
-  `s2` int(11) NOT NULL DEFAULT 0,
-  `s3` int(11) NOT NULL DEFAULT 0,
-  `data` text DEFAULT NULL,
-  `__is_deleted` int(2) DEFAULT NULL,
-  `__deleted_time` int(11) DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `date_added` int NOT NULL,
+  `reversed` int NOT NULL DEFAULT '0',
+  `ax_associated` int NOT NULL DEFAULT '0',
+  `ax_group` int NOT NULL DEFAULT '0',
+  `ax_type` int NOT NULL DEFAULT '0',
+  `ref1` int NOT NULL DEFAULT '0',
+  `ref2` int NOT NULL DEFAULT '0',
+  `ref3` int NOT NULL DEFAULT '0',
+  `s1` int NOT NULL DEFAULT '0',
+  `s2` int NOT NULL DEFAULT '0',
+  `s3` int NOT NULL DEFAULT '0',
+  `data` text,
+  `__is_deleted` int DEFAULT NULL,
+  `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
--- Dumping structure for table restopos_template.categories
+-- Dumping structure for table restopos.categories
 CREATE TABLE IF NOT EXISTS `categories` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `parent_id` int(11) NOT NULL DEFAULT 0,
-  `childs_type` int(11) NOT NULL DEFAULT 0,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `parent_id` int NOT NULL DEFAULT '0',
+  `childs_type` int NOT NULL DEFAULT '0',
+  `sort_no` int NOT NULL DEFAULT '0',
   `name` varchar(100) NOT NULL,
   `icon` varchar(50) NOT NULL,
-  `ctype` int(11) NOT NULL,
-  `date_modified` int(11) DEFAULT 0,
-  `__is_deleted` int(2) DEFAULT NULL,
-  `__deleted_time` int(11) DEFAULT NULL,
+  `ctype` int NOT NULL,
+  `date_modified` int DEFAULT '0',
+  `__is_deleted` int DEFAULT NULL,
+  `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
--- Dumping structure for table restopos_template.clients
+-- Dumping structure for table restopos.clients
 CREATE TABLE IF NOT EXISTS `clients` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `is_company` int(11) NOT NULL DEFAULT 0,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `is_company` int NOT NULL DEFAULT '0',
   `phone` varchar(15) NOT NULL,
   `email` varchar(40) NOT NULL,
   `first_name` varchar(20) NOT NULL,
   `last_name` varchar(20) NOT NULL,
-  `want_receipt` int(11) NOT NULL DEFAULT 0,
-  `date_added` int(11) NOT NULL,
-  `__is_deleted` int(2) DEFAULT NULL,
-  `__deleted_time` int(11) DEFAULT NULL,
+  `want_receipt` int NOT NULL DEFAULT '0',
+  `date_added` int NOT NULL,
+  `__is_deleted` int DEFAULT NULL,
+  `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
--- Dumping structure for table restopos_template.invoices
+-- Dumping structure for table restopos.invoices
 CREATE TABLE IF NOT EXISTS `invoices` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `client_id` int(11) NOT NULL,
-  `amount` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
-  `is_paid` int(11) NOT NULL DEFAULT 0,
-  `date_added` int(11) NOT NULL,
-  `__is_deleted` int(2) DEFAULT NULL,
-  `__deleted_time` int(11) DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `client_id` int NOT NULL,
+  `amount` int NOT NULL,
+  `order_id` int NOT NULL,
+  `is_paid` int NOT NULL DEFAULT '0',
+  `date_added` int NOT NULL,
+  `__is_deleted` int DEFAULT NULL,
+  `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
--- Dumping structure for table restopos_template.loyalty_cards
+-- Dumping structure for table restopos.loyalty_cards
 CREATE TABLE IF NOT EXISTS `loyalty_cards` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `barcode` varchar(20) NOT NULL,
-  `client_id` int(11) NOT NULL,
-  `balance` int(11) NOT NULL DEFAULT 0,
-  `date_added` int(11) NOT NULL,
-  `date_modified` int(11) NOT NULL,
-  `__is_deleted` int(2) DEFAULT NULL,
-  `__deleted_time` int(11) DEFAULT NULL,
+  `client_id` int NOT NULL,
+  `balance` int NOT NULL DEFAULT '0',
+  `date_added` int NOT NULL,
+  `date_modified` int NOT NULL,
+  `__is_deleted` int DEFAULT NULL,
+  `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `barcode` (`barcode`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
--- Dumping structure for table restopos_template.orders
+-- Dumping structure for table restopos.offers
+CREATE TABLE IF NOT EXISTS `offers` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL DEFAULT '0',
+  `expires` varchar(30) DEFAULT NULL,
+  `condition` json NOT NULL,
+  `available_on_delivery` tinyint NOT NULL DEFAULT '0',
+  `available_on_pickup` tinyint NOT NULL DEFAULT '0',
+  `available_on_website` tinyint NOT NULL DEFAULT '0',
+  `available_on_pos` tinyint NOT NULL DEFAULT '0',
+  `benefits` json NOT NULL,
+  `activated_by_promo_code` tinyint NOT NULL DEFAULT '0',
+  `promo_code` varchar(50) NOT NULL DEFAULT '0',
+  `__is_deleted` int DEFAULT NULL,
+  `__deleted_time` int DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table restopos.orders
 CREATE TABLE IF NOT EXISTS `orders` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `no` varchar(50) NOT NULL,
-  `status` int(11) NOT NULL DEFAULT 1,
-  `user_id` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
+  `status` int NOT NULL DEFAULT '1',
+  `user_id` int NOT NULL,
+  `client_id` int NOT NULL,
   `order_type` varchar(50) NOT NULL,
   `order_details` varchar(300) NOT NULL,
-  `total` int(11) NOT NULL,
+  `total` int NOT NULL,
   `pay_method` varchar(20) NOT NULL,
   `totals` varchar(400) NOT NULL,
   `items` text NOT NULL,
   `other_data` varchar(1000) DEFAULT NULL,
-  `receipt` int(11) NOT NULL DEFAULT 0,
-  `date_added` int(11) NOT NULL,
-  `__is_deleted` int(2) DEFAULT NULL,
-  `__deleted_time` int(11) DEFAULT NULL,
+  `receipt` int NOT NULL DEFAULT '0',
+  `date_added` int NOT NULL,
+  `__is_deleted` int DEFAULT NULL,
+  `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
--- Dumping structure for table restopos_template.prepaid_cards
+-- Dumping structure for table restopos.prepaid_cards
 CREATE TABLE IF NOT EXISTS `prepaid_cards` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `card_type` int(11) NOT NULL DEFAULT 0,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `card_type` int NOT NULL DEFAULT '0',
   `barcode` varchar(20) NOT NULL,
-  `client_id` int(11) NOT NULL,
-  `balance` int(11) NOT NULL,
-  `date_added` int(11) NOT NULL,
-  `date_modified` int(11) NOT NULL,
-  `__is_deleted` int(2) DEFAULT NULL,
-  `__deleted_time` int(11) DEFAULT NULL,
+  `client_id` int NOT NULL,
+  `balance` int NOT NULL,
+  `date_added` int NOT NULL,
+  `date_modified` int NOT NULL,
+  `__is_deleted` int DEFAULT NULL,
+  `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `barcode` (`barcode`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
--- Dumping structure for table restopos_template.products
+-- Dumping structure for table restopos.products
 CREATE TABLE IF NOT EXISTS `products` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `category_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `category_id` int NOT NULL,
+  `sort_no` int NOT NULL DEFAULT '0',
   `name` varchar(100) NOT NULL,
-  `price` int(11) NOT NULL,
-  `stock_enabled` int(10) NOT NULL DEFAULT 0,
-  `stock` int(10) NOT NULL DEFAULT -1,
-  `can_exclude_taxes` int(11) NOT NULL DEFAULT 0,
-  `product_type` int(11) NOT NULL,
-  `contains_allergens` int(10) NOT NULL DEFAULT 0,
-  `date_modified` int(11) NOT NULL DEFAULT 0,
-  `__is_deleted` int(2) DEFAULT NULL,
-  `__deleted_time` int(11) DEFAULT NULL,
+  `price` int NOT NULL,
+  `stock_enabled` int NOT NULL DEFAULT '0',
+  `stock` int NOT NULL DEFAULT '-1',
+  `can_exclude_taxes` int NOT NULL DEFAULT '0',
+  `product_type` int NOT NULL,
+  `contains_allergens` int NOT NULL DEFAULT '0',
+  `date_modified` int NOT NULL DEFAULT '0',
+  `__is_deleted` int DEFAULT NULL,
+  `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `category_id` (`category_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
--- Dumping structure for table restopos_template.settings
+-- Dumping structure for table restopos.settings
 CREATE TABLE IF NOT EXISTS `settings` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(30) NOT NULL,
   `value` varchar(255) NOT NULL,
   `data_type` varchar(10) NOT NULL DEFAULT 'string',
-  `modified_by_user_id` int(11) NOT NULL,
+  `modified_by_user_id` int NOT NULL,
   `modified_by_username` varchar(50) NOT NULL,
-  `date_modified` int(11) NOT NULL,
-  `__is_deleted` int(2) DEFAULT NULL,
-  `__deleted_time` int(11) DEFAULT NULL,
+  `date_modified` int NOT NULL,
+  `__is_deleted` int DEFAULT NULL,
+  `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
--- Dumping structure for table restopos_template.stats
+-- Dumping structure for table restopos.stats
 CREATE TABLE IF NOT EXISTS `stats` (
-  `day` int(11) NOT NULL,
-  `date_added` int(11) NOT NULL,
-  `cw` int(11) NOT NULL DEFAULT 0,
-  `pp` int(11) NOT NULL DEFAULT 0,
-  `rpp` int(11) NOT NULL DEFAULT 0,
-  `dt` int(11) NOT NULL DEFAULT 0,
-  `cs` int(11) DEFAULT 0,
-  `cc` int(11) DEFAULT 0,
-  `cxc` int(11) DEFAULT 0,
-  `cxv` int(11) DEFAULT 0,
-  `__is_deleted` int(2) DEFAULT NULL,
-  `__deleted_time` int(11) DEFAULT NULL,
+  `day` int NOT NULL,
+  `date_added` int NOT NULL,
+  `cw` int NOT NULL DEFAULT '0',
+  `pp` int NOT NULL DEFAULT '0',
+  `rpp` int NOT NULL DEFAULT '0',
+  `dt` int NOT NULL DEFAULT '0',
+  `cs` int DEFAULT '0',
+  `cc` int DEFAULT '0',
+  `cxc` int DEFAULT '0',
+  `cxv` int DEFAULT '0',
+  `__is_deleted` int DEFAULT NULL,
+  `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`day`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
--- Dumping structure for table restopos_template.transactions
+-- Dumping structure for table restopos.transactions
 CREATE TABLE IF NOT EXISTS `transactions` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `order_id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `order_id` int NOT NULL,
   `xtype` varchar(50) NOT NULL,
-  `xamount` int(11) NOT NULL,
-  `ref_code` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
-  `date_added` int(11) NOT NULL,
-  `__is_deleted` int(2) DEFAULT NULL,
-  `__deleted_time` int(11) DEFAULT NULL,
+  `xamount` int NOT NULL,
+  `ref_code` int NOT NULL,
+  `client_id` int NOT NULL,
+  `date_added` int NOT NULL,
+  `__is_deleted` int DEFAULT NULL,
+  `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
--- Dumping structure for table restopos_template.users
+-- Dumping structure for table restopos.users
 CREATE TABLE IF NOT EXISTS `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_type` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_type` int NOT NULL,
   `username` varchar(40) NOT NULL,
   `password` varchar(40) NOT NULL,
   `first_name` varchar(20) NOT NULL,
   `last_name` varchar(20) NOT NULL,
-  `date_added` int(11) NOT NULL,
-  `is_active` int(11) NOT NULL DEFAULT 1,
-  `__is_deleted` int(2) DEFAULT NULL,
-  `__deleted_time` int(11) DEFAULT NULL,
+  `date_added` int NOT NULL,
+  `is_active` int NOT NULL DEFAULT '1',
+  `__is_deleted` int DEFAULT NULL,
+  `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
--- Dumping structure for table restopos_template.user_tokens
+-- Dumping structure for table restopos.user_tokens
 CREATE TABLE IF NOT EXISTS `user_tokens` (
-  `user_id` int(11) NOT NULL,
+  `user_id` int NOT NULL,
   `token` varchar(30) NOT NULL,
-  `date_added` int(11) NOT NULL,
-  `is_active` int(11) NOT NULL DEFAULT 0,
-  `__is_deleted` int(2) DEFAULT NULL,
-  `__deleted_time` int(11) DEFAULT NULL,
+  `date_added` int NOT NULL,
+  `is_active` int NOT NULL DEFAULT '0',
+  `__is_deleted` int DEFAULT NULL,
+  `__deleted_time` int DEFAULT NULL,
   UNIQUE KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
--- Dumping structure for table restopos_template.__sqlsyncer_tables
+-- Dumping structure for table restopos.__sqlsyncer_tables
 CREATE TABLE IF NOT EXISTS `__sqlsyncer_tables` (
   `name` varchar(255) DEFAULT NULL,
-  `last_id` int(11) DEFAULT NULL,
-  `last_update_time` int(11) DEFAULT NULL,
+  `last_id` int DEFAULT NULL,
+  `last_update_time` int DEFAULT NULL,
   UNIQUE KEY `__sqlsyncer_tables_name_unique` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

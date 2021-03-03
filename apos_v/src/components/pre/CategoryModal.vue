@@ -9,6 +9,10 @@
                 <label>{{ inputName }}</label>
                 <input v-model="categoryName" :placeholder="inputName" >
             </sui-form-field>
+            <sui-form-field>
+                <label>Sort No</label>
+                <input v-model.number="sort_no" type="number" >
+            </sui-form-field>
         </sui-form>
 
         <template v-slot:buttons>
@@ -26,7 +30,6 @@ import Switcher from './Switcher.vue';
 import Component from 'vue-class-component';
 import MxHelper from '@/prs/MxHelper';
 import DS from '@/prs/ds';
-import { mapState } from 'vuex';
 import ModalDialog from '@/ccs/ModalDialog';
 
 @Component({
@@ -57,6 +60,8 @@ export default class CategoryModal extends Vue{
     private parentCategory: any = null;
     private categoryName: string = '';
     private ctype: number = 1;
+    private sort_no: number = 1;
+    private parent_id: number = 0;
 
 
     private saveClick(){
@@ -70,8 +75,9 @@ export default class CategoryModal extends Vue{
             id: this.category ? this.category.id : 'new',
             name: this.categoryName,
             childs_type: 0,
-            parent_id: this.parentCategory ? this.parentCategory.id : 0,
+            parent_id: this.parentCategory ? this.parentCategory.id : this.parent_id,
             ctype: this.ctype,
+            sort_no: this.sort_no || 0
         };
         this.loading = true;
         DS.editCategory(data).then(() => {
@@ -103,11 +109,15 @@ export default class CategoryModal extends Vue{
             this.categoryName = current.name;
             this.ctype = current.ctype;
             this.parentCategory = null;
+            this.sort_no = current.sort_no;
+            this.parent_id = current.parent_id;
         }else{
             this.category = null;
             this.parentCategory = parent;
             this.categoryName = '';
             this.ctype = 1;
+            this.sort_no = 0;
+            this.parent_id = 0;
         }
     }
 

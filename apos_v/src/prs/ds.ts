@@ -71,6 +71,7 @@ export default class DS{
             p.stock_enabled = data.stock_enabled;
             p.stock = data.stock;
             p.price = utils.mapPrice(data.price);
+            p.sort_no = data.sort_no;
         }
     }
 
@@ -127,6 +128,7 @@ export default class DS{
             const cat = state.categoriesByIds[srcId];
             cat.ctype = data.ctype;
             cat.name = data.name;
+            cat.sort_no = data.sort_no;
         }
         services.onMenuChanged();
         return true;

@@ -11,7 +11,8 @@ export function mapPosProductsToMurewProducts(products: PosProduct[], mapPrices:
             enable_stock: !!product.stock_enabled,
             stock: product.stock,
             contains_allergens: product.contains_allergens,
-            extras: []
+            extras: [],
+            sort_no: product.sort_no
         }
         result.push(mProduct);
     }

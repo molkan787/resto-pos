@@ -12,7 +12,7 @@ global.TempDir = path.join(app.getPath('temp'), 'resto-pos')
 const DownloadManager = require("electron-download-manager")
 const server = require('./server');
 const services = require('./services');
-const backendServer = require('./server/index');
+const backendServer = require(DEV ? '../server/index' : './server/index');
 const updater = require('./services/updater');
 
 const port = DEV ? 8080 : 8083;

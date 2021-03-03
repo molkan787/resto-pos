@@ -8,8 +8,8 @@ const Offer = require('../models/Offer');
 
 module.exports = async (req, res, next) => {
     try {
-        const categories = await Category.query();
-        const products = await Product.query();
+        const categories = await Category.query().orderBy('sort_no', 'DESC');
+        const products = await Product.query().orderBy('sort_no', 'DESC');
         const offers = await Offer.query();
         const companies = await Client.query().where({is_company: 1});
         const settings = await Settings.getValues();

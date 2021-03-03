@@ -12,6 +12,7 @@ export function mapPosCategoriesToMurewCategories(categories: PosCategory[]): Mu
             products: [],
             children: [],
             remote_id: category.id,
+            sort_no: category.sort_no
         }
         result.push(mCategory);
     }
