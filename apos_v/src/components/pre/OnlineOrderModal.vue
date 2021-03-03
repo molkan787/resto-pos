@@ -5,7 +5,7 @@
 
             <sui-segment>
                 <div class="ui form">
-                    <h4>Products</h4>
+                    <h4 class="low-importance">Products</h4>
                     <sui-table celled striped>
                         <sui-table-header>
                             <sui-table-row>
@@ -49,7 +49,7 @@
 
             <sui-segment>
                 <div class="ui form">
-                    <h4>Customer</h4>
+                    <h4 class="low-importance">Customer</h4>
                     <div class="inline fields">
                         <div class="eight wide field">
                             <sui-input v-model="order.owner.fullname" placeholder="Fullname" icon="user" readonly/>
@@ -58,9 +58,9 @@
                             <sui-input v-model="order.owner.email" placeholder="Email" icon="at" readonly/>
                         </div>
                     </div>
-                    <h4>Order type: {{ order.type | capitalize }}</h4>
+                    <h4><span class="low-importance">Order type:</span> {{ order.type | capitalize }}</h4>
                     <template v-if="order.type == OrderType.Delivery">
-                        <h4>Delivery Address</h4>
+                        <h4 class="low-importance">Delivery Address</h4>
                         <div class="inline fields">
                             <div class="eight wide field">
                                 <sui-input v-model="delAddr.line1" placeholder="Line 1" readonly/>
@@ -77,6 +77,11 @@
                                 <sui-input v-model="delAddr.city" placeholder="City" readonly/>
                             </div>
                         </div>
+                    </template>
+                    <template v-if="preorder">
+                        <h4 class="low-importance">Preorder</h4>
+                        <h5 style="margin: 0.5rem 0"><span class="low-importance">Date:</span> {{ preorderDate }}</h5>
+                        <h5 style="margin: 0.5rem 0"><span class="low-importance">Time:</span> {{ preorderTime }}</h5>
                     </template>
                 </div>
             </sui-segment>
@@ -135,7 +140,16 @@ export default {
         },
         delAddr(){
             return this.order.delivery_address || {};
-        }
+        },
+        preorder(){
+            return this.order.preorder;
+        },
+        preorderDate(){
+            return new Date(this.preorder.date).toLocaleDateString();
+        },
+        preorderTime(){
+            return this.preorder.time.split(':').slice(0, 2).join(':');
+        },
     },
     methods: {
         close(){
@@ -158,7 +172,6 @@ export default {
             const { id, status } = data;
             if(id == this.order.id){
                 const order = this.order;
-                // this.order = { owner: {} };
                 if(status == 'accepted'){
                     try {
                         this.submitOrder(order);
