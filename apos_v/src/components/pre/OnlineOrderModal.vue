@@ -90,7 +90,7 @@
 
         <template v-slot:buttons>
             <button class="ui button" @click="close" style="float: left">CLOSE</button>
-            <button :loading="loading == 'decline'" :disabled="loading" class="ui button" @click="decline">DECLINE</button>
+            <sui-button :loading="loading == 'decline'" :disabled="!!loading" class="ui button" @click="decline">DECLINE</sui-button>
             <div class="accept-settings">
                 <sui-dropdown
                     placeholder="Ready time"
@@ -99,7 +99,7 @@
                     v-model="readyTime"
                 />
             </div>
-            <button :loading="loading == 'accept'" :disabled="loading" class="ui green button" @click="accept">ACCEPT</button>
+            <sui-button :loading="loading == 'accept'" :disabled="!!loading" class="ui green button" @click="accept">ACCEPT</sui-button>
         </template>
     </Modal>
 </template>
