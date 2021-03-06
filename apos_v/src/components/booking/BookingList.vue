@@ -25,6 +25,7 @@
                         <sui-table-header-cell>Time</sui-table-header-cell>
                         <sui-table-header-cell style="white-space: nowrap;">Number of persons</sui-table-header-cell>
                         <sui-table-header-cell>Status</sui-table-header-cell>
+                        <sui-table-header-cell>Category</sui-table-header-cell>
                         <sui-table-header-cell>Customer</sui-table-header-cell>
                     </sui-table-row>
                 </sui-table-header>
@@ -37,6 +38,7 @@
                         <sui-table-cell>{{ item.time | timeText }}</sui-table-cell>
                         <sui-table-cell collapsing>{{ item.number_of_persons }}</sui-table-cell>
                         <sui-table-cell>{{ item.status | capitalize }}</sui-table-cell>
+                        <sui-table-cell>{{ item.category | capitalize }}</sui-table-cell>
                         <sui-table-cell>{{ item.owner.fullname | customerName }}</sui-table-cell>
 
                     </sui-table-row>
