@@ -19,8 +19,8 @@ module.exports = class Changes {
         this.db1 = db1;
         this.db2 = db2;
 
-        this.metadata1 = new MetaData(db1);
-        this.metadata2 = new MetaData(db2);
+        this.metadata1 = new MetaData(db1, options);
+        this.metadata2 = new MetaData(db2, options);
     }
 
     async init(){

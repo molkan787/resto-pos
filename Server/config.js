@@ -18,4 +18,8 @@ module.exports = class Config{
         };
     }
 
+    static get dbSyncSkipTables(){
+        return ['invoices', 'loyalty_cards', 'prepaid_cards', 'stats', 'transactions', 'user_tokens', 'booking_slots'];
+    }
+
 }

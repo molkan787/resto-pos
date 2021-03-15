@@ -8,6 +8,8 @@ import Utils from '@/utils';
 import { Offer } from 'murew-core/dist/interfaces';
 import store from '@/store';
 import { services } from '@/services';
+import { PosBooking } from '@/interfaces/pos/PosBooking';
+import { mapBookingSlotsObjectToArray } from './helpers';
 
 export default class DM{
 
@@ -23,6 +25,41 @@ export default class DM{
         window.dm = this;
     }
 
+    public static async getBookedSlots(month: string){
+        const { data } = await axios.get(_url(`booked_slots?month=${month}`));
+        const ppt = this.context.state.persons_per_table || 4;
+        for(let timeSlots of Object.values(data)){
+            for(let [time, bookings] of Object.entries(timeSlots)){
+                timeSlots[time] = bookings.reduce((t, ps) => t + Math.ceil(ps / ppt), 0);
+            }
+        }
+        return data;
+    }
+
+    public static async setBookingSlots(slotsMap: any){
+        const slots = mapBookingSlotsObjectToArray(slotsMap);
+        await axios.put(_url('booking_slots'), { booking_slots: slots });
+        this.context.state.bookingSlots = Object.clone(slotsMap);
+        services.instances.bookingsService.syncBookingSlots();
+    }
+
+    public static async createBooking(bookingData: any){
+        const { data } = await axios.post(_url('bookings'), bookingData);
+        try {
+            services.instances.bookingsService.syncBookings();
+        } catch (error) {
+            console.error(error);
+        }
+        return data;
+    }
+
+    public static syncBookings(bookings: any[]){
+        return axios.put(_url('bookings/sync'), { bookings });
+    }
+
+    public static updateBooking(id: number, data: Partial<PosBooking>){
+        return axios.put(_url(`bookings/${id}`), data);
+    }
     
     public static async editOffer(offer: Offer){
         const { offers } = store.state;

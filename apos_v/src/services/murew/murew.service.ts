@@ -121,9 +121,9 @@ export class MurewService extends Service{
     }
 
     private onMessage(message: MessageEvent){
-        this.log('Received message:', message.data);
         try {
             const data = JSON.parse(message.data);
+            this.log('Received message:', data);
             if(!this.handleAction(data)){
                 this.emit('message', message);
             }

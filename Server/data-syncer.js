@@ -1,3 +1,4 @@
+const Config = require('./config');
 const SqlDbSyncer = require('./sqldb-syncer');
 const { sleep } = require('./sqldb-syncer/utils');
 
@@ -10,7 +11,7 @@ module.exports = class DataSyncer{
             localDB,
             remoteDB
         ], {
-            skipTables: ['invoices', 'loyalty_cards', 'prepaid_cards', 'stats', 'transactions', 'user_tokens'],
+            skipTables: Config.dbSyncSkipTables,
             updatedColumnPerTable: {
                 actions: 'date_added',
                 categories: 'date_modified',

@@ -1,5 +1,5 @@
 <template>
-    <Modal v-model="open" :title="title" :loading="mr._loading" @dialogAnswer="open = false" :dialog="dialog">
+    <Modal v-model="open" :title="title" :loading="mr._loading" @dialogAnswer="open = false" :dialog="dialog" :highLayer="true">
         <h3 class="content-area">{{text}}</h3>
         <template v-slot:buttons>
             <template v-if="type == 2">

@@ -5,8 +5,9 @@ import filters from './filters/';
 // @ts-ignore
 import SuiVue from 'semantic-ui-vue';
 import PortalVue from 'portal-vue';
-import Datetime from 'vue-datetime'
-import Toastr from 'vue-semantic-ui-toastr'
+import Datetime from 'vue-datetime';
+import Toastr from 'vue-semantic-ui-toastr';
+import Datepicker from 'vuejs-datepicker';
 import App from './App.vue';
 import router from './router';
 import store from './store';
@@ -24,12 +25,13 @@ Vue.use(PortalVue);
 Vue.use(Datetime);
 Vue.use(filters);
 
+Vue.component('Datepicker', Datepicker);
 Vue.use(Toastr, {
   duration: 3000,
   container: '.toastr-container',
   autoshow: true,
   html: false,
-  position: 'bottom left',
+  position: 'top center',
   type: 'success',
 })
 

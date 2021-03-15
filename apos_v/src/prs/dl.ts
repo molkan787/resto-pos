@@ -1,6 +1,7 @@
 import axios from 'axios';
 import _url from './api';
 import utils from '@/utils';
+import qs from 'query-string';
 
 export default class Dl{
 
@@ -32,6 +33,16 @@ export default class Dl{
 
     static getUsers(filters?: any){
         return this.getData('users', filters, 'users');
+    }
+
+    static async getBookings(params?: any): Promise<any[]>{
+        let request = 'bookings';
+        if(params){
+            const query = qs.stringify(params);
+            if(query) request += '?' + query;
+        }
+        const { data } = await axios.get(_url(request));
+        return data;
     }
 
     // -----------------------------

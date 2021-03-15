@@ -25,6 +25,13 @@ export default {
         return (val + '').trim() + '%';
     },
     capitalize: capitalize,
+    capitalizeAll: (val: string) => {
+        if(typeof val == 'string'){
+            return val.split(' ').map(w => capitalize(w)).join(' ');
+        }else{
+            return val;
+        }
+    },
     date(date: any){
         const d = typeof date == 'string' && date.length ? new Date(date) : date;
         return d instanceof Date ? d.toLocaleDateString() : date;

@@ -20,7 +20,7 @@ module.exports = class MetaData{
         this.tables = [];
         this.isNewSetup = false;
         this.database.on('start', (builder) => {
-            if(builder._method == 'select' && builder._single && builder._single.table != METADATA_TABLE && !this.isMyQuery(builder)){
+            if(builder._method == 'select' && builder._single && builder._single.table != METADATA_TABLE && !options.skipTables.includes(builder._single.table) && !this.isMyQuery(builder)){
                 builder.whereNull(IS_DELETED_COLUMN);
             }
             if(builder._method == 'update')

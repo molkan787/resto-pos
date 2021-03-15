@@ -5,6 +5,7 @@ const Client = require('../models/Client');
 const Settings = require('../models/Settings');
 const Order = require('../models/Order');
 const Offer = require('../models/Offer');
+const BookingSlot = require('../models/BookingSlot');
 
 module.exports = async (req, res, next) => {
     try {
@@ -14,6 +15,7 @@ module.exports = async (req, res, next) => {
         const companies = await Client.query().where({is_company: 1});
         const settings = await Settings.getValues();
         const orderPtr = await Order.getPtr();
+        const bookingSlots = await BookingSlot.query();
         res.send({
             categories,
             products: products,
@@ -22,6 +24,7 @@ module.exports = async (req, res, next) => {
             companies,
             settings,
             orderPtr,
+            bookingSlots
         });
         next();
     } catch (error) {

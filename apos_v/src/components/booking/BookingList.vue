@@ -4,7 +4,7 @@
             <div class="ui form">
                 <div class="field">
                     <label>Date</label>
-                    <sui-input v-model="bookings.filterDate" type="date" :loading="bookings.loading" :disabled="bookings.loading" />
+                    <sui-input v-model="filterDate" type="date" :loading="loading" :disabled="loading" />
                 </div>
             </div>
             <div class="ui form">
@@ -21,30 +21,41 @@
             <sui-table celled striped size="large">
                 <sui-table-header>
                     <sui-table-row>
+                        <sui-table-header-cell>NO</sui-table-header-cell>
                         <sui-table-header-cell>Date</sui-table-header-cell>
                         <sui-table-header-cell>Time</sui-table-header-cell>
                         <sui-table-header-cell style="white-space: nowrap;">Number of persons</sui-table-header-cell>
                         <sui-table-header-cell>Status</sui-table-header-cell>
                         <sui-table-header-cell>Category</sui-table-header-cell>
                         <sui-table-header-cell>Customer</sui-table-header-cell>
+                        <sui-table-header-cell>Phone</sui-table-header-cell>
+                        <sui-table-header-cell> </sui-table-header-cell>
                     </sui-table-row>
                 </sui-table-header>
 
                 <sui-table-body>
 
-                    <sui-table-row v-for="(item, index) in shownItems" :key="item.id + index">
+                    <sui-table-row v-for="(item) in shownItems" :key="item.no">
 
+                        <sui-table-cell>{{ item.no }}</sui-table-cell>
                         <sui-table-cell>{{ item.date | localDate }}</sui-table-cell>
                         <sui-table-cell>{{ item.time | timeText }}</sui-table-cell>
                         <sui-table-cell collapsing>{{ item.number_of_persons }}</sui-table-cell>
                         <sui-table-cell>{{ item.status | capitalize }}</sui-table-cell>
                         <sui-table-cell>{{ item.category | capitalize }}</sui-table-cell>
-                        <sui-table-cell>{{ item.owner.fullname | customerName }}</sui-table-cell>
+                        <sui-table-cell>{{ item.customer_name | capitalizeAll }}</sui-table-cell>
+                        <sui-table-cell>{{ item.customer_phone }}</sui-table-cell>
+                        <sui-table-cell>
+                            <sui-button @click="cancelClick(item)" v-if="item.status != 'canceled'" size="tiny">
+                                <sui-icon name="ban" />
+                                Cancel
+                            </sui-button>
+                        </sui-table-cell>
 
                     </sui-table-row>
 
                     <sui-table-row v-if="shownItems.length == 0">
-                        <sui-table-cell colspan="5" style="text-align: center">
+                        <sui-table-cell colspan="6" style="text-align: center">
                             <template v-if="bookings.loading">
                                 Loading...
                             </template>
@@ -62,38 +73,72 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import Vue from 'vue';
 import Utils from '@/utils';
+import Dl from '@/prs/dl';
+import Message from '@/ccs/Message';
+import DM from '@/prs/dm';
 export default {
     computed: {
-        ...mapState(['bookings']),
-        items(){
-            const today = Utils.todaysDate('-');
-            const fd = this.bookings.filterDate;
-            return fd && fd != today ? this.bookings.other : this.bookings.todays;
-        },
         shownItems(){
             const s = this.customerName;
             if(s){
                 const names = s.toLowerCase().split(' ').map(n => n.trim());
                 const s1 = names.join(' ');
                 const s2 = names.reverse().join(' ');
-                return this.items.filter(i => {
-                    const n = i.owner.fullname.toLowerCase();
+                return this.bookings.filter(i => {
+                    const n = (i.customer_name || '').trim().toLowerCase();
                     return n.includes(s1) || n.includes(s2)
                 });
             }else{
-                return this.items;
+                return this.bookings;
             }
         },
         selectedDateText(){
-            return new Date(this.bookings.filterDate || Utils.todaysDate('-')).toLocaleDateString();
+            return this.filterDate || Utils.todaysDate('-');
+        }
+    },
+    watch: {
+        selectedDateText(){
+            this.loadBookings();
         }
     },
     data: () => ({
         customerName: '',
+        filterDate: '',
+        loading: false,
+        bookings: [],
     }),
+    methods: {
+        async loadBookings(){
+            this.loading = true;
+            try {
+                this.bookings = await Dl.getBookings({
+                    date: this.selectedDateText
+                });
+            } catch (error) {
+                console.error(error);
+            }
+            this.loading = false;
+        },
+        async cancelClick(booking){
+            const mr = await Message.ask(`Cancel bookings # ${booking.no} ?`, 'Cancel Booking');
+            if(mr.answer){
+                mr.loading();
+                try {
+                    await DM.updateBooking(booking.id, { status: 'canceled' });
+                    booking.status = 'canceled';
+                    mr.hide();
+                } catch (error) {
+                    console.error(error);
+                    mr.hide();
+                    Message.info('An error occured, Please try again', 'Error').then(r => r.hide());
+                }
+            }else{
+                mr.hide();
+            }
+        }
+    },
     filters: {
         timeText(time){
             return time.split(':').slice(0, 2).join(':');

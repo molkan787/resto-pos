@@ -33,6 +33,9 @@ const pos = require('./pos');
 const dailyStats = require('./dailyStats');
 const stocks = require('./stocks');
 const { createOffer, updateOffer, deleteOffer } = require('./offers');
+const bookings = require('./bookings');
+const bookingSlots = require('./booking_slots');
+const bookedSlots = require('./booked_slots');
 
 module.exports = server => {
     server.get('/stats', StatsWebPage);
@@ -86,4 +89,15 @@ module.exports = server => {
     server.post('/offers', createOffer);
     server.put('/offers/:id', updateOffer);
     server.del('/offers/:id', deleteOffer);
+
+    server.get('/bookings', bookings.find);
+    server.post('/bookings', bookings.create);
+    server.put('/bookings/:id', bookings.update);
+    server.del('/bookings/:id', bookings.delete);
+    server.put('/bookings/sync', bookings.sync);
+
+    server.put('/booking_slots', bookingSlots.put);
+
+    server.get('/booked_slots', bookedSlots.get);
+
 };

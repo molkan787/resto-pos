@@ -1,5 +1,5 @@
 <template>
-  <sui-modal v-model="value" :class="{hideOverflow: dialog.open}" :animationDuration="300" :size="size" :closable="false">
+  <sui-modal v-model="value" :class="{hideOverflow: dialog.open, 'high-layer': highLayer }" :animationDuration="300" :fullscreen="fullscreen" :size="size" :closable="false">
     <sui-modal-header style="user-select: none" v-if="title">{{ title }}</sui-modal-header>
     <sui-modal-content>
       <sui-modal-description>
@@ -47,6 +47,8 @@ export default class Modal extends Vue {
 
   @Prop({default: 'tiny'}) size!:string;
   @Prop({ default: false }) value!: boolean;
+  @Prop({ default: false }) fullscreen!: boolean;
+  @Prop({ default: false }) highLayer!: boolean;
   @Prop({ default: "" }) title!: string;
   @Prop({ default: false }) defaultButton!: boolean;
   @Prop({ default: false }) hideActions!: boolean;
@@ -77,6 +79,9 @@ export default class Modal extends Vue {
 <style lang="scss">
 .hideOverflow .modal{
   overflow: hidden;
+}
+.high-layer{
+  z-index: 2000 !important;
 }
 .modal-buttons > button {
   font-size: 1.2rem !important;

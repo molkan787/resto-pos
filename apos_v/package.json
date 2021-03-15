@@ -27,6 +27,7 @@
     "vue-property-decorator": "^7.3.0",
     "vue-router": "^3.0.1",
     "vue-semantic-ui-toastr": "^1.1.1",
+    "vuejs-datepicker": "^1.6.2",
     "vuex": "^3.0.1",
     "websocket": "^1.0.33",
     "weekstart": "^1.0.0"

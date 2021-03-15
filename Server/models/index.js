@@ -15,6 +15,10 @@ module.exports = function (serverPort){
     });
 
     Model.beforeDelete = async function (args){
+        if(Config.dbSyncSkipTables.includes(this.tableName)){
+            return;
+        }
+
         await args.asFindQuery().patch({
             [SqlSyncerMetaData.IS_DELETED_COLUMN]: 1,
             [SqlSyncerMetaData.DELETED_TIME_COLUMN]: time.now(),

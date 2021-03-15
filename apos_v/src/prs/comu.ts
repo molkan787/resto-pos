@@ -23,6 +23,8 @@ import Printers from './printers';
 import Reports from './reports';
 import { services } from '../services';
 import * as srv from '../services';
+import { arrayToObjectMap } from 'murew-core/dist/DataUtils';
+import { mapBookingSlotsArrayToObject } from './helpers';
 
 console.log(Object.values(srv));
 
@@ -170,6 +172,7 @@ export default class Comu {
                 state.stats = data.stats;
                 state.nextOrderId = data.orderPtr;
                 state.companies = Clients.prepareData(data.companies);
+                state.bookingSlots = mapBookingSlotsArrayToObject(data.bookingSlots)
                 this.putSettings(data.settings);
                 services.onDataLoaded(data);
                 resolve(true);
@@ -212,6 +215,7 @@ export default class Comu {
         if (settings.receipt_msg) state.receipt_msg = settings.receipt_msg;
         if (settings.order_types) state.order_types = settings.order_types;
         state.tables_count = parseInt(settings.tables_count) || 10;
+        state.persons_per_table = parseInt(settings.persons_per_table) || 4;
     }
 
     // ==================================

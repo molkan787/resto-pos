@@ -148,6 +148,7 @@ const store = new Vuex.Store({
     receipt_msg: '',
     vat_number: '',
     tables_count: 1,
+    persons_per_table: 4,
     order_types: {
       table: true,
       delivery: true,
@@ -171,12 +172,16 @@ const store = new Vuex.Store({
 
     // =========================
 
-    bookings: {
-      todays: [],
-      other: [],
-      loading: false,
-      filterDate: '',
-    }
+    bookingSlots: {},
+
+    bookings: []
+
+    // bookings: {
+    //   todays: [],
+    //   other: [],
+    //   loading: false,
+    //   filterDate: '',
+    // }
 
   },
   getters: {
