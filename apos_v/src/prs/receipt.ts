@@ -225,7 +225,11 @@ export default class Receipt{
     }
 
     static getCatCtype(product){
-        const cat = store.state.categoriesByIds[product.category_id];
+        const { category_type, category_id } = product;
+        if(typeof category_type == 'string'){
+            return category_type == 'food' ? 1 : 2;
+        }
+        const cat = store.state.categoriesByIds[category_id] || {};
         return cat.ctype || 1;
     }
 

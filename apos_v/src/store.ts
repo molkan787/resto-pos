@@ -204,6 +204,7 @@ const store = new Vuex.Store({
         products,
         orderType: orderType == 'delivery' ? OrderType.Delivery : OrderType.Collection,
         delivery: 0,
+        deliveryDistance: 0,
         selectedOffer: selectedOffer
       };
       return cart;

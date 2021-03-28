@@ -1,7 +1,7 @@
 <template>
     <DataTable :cols="tableSchema" :items="orders" :loading="loading" 
     :filtersSchema="filtersSchema" :filtersValues="filtersValues"
-    @filtersChanged="loadData" @refund="refund" @print="print" />
+    @filtersChanged="loadData" @show="showOrderDetails" @refund="refund" @print="print" />
 </template>
 
 <script lang="ts">
@@ -14,6 +14,7 @@ import DM from '@/prs/dm';
 import Pfs from '@/prs/pfs';
 import Message from '@/ccs/Message';
 import Receipt from '@/prs/receipt';
+import MxHelper from '@/prs/MxHelper';
 
 @Component({
     components: {
@@ -53,15 +54,20 @@ export default class OrdersTab extends Vue{
         //         {name: 'print', text: 'Receipt', icon: 'file alternate'}
         //     ]
         // },
-        {name: '', prop: '@', buttons: [
-                {name: 'refund', text: 'Refund', icon: 'undo'}
-            ],
-            conditional: {
-                prop: 'status',
-                value: 3,
-                text: '(Refunded)',
-                styleClass: 'special-cell'
-            }
+        // {name: '', prop: '@', buttons: [
+        //         {name: 'refund', text: 'Refund', icon: 'undo'}
+        //     ],
+        //     conditional: {
+        //         prop: 'status',
+        //         value: 3,
+        //         text: '(Refunded)',
+        //         styleClass: 'special-cell'
+        //     }
+        // }
+        { name: '', prop: '@',
+            buttons: [
+                {name: 'show', text: 'Show', icon: 'file'}
+            ]
         }
     ];
 
@@ -77,6 +83,11 @@ export default class OrdersTab extends Vue{
             console.log(this.orders)
             this.loading = false;
         });
+    }
+
+    showOrderDetails(order: any){
+        // @ts-ignore
+        MxHelper.showOrderDetails(order);
     }
 
     refund(order: any){

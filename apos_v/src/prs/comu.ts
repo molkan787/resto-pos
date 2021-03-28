@@ -295,7 +295,7 @@ export default class Comu {
 
     static async postOnlineOrder(order) {
         const state = this.context.state;
-        const { type, total: _total, products, id: onlineOrderId, owner, no, delivery_address, menu, payment_method, note } = order;
+        const { type, total: _total, products, id: onlineOrderId, owner, no, delivery_address, menu, payment_method, preorder, note } = order;
         const paymentMethod = payment_method || 'cod';
         const isPOSMenu = menu == 'pos';
         const items = {
@@ -311,6 +311,8 @@ export default class Comu {
                 note: p.note,
                 product_type: 1,
                 date_modified: 0,
+                category_type: p.category_type,
+                extras: p.extras
             });
             items.counts[_id] = p.quantity;
         }
@@ -336,6 +338,7 @@ export default class Comu {
                 kitchenMessage: note || '',
                 paid: false,
                 table: "",
+                preorder: preorder
             },
             user_id: 0,
             client_id: 0,

@@ -113,7 +113,7 @@ export default class Login extends Vue{
         this.initial_loading = false;
         if(config.devMode){
             this.username = 'admin';
-            this.password = 'password123';
+            this.password = '123456';
             this.login();
         }
         
