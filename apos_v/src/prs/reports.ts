@@ -34,33 +34,33 @@ export default class ReportsDownloader{
             const _date = utils.dateToTimestamp(date);
             console.log(_date);
             const response = await axios.post(_url('reports'), {type: dailySales, day: _date});
-            await this.downloadFile(response.data);
-            return true;
+            const { filePath } = await this.downloadFile(response.data);
+            return filePath;
         } catch (error) {
             console.error(error);
             throw new Error('Unknow error at ReportsDownloader.dailySales');
         }
     }
 
-    static async dailySummary(date: any){
+    static async dailySummary(date: any): string{
         try {
             const _date = utils.dateToTimestamp(date);
             const response = await axios.post(_url('reports'), {type: dailySummary, day: _date});
-            await this.downloadFile(response.data);
-            return true;
+            const { filePath } = await this.downloadFile(response.data);
+            return filePath;
         } catch (error) {
             console.error(error);
             throw new Error('Unknow error at ReportsDownloader.dailySummary');
         }
     }
 
-    static async weeklySummary(date_from: any, date_to: any) {
+    static async weeklySummary(date_from: any, date_to: any): string {
         try {
             const _from = utils.dateToTimestamp(date_from);
             const _to = utils.dateToTimestamp(date_to);
             const response = await axios.post(_url('reports'), { type: weeklySummary, date_from: _from, date_to: _to });
-            await this.downloadFile(response.data);
-            return true;
+            const { filePath } = await this.downloadFile(response.data);
+            return filePath;
         } catch (error) {
             console.error(error);
             throw new Error('Unknow error at ReportsDownloader.weeklySummary');
@@ -72,8 +72,8 @@ export default class ReportsDownloader{
             const _from = utils.dateToTimestamp(date_from);
             const _to = utils.dateToTimestamp(date_to);
             const response = await axios.post(_url('reports'), { type: loyaltyPoints, date_from: _from, date_to: _to });
-            await this.downloadFile(response.data);
-            return true;
+            const { filePath } = await this.downloadFile(response.data);
+            return filePath;
         } catch (error) {
             console.error(error);
             throw new Error('Unknow error at ReportsDownloader.loyaltyPoints');
@@ -88,8 +88,8 @@ export default class ReportsDownloader{
                 type: balanceAdjust, card_type,
                 date_from: _from, date_to: _to 
             });
-            await this.downloadFile(response.data);
-            return true;
+            const { filePath } = await this.downloadFile(response.data);
+            return filePath;
         } catch (error) {
             console.error(error);
             throw new Error('Unknow error at ReportsDownloader.cardBalancesAdjust');
@@ -110,7 +110,7 @@ export default class ReportsDownloader{
                     reject(error);
                     return;
                 }
-                resolve(true);
+                resolve(info);
             });
         });
     }

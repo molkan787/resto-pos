@@ -119,7 +119,7 @@ export default class ReportsTab extends Vue{
         if(this.checkForInputsErrors(this.day)) return;
         this.dg_dailySales = true;
         Reports.dailySales(this.day)
-        .then(() => this.successMessage())
+        .then((filePath) => this.successMessage(filePath))
         .catch(() => this.failureMessage())
         .finally(() => this.dg_dailySales = false);
     }
@@ -128,7 +128,7 @@ export default class ReportsTab extends Vue{
         if(this.checkForInputsErrors(this.day2)) return;
         this.dg_daileSum = true;
         Reports.dailySummary(this.day2)
-        .then(() => this.successMessage())
+        .then((filePath) => this.successMessage(filePath))
         .catch(() => this.failureMessage())
         .finally(() => this.dg_daileSum = false);
     }
@@ -137,7 +137,7 @@ export default class ReportsTab extends Vue{
         if(this.checkForInputsErrors(this.date_from, this.date_to)) return;
         this.dg_weeklySum = true;
         Reports.weeklySummary(this.date_from, this.date_to)
-        .then(() => this.successMessage())
+        .then((filePath) => this.successMessage(filePath))
         .catch(() => this.failureMessage())
         .finally(() => this.dg_weeklySum = false);
     }
@@ -146,7 +146,7 @@ export default class ReportsTab extends Vue{
         if(this.checkForInputsErrors(this.date_from2, this.date_to2)) return;
         this.dg_loyaltyPoints = true;
         Reports.loyaltyPoints(this.date_from2, this.date_to2)
-        .then(() => this.successMessage())
+        .then((filePath) => this.successMessage(filePath))
         .catch(() => this.failureMessage())
         .finally(() => this.dg_loyaltyPoints = false);
     }
@@ -155,7 +155,7 @@ export default class ReportsTab extends Vue{
         if(this.checkForInputsErrors(this.date_from3, this.date_to3)) return;
         this.dg_balancesAdjust = true;
         Reports.cardBalancesAdjust(this.date_from3, this.date_to3, this.card_type)
-        .then(() => this.successMessage())
+        .then((filePath) => this.successMessage(filePath))
         .catch(() => this.failureMessage())
         .finally(() => this.dg_balancesAdjust = false);
     }
@@ -169,9 +169,14 @@ export default class ReportsTab extends Vue{
         return false;
     }
 
-    successMessage(){
-        Message.info('Report file was successfully downloaded and can be found inside folder "POS REPORTS" on your Desktop!')
-        .then((e: any) => e.hide());
+    successMessage(filePath: string){
+        Message.ask('Reports file was successfully downloaded and can be found inside folder "POS REPORTS" on your Desktop.\n\nDo you want to show the file?', 'Reports Downloaded')
+        .then((e: any) => {
+            if(e.answer){
+                electron.remote.shell.showItemInFolder(filePath);
+            }
+            e.hide();
+        });
     }
 
     failureMessage(){
