@@ -111,6 +111,7 @@ import ModalDialog from '@/ccs/ModalDialog';
 import Comu from '@/prs/comu';
 import { MurewActions } from 'murew-core/dist/enums';
 import { OrderType } from 'murew-core/dist/types';
+import { Howl } from 'howler';
 const { murew } = Comu.services.instances;
 export default {
     components: {
@@ -129,7 +130,10 @@ export default {
             { text: '60 Min', value: 60 },
             { text: '1 Hour 15 Min', value: 75 },
             { text: '1 Hour 30 Min', value: 90 },
-        ]
+        ],
+        beepSound: new Howl({
+            src: [require('@/assets/audio/mixkit-positive-interface-beep-221.wav')]
+        })
     }),
     computed: {
         title(){
@@ -167,6 +171,7 @@ export default {
             this.order = order;
             this.loading = false;
             this.isOpen = true;
+            this.beepSound.play();
         },
         async handleOrderStatusChanged(data){
             const { id, status } = data;
