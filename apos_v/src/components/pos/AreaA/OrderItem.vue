@@ -3,12 +3,12 @@
         <div class="gift button" @click="$emit('giftClick')" :class="{ immutable }" :title="isFree ? 'Remove free item' : 'Make this item free'">
             <i class="gift icon" :class="{active: isFree}"></i>
         </div>
-        <label class="item-name">{{ text }}</label>
+        <label class="item-name">{{ text }}  - {{minimumCount}}</label>
         <label v-if="label" class="label">{{ label }}</label>
         <span v-if="isFree">Free</span>
         <span v-else>{{ amount | price }}</span>
         <div class="count">
-            <sui-icon @click="minus" name="minus" :class="{ immutable }" />
+            <sui-icon :disabled="disableDecrement" @click="minus" name="minus" :class="{ immutable }" />
             <label>{{ count }}</label>
             <sui-icon @click="plus" name="plus" :class="{ immutable }" />
         </div>
@@ -23,7 +23,12 @@ import { Prop } from 'vue-property-decorator';
 import { mapActions } from 'vuex';
 
 @Component({
-    methods: mapActions(['incItemCount', 'decItemCount'])
+    methods: mapActions(['incItemCount', 'decItemCount']),
+    computed: {
+        disableDecrement(){
+            return this.count <= this.minimumCount;
+        }
+    }
 })
 export default class OrderItem extends Vue{
 
@@ -31,11 +36,13 @@ export default class OrderItem extends Vue{
     @Prop({default: ''}) label!: string;
     @Prop({default: 0}) amount!: number;
     @Prop({default: 1}) count!: number;
+    @Prop({default: 0}) minimumCount!: number;
     @Prop({default: false}) isFree!: boolean;
     @Prop({default: false}) immutable!: boolean;
     @Prop({required: true}) product_id: number;
 
     minus(){
+        if(this.disableDecrement) return;
         this.decItemCount(this.product_id);
     }
 

@@ -4,13 +4,14 @@
 
             <OrderItem v-for="item in pos.items" :key="item.id" :text="item.name"
              :amount="item.price" :count="pos.itemsCount[item.id]" :isFree="item.isFree"
-             :product_id="item.id" @giftClick="giftClick(item)"/>
+             :product_id="item.id" @giftClick="giftClick(item)"
+             :minimumCount="getItemMinimumCount(item.id)"/>
 
             <div v-if="pos.items.length == 0" class="empty-text">No items added</div>
 
             <OrderItem v-for="item in offerItems" :key="'offer-' + item.pid" :text="item.name"
              :amount="0" :count="1" :isFree="true" :immutable="true"
-             :product_id="item.pid"/>
+             :product_id="item.pid" :minimumCount="getItemMinimumCount(item.pid)"/>
 
         </sui-segment>
         <Totals class="totals" />
@@ -34,7 +35,7 @@ import ProductsFactory from '@/prs/productsFactory.ts';
     },
     computed: {
         ...mapState(['pos']),
-        ...mapGetters(['offerItems'])
+        ...mapGetters(['offerItems', 'canUserRemoveExistingItems', 'userType'])
     },
     methods: {
         ...mapActions(['loadData', 'setItemCount'])
@@ -50,6 +51,9 @@ export default class OrderSummary extends Vue{
     }
 
     giftClick(item){
+        if(this.userType >= 5){
+            return;
+        }
         const count = this.pos.itemsCount[item.id];
         this.setItemCount({
             itemId: item.id,
@@ -61,6 +65,14 @@ export default class OrderSummary extends Vue{
                 itemId: freeItem.id,
                 count,
             })
+        }
+    }
+
+    getItemMinimumCount(itemId){
+        if(this.canUserRemoveExistingItems){
+            return 0;
+        }else{
+            return this.pos.minimumItemsCount[itemId] || 0;
         }
     }
 

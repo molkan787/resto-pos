@@ -98,7 +98,8 @@ export default class DM{
         Object.patch(pos.orderDetails, order_details);
         Object.patch(pos.values, totals);
         const { products, counts } = items;
-        for(let p of products){ // TODO: Craft free items
+        pos.minimumItemsCount = Object.clone(counts);
+        for(let p of products){
             const itemId = p.id;
             const count = counts[itemId] || 0;
             if(itemId > 100000){

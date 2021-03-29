@@ -3,15 +3,15 @@
         <sui-button icon="write" @click="kitchenMessageClick" :color="kitchenMessage ? 'grey' : null" >
             <br>Kitchen Message
         </sui-button>
-        <sui-button icon="calendar" @click="bookingsClick" >
+        <sui-button :disabled="userType >= 5" icon="calendar" @click="bookingsClick" >
             <br>Bookings
         </sui-button>
 
-        <sui-button icon="pound" @click="discountClick(false)" >
+        <sui-button :disabled="userType >= 5" icon="pound" @click="discountClick(false)" >
             <br>Discount<br>
             <span v-if="isCustomDiscount" class="positive-color">({{ customDiscount | price }})</span>
         </sui-button>
-        <sui-button icon="percent" @click="discountClick(true)" >
+        <sui-button :disabled="userType >= 5" icon="percent" @click="discountClick(true)" >
             <br>Discount<br>
             <span v-if="percentDiscount > 0" class="positive-color">(- {{ percentDiscount | percent }})</span>
         </sui-button>
@@ -32,7 +32,7 @@
 // @ts-nocheck
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapState, mapGetters } from 'vuex';
 import Comu from '@/prs/comu';
 import MxHelper from '@/prs/MxHelper';
 import Message from '@/ccs/Message';
@@ -40,6 +40,7 @@ import Message from '@/ccs/Message';
 @Component({
     computed: {
         ...mapState(['pos', 'extraChargeReason', 'discountReason']),
+        ...mapGetters(['userType']),
         kitchenMessage(){
             return this.pos.orderDetails.kitchenMessage;
         },

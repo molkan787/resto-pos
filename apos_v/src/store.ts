@@ -91,6 +91,7 @@ const store = new Vuex.Store({
       },
       items: [],
       itemsCount: {},
+      minimumItemsCount: {},
       pay_method: 'cash',
       cantUsePrepaid: false,
       paid: false,
@@ -180,15 +181,15 @@ const store = new Vuex.Store({
 
     bookings: []
 
-    // bookings: {
-    //   todays: [],
-    //   other: [],
-    //   loading: false,
-    //   filterDate: '',
-    // }
-
   },
   getters: {
+    canUserRemoveExistingItems({ user: { user_type }, pos: { orderId } }){
+      if(orderId && user_type >= 5){
+        return false;
+      }else{
+        return true;
+      }
+    },
     getCategory(state){
       // @ts-ignore
       return (catID: string) => state.categories.filter(category => category.id == catID)[0];
@@ -379,6 +380,7 @@ const store = new Vuex.Store({
       const values = pos.values;
       pos.items = [];
       pos.itemsCount = {};
+      pos.minimumItemsCount = {};
       pos.pay_method = 'cash';
       pos.cantUsePrepaid = false;
       pos.paid = false;
@@ -631,7 +633,7 @@ function setItemCount(context: any, itemId: number, amount: number, forceAmount:
 
   Vue.set(itemsCount, itemId, count);
 
-  const itemIndex = items.indexOf(product);
+  const itemIndex = items.findIndex(item => item.id === product.id);
 
   if(itemsCount[itemId] > 0){
     if(itemIndex == -1) items.unshift(product);

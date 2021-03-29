@@ -26,7 +26,7 @@
                 <input v-model="u_password" type="password" placeholder="Password (PIN)">
             </div>
             <div class="field">
-                <label>Rights</label>
+                <label>Role</label>
                 <sui-dropdown
                     selection
                     :options="user_types"
@@ -69,10 +69,10 @@ export default class UserModal extends Vue{
 
     private lockUsername: boolean = false;
     private user_types = [
-        {value: 5, text: 'Access to POS only'},
-        {value: 4, text: 'Access to POS & Admin Panel (Orders & Clients Tabs)'},
-        {value: 3, text: 'Access to POS & Full Admin Panel (Without Users tab)'},
-        {value: 2, text: 'Access to POS & Full Admin Panel (Including Users tab)'}
+        {value: 5, text: 'Waiter'},
+        {value: 4, text: 'Manager (Access to Orders & Clients Tabs only)'},
+        {value: 3, text: 'Manager (Full access, without Users tab)'},
+        {value: 2, text: 'Admin (Full access)'}
     ];
 
     private u_id: any = 0;
