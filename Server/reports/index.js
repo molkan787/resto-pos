@@ -19,8 +19,8 @@ module.exports = class Reports {
 
     static async genDailyStats(day){
         try {
-            const cond = wb.dateRange({date_from: day, date_to: day}, null, 'status = 1');
-            const orders = await Order.query().select(['total', 'pay_method']).whereRaw(cond);
+            const cond = wb.dateRange({date_from: day, date_to: day}, null, 'status IN (1, 2)');
+            const orders = await Order.query().select(['total', 'pay_method', 'order_type']).whereRaw(cond);
             const cashouts = await Action.getBulkByTypeDateRange(AC.TYPE_CASHOUT, day, day);
             const data = this.prepareDailyStats(orders, cashouts);
 
@@ -33,7 +33,7 @@ module.exports = class Reports {
 
     static async genDailyReports(day){
         try {
-            const cond = wb.dateRange({date_from: day, date_to: day}, null, 'status = 1');
+            const cond = wb.dateRange({date_from: day, date_to: day}, null, 'status IN (1, 2)');
             const orders = await Order.query().eager('[cashier, transaction.[prepaid, loyalty]]').whereRaw(cond);
             const cashouts = await Action.getBulkByTypeDateRange(AC.TYPE_CASHOUT, day, day);
             const data = this.prepareDailySummaryData(orders, cashouts);
@@ -49,7 +49,7 @@ module.exports = class Reports {
 
     static async genWeeklyReports(date_from, date_to){
         try {
-            const cond = wb.dateRange({ date_from, date_to }, 'date_added', 'status = 1');
+            const cond = wb.dateRange({ date_from, date_to }, 'date_added', 'status IN (1, 2)');
             const cond2 = wb.dateRange({ date_from, date_to }, 'day', '', true);
             const orders = await Order.query().eager('[cashier, transaction.[prepaid, loyalty]]').whereRaw(cond);
             const stats = await Stats.query().whereRaw(cond2);
@@ -98,17 +98,39 @@ module.exports = class Reports {
     }
 
     static prepareDailyStats(orders, cashouts){
-        // const cashout = cashouts.reduce((current, co) => current + co.s1, 0);
-        let cash = 0, card = 0;
+        let cash = 0, card = 0, table = 0, delivery = 0, collection = 0;
+        let cashCount = 0, cardCount = 0, tableCount = 0, deliveryCount = 0, collectionCount = 0;
         for(let i = 0; i < orders.length; i++){
-            const { total, pay_method } = orders[i];
-            if(pay_method == 'cash') cash += total;
-            else if(pay_method == 'card') card += total;
+            const { total, pay_method, order_type } = orders[i];
+            if(pay_method == 'cash' || pay_method == 'cod'){
+                cash += total;
+                cashCount++;
+            }else if(pay_method == 'card' || pay_method == 'online_card'){
+                card += total;
+                cardCount++;
+            }
+            if(order_type == 'table'){
+                table += total;
+                tableCount++;
+            }else if(order_type == 'delivery'){
+                delivery += total;
+                deliveryCount++;
+            }else if(order_type == 'collection'){
+                collection += total;
+                collectionCount++;
+            }
         }
-        // cash -= cashout;
         return {
             cash,
-            card
+            card,
+            table,
+            delivery,
+            collection,
+            cashCount,
+            cardCount,
+            tableCount,
+            deliveryCount,
+            collectionCount
         }
     }
 

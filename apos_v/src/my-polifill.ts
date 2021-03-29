@@ -27,6 +27,8 @@ declare global{
     interface Object{
         clone: <T>(obj: T) => T
     }
+    interface String{
+        capitalize(): string;
+    }
 }
-
 export {};

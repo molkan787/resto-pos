@@ -27,17 +27,26 @@
                     <!-- <h3>Cash out</h3>
                     <hr>
                     <sui-button @click="cashout">Cash out</sui-button> -->
-                    <h3>Daily Stats</h3>
+                    <h3>
+                        Daily Stats
+                        <sui-button @click="printDailyStatsClick" :loading="dg_dailyStatsPrint" style="float: right;margin-top: -6px">Print</sui-button>
+                    </h3>
                     <hr>
                     <table class="stats-table">
                         <tbody>
                             <tr>
-                                <th>Cash</th>
-                                <th>Credit/Debit Card</th>
+                                <th class="primary">Cash</th>
+                                <th class="primary">Credit/Debit Card</th>
+                                <th>Table</th>
+                                <th>Delivery</th>
+                                <th>Collection</th>
                             </tr>
                             <tr>
-                                <td>{{ dailyStats.cash | price_m }}</td>
-                                <td>{{ dailyStats.card | price_m }}</td>
+                                <td class="primary">{{ dailyStats.cash | price_m }}</td>
+                                <td class="primary">{{ dailyStats.card | price_m }}</td>
+                                <td>{{ dailyStats.table | price_m }}</td>
+                                <td>{{ dailyStats.delivery | price_m }}</td>
+                                <td>{{ dailyStats.collection | price_m }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -78,6 +87,7 @@ import LabeledDropdown from '../Elts/inputs/LabeledDropdown.vue';
 import Message from '@/ccs/Message';
 import Reports from '@/prs/reports';
 import MxHelper from '@/prs/MxHelper';
+import ReportsPrint from '@/prs/reportsPrint';
 import { mapState } from 'vuex';
 
 @Component({
@@ -103,8 +113,16 @@ export default class ReportsTab extends Vue{
     private dg_weeklySum = false;
     private dg_loyaltyPoints = false;
     private dg_balancesAdjust = false;
+    private dg_dailyStatsPrint = false;
 
     private key_press_handler: Function = null;
+
+    printDailyStatsClick(){
+        this.dg_dailyStatsPrint = true;
+        ReportsPrint.printDailyStats(this.dailyStats);
+        setTimeout(() => this.dg_dailyStatsPrint = false, 1000);
+        
+    }
 
     async cashout(){
         try {
@@ -243,14 +261,18 @@ hr{
     min-width: 302px;
     th, td{
         border: 1px solid #DEDEDF;
-        min-width: 150px;
+        min-width: 80px;
+        text-align: center;
+        &.primary{
+            font-weight: bold;
+        }
     }
     th{
-        font-size: 17px;
+        font-size: 14px;
         padding: 10px 5px;
     }
     td{
-        font-size: 26px;
+        font-size: 20px;
         padding: 20px 5px;
     }
 }

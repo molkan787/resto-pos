@@ -1,6 +1,7 @@
 const LEFT = 'left';
 const RIGHT = 'right';
 const CENTER = 'center';
+type TextAlignment = 'left' | 'center' | 'right' | false;
 
 class POSReceiptBuilder {
 
@@ -220,7 +221,7 @@ class POSReceiptBuilder {
 		this._line(text, false);
 	}
 
-	_paragraph(text: string, alignment?: string){
+	_paragraph(text: string, alignment?: TextAlignment){
 		const words = text.split(' ');
 		const lines = [];
 		let line = '';
@@ -243,7 +244,7 @@ class POSReceiptBuilder {
 		let line = '';
 		line += this._block(item.name, this.nameLength);
 		line += this.spaceChar;
-		line += this._block(item.q, this.quantityLength);
+		line += this._block(item.q, this.quantityLength, "right");
 		line += this.spaceChar;
 		if(this.showItemPrice && this.showPrices){
 			line += this._block(item.q ? item.price : '', this.priceLength, RIGHT);
@@ -255,7 +256,7 @@ class POSReceiptBuilder {
 		this._line(line);
 	}
 
-	_block(text: string, size: number, align?: any){
+	_block(text: string, size: number, align?: TextAlignment){
 		const spacesCount = size - text.length;
 		if(spacesCount == 0){
 			return text;
@@ -295,7 +296,7 @@ class POSReceiptBuilder {
 		this._line('', false);
 	}
 
-	_line(line: string, align?: any){
+	_line(line: string, align?: TextAlignment){
 		let str;
 		if(typeof align == 'boolean' && !align){
 			str = line;

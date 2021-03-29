@@ -26,6 +26,7 @@ import * as srv from '../services';
 import { arrayToObjectMap } from 'murew-core/dist/DataUtils';
 import { mapBookingSlotsArrayToObject } from './helpers';
 import { OrderLogics } from './order';
+import ReportsPrint from './reportsPrint';
 
 console.log(Object.values(srv));
 
@@ -50,6 +51,7 @@ export default class Comu {
         Ds.setup(context);
         DM.setup(context, this);
         Receipt.setup(context);
+        ReportsPrint.setup(context);
         Login.setup(context, this);
 
         this.settings = LocalSettings;
