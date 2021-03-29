@@ -86,6 +86,7 @@ export default class Receipt{
         }, true);
         
         const items = typeof itemsFilter == 'function' ? order.products.filter(itemsFilter) : order.products;
+        if(items.length < 1) return;
         const counts = order.counts;
         for(let i = 0; i < items.length; i++){
             const p = items[i];

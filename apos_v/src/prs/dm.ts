@@ -115,6 +115,11 @@ export default class DM{
         pos.extraChargeReason = extra;
     }
 
+    public static async getOrderData(orderId){
+        const { data } = await axios.get(_url(`pos/get_order/${orderId}`));
+        return data.order;
+    }
+
     public static async recordCashout(amount: any){
         const day = Utils.todaysTimestamp();
         const { data } = await axios.post(_url('cashout'), { amount, day });

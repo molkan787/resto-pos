@@ -101,6 +101,7 @@ const store = new Vuex.Store({
     ticket: '',
     nextOrderId: 0,
     lastOrderDate: 0,
+    lastOrderData: null,
     discountReason: '',
     freeOrderReason: '',
     extraChargeReason: '',

@@ -25,6 +25,7 @@ import { services } from '../services';
 import * as srv from '../services';
 import { arrayToObjectMap } from 'murew-core/dist/DataUtils';
 import { mapBookingSlotsArrayToObject } from './helpers';
+import { OrderLogics } from './order';
 
 console.log(Object.values(srv));
 
@@ -277,6 +278,7 @@ export default class Comu {
                     orderData.no = data.orderNo;
                     state.lastOrderDate = data.date_added;
                     state.loyaltyPoints = data.loyaltyPoints;
+                    state.lastOrderData = orderData;
                     this.setCardsBalances(data.balances);
                     this.backupState();
                     this.setToRecentOrders(data.orderId, orderData);
@@ -407,7 +409,7 @@ export default class Comu {
         }
     }
 
-    static printOrderReceipt(orderData){
+    static printOrderReceipt(orderData, printersGroup: 'pos' | 'flow' = 'flow'){
         const od = orderData;
         // axios.post(_url('setReceiptFlag'), {order_id}).catch(() => {});
         const receipt = {
@@ -427,7 +429,11 @@ export default class Comu {
             prepaidCard: { id: 0 },
             taxes: state.taxes,
         };
-        return this.printReceiptInAllPrinters(receipt);
+        if(printersGroup == 'flow'){
+            return this.printReceiptInFlowPrinters(receipt);
+        }else if(printersGroup == 'pos'){
+            return this.printReceiptInPOSPrinters(receipt);
+        }
     }
 
     static setTableState() {
@@ -510,13 +516,34 @@ export default class Comu {
         }
     }
 
-    static markAsPaid() {
+    static async markAsPaid() {
         this.context.dispatch('markAsPaid');
         // @ts-ignore
         MxHelper.payment({ state: 'posting' });
+        const { orderId } = this.context.state.pos;
+        let originalOrder = null;
+        if(orderId){
+            originalOrder = await DM.getOrderData(orderId);
+        }
         this.postOrder().then((orderData) => {
             this.markAsFinished();
-            this.printReceipt(null, orderData.no);
+            if(originalOrder){
+                try {
+                    const diffItems = OrderLogics.getOrdersItemsDiff(originalOrder, orderData);
+                    console.log(diffItems);
+                    if(diffItems.products.length > 0){
+                        const order = Object.clone(orderData);
+                        order.items = diffItems;
+                        this.printOrderReceipt(order);
+                    }else{
+                        console.log('Order\'s items unchanged, Skipping receipt printing.');
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            }else{
+                this.printOrderReceipt(orderData);
+            }
             // @ts-ignore
             MxHelper.payment({ state: 'success' });
         }).catch(error => {
@@ -539,18 +566,10 @@ export default class Comu {
 
     // ==================================
 
-    static async printReceiptInAllPrinters(receipt) {
+    static async printReceiptInFlowPrinters(receipt) {
         const printers = Printers.list;
-        const posPrinters = printers.filter(p => p.used_for == 'pos');
         const kitchenPrinters = printers.filter(p => p.used_for == 'kitchen');
         const barPrinters = printers.filter(p => p.used_for == 'bar');
-        if(window.printToConsole){
-            await Receipt.print(receipt);
-        }
-        for (let printer of posPrinters) {
-            Printers.use(printer);
-            await Receipt.print(receipt);
-        }
         for (let printer of kitchenPrinters) {
             Printers.use(printer);
             await Receipt.printKitchen(receipt);
@@ -558,6 +577,22 @@ export default class Comu {
         for (let printer of barPrinters) {
             Printers.use(printer);
             await Receipt.printBar(receipt);
+        }
+    }
+
+    static async printReceiptInPOSPrinters(receipt) {
+        const printers = Printers.list;
+        const posPrinters = printers.filter(p => p.used_for == 'pos');
+        for (let printer of posPrinters) {
+            Printers.use(printer);
+            await Receipt.print(receipt);
+        }
+    }
+
+    static printLastOrderPOSReceipt(){
+        const { lastOrderData } = this.context.state;
+        if(lastOrderData){
+            this.printOrderReceipt(lastOrderData, 'pos');
         }
     }
 
@@ -583,7 +618,7 @@ export default class Comu {
             prepaidCard: state.prepaidCard,
             taxes: state.taxes,
         };
-        this.printReceiptInAllPrinters(receipt);
+        this.printReceiptInFlowPrinters(receipt);
     }
 
     static reprintReceipt() {
