@@ -4,6 +4,7 @@
         <OrderDetails v-if="order" :order="order" />
 
         <template v-slot:buttons>
+            <sui-button @click="printReceipt" icon="file alternate" :loading="printBtnLoading">Print Receipt</sui-button>
             <sui-button @click="open = false">CLOSE</sui-button>
         </template>
     </Modal>
@@ -14,6 +15,7 @@ import Modal from '../Elts/Modal.vue';
 import MxHelper from '@/prs/MxHelper';
 import ModalDialog from '@/ccs/ModalDialog';
 import OrderDetails from '../order/OrderDetails';
+import Comu from '@/prs/comu';
 
 export default {
     components: {
@@ -22,13 +24,20 @@ export default {
     },
     data: () => ({
         open: false,
+        printBtnLoading: false,
+        dialog: new ModalDialog(),
+
         order: null,
-        dialog: new ModalDialog()
     }),
     methods: {
         handleOpen(order){
             this.order = order;
             this.open = true;
+        },
+        printReceipt(){
+            Comu.printOrderReceipt(this.order, 'pos');
+            this.printBtnLoading = true;
+            setTimeout(() => this.printBtnLoading = false, 1000);
         }
     },
     created(){
