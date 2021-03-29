@@ -245,6 +245,7 @@ module.exports = class Reports {
             const row = {}; //this.extractItems(order);
             row.values = this.extractValues(order);
             row.id = order.id;
+            row.no = order.no;
             row.date = time.timestampToDate(order.date_added, true);
 
             row.order_type = this.capitalizeString(order.order_type);

@@ -7,7 +7,7 @@ module.exports = class Sales{
         const l = items.length;
         for(let i = 0; i < l; i++){
             const o = items[i];
-            xb.str(o.id + '');
+            xb.str(o.no);
             xb.str(o.date);
             xb.str(o.cashier);
             xb.str(o.order_type);
@@ -35,7 +35,7 @@ module.exports = class Sales{
 
     static prepare(xb){
         const head = [
-            "ID", 2, "DATE & TIME", 3.5,
+            "ORDER NO", 3, "DATE & TIME", 3.5,
             "CASHIER ID", 2, "ORDER TYPE", 2, "ORDER VALUE", 2, "PAYMENT TYPE", 4,
             "DISCOUNT", 2, "DISCOUNT REASON", 3,
             "EXTRA CHARGES", 2, "TIPS", 2
