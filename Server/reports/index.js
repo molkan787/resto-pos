@@ -248,7 +248,7 @@ module.exports = class Reports {
             row.date = time.timestampToDate(order.date_added, true);
 
             row.order_type = this.capitalizeString(order.order_type);
-            row.cashier = order.cashier.username;
+            row.cashier = (order.cashier || {}).username || '---';
             row.total = order.total;
             row.payment = this.getPaymentText(order);
             row.discount = order.totals.discount;
