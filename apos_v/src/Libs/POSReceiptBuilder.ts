@@ -50,7 +50,7 @@ class POSReceiptBuilder {
 		this.lineLength = _options.lineLength || 44;
 		this.totalLength = _options.totalLength || 6;
 		this.priceLength = _options.priceLength || 7;
-		this.quantityLength = _options.quantityLength || 2;
+		this.quantityLength = _options.quantityLength || 4;
 		const itemLineLength = this.itemInBigText ? this.bigTextLineLength : this.lineLength;
 		this.nameLength = itemLineLength - this.quantityLength - 1;
 		if(this.showItemPrice && this.showPrices){
@@ -88,34 +88,19 @@ class POSReceiptBuilder {
 	// ===========================================
 
 	addHeader(data: any, doNotCenterTitle?: boolean){
-		const { order_type, order_details } = data;
-		this._fontNormal();
-		this._separator(this.lineLength);
+		this._fontBig();
+		// this._separator(this.lineLength);
 		this._line(data.title, doNotCenterTitle ? false : CENTER);
 
 		this._fontNormal();
 		let ctr = 1;
 		for(let st of data.subtitles){
 			this._line(st, doNotCenterTitle ? false : CENTER);
-			if(ctr++ % 2 == 0) this._separator(this.lineLength);
+			// if(ctr++ % 2 == 0) this._separator(this.lineLength);
 		}
 		if(ctr % 2 == 0) this._separator(this.lineLength);
-		this._emptyLine();
-
-		this._line(`Order #: ${data.orderNo}`);
-		this._line(`Date: ${data.date}`);
-		this._line(`Time: ${data.time}`);
-		if(data.cashier) this._line(`Cashier: ${data.cashier}`);
-		// this._line(`Client: ${data.client}`);
-		if(order_type == 'table' && order_details.table){
-			this._line(`Table #: ${order_details.table}`);
-		}else{
-			const otype = order_type.charAt(0).toUpperCase() + order_type.substr(1).toLowerCase();
-			this._line(`Type: ${otype}`);
-		}
-		this._emptyLine();
-		// this._item({name: 'PRODUCT', q: 'QTY', price: 'PRICE', total: 'TOTAL'});
-		// this._underline();
+		// this._emptyLine();
+		this._separator(this.lineLength);
 
 	}
 
@@ -141,7 +126,7 @@ class POSReceiptBuilder {
 		}
 	}
 
-	addTotalsItem(item: any){
+	addTotalsItem(item: any, skipPriceFormating?: boolean){
 		if(!this.showPrices) return;
 		let nlen = this.tNameLength;
 		let plen = this.tPriceLength;
@@ -157,7 +142,7 @@ class POSReceiptBuilder {
 		if(item.text){
 			line += this._block(item.text, plen, RIGHT);
 		}else{
-			line += this._block(this._price(item.amount), plen, RIGHT);
+			line += this._block(skipPriceFormating ? item.amount : this._price(item.amount), plen, RIGHT);
 		}
 
 		if(!this.addedSepAfterItems){
@@ -222,29 +207,31 @@ class POSReceiptBuilder {
 	}
 
 	_paragraph(text: string, alignment?: TextAlignment){
-		const words = text.split(' ');
-		const lines = [];
-		let line = '';
-		for(let word of words){
-			const es = line.length > 0;
-			if(line.length + word.length + (es ? 1 : 0) > this.lineLength){
-				lines.push(line);
-				line = word;
-			}else{
-				line += (es ? ' ' : '') + word;
+		for(let ln of text.split('\n')){
+			const words = ln.split(' ');
+			const lines = [];
+			let line = '';
+			for(let word of words){
+				const es = line.length > 0;
+				if(line.length + word.length + (es ? 1 : 0) > this.lineLength){
+					lines.push(line);
+					line = word;
+				}else{
+					line += (es ? ' ' : '') + word;
+				}
 			}
-		}
-		if(line.length) lines.push(line);
-		for(let line of lines){
-			this._line(line, alignment);
+			if(line.length) lines.push(line);
+			for(let line of lines){
+				this._line(line, alignment);
+			}
 		}
 	}
 
 	_item(item: any){
 		let line = '';
-		line += this._block(item.name, this.nameLength);
+		line += this._block(item.q + ' x', this.quantityLength, RIGHT);
 		line += this.spaceChar;
-		line += this._block(item.q, this.quantityLength, "right");
+		line += this._block(item.name, this.nameLength);
 		line += this.spaceChar;
 		if(this.showItemPrice && this.showPrices){
 			line += this._block(item.q ? item.price : '', this.priceLength, RIGHT);
@@ -326,7 +313,7 @@ class POSReceiptBuilder {
 	}
 
 	_qty(q: number){
-		return q ? 'x' + q : '';
+		return q ? q : '';
 	}
 }
 

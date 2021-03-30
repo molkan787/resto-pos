@@ -4,20 +4,67 @@
             <div class="ui segment">
                 <h2>Receipt informations</h2>
                 <hr>
-                <LabeledInput class="input" label="VAT NUMBER" v-model="my_vat_number" :disabled="loading"/> <br>
+                <div class="ui form">
+                    <div class="two fields">
+                        <sui-form-field :disabled="loading">
+                            <label>Restaurant Name</label>
+                            <input v-model="allSettings.store_name" type="text">
+                        </sui-form-field>
+                        <sui-form-field :disabled="loading">
+                            <label>Restaurant Phone</label>
+                            <input v-model="allSettings.store_phone" type="text">
+                        </sui-form-field>
+                    </div>
+                    <sui-form-field>
+                        <label>Restaurant Address</label>
+                        <div class="two fields">
+                            <sui-form-field :disabled="loading">
+                                <label>Line 1</label>
+                                <input v-model="allSettings.store_address.line1" type="text">
+                            </sui-form-field>
+                            <sui-form-field :disabled="loading">
+                                <label>City</label>
+                                <input v-model="allSettings.store_address.city" type="text">
+                            </sui-form-field>
+                        </div>
+                        <div class="two fields">
+                            <sui-form-field :disabled="loading">
+                                <label>Line 2</label>
+                                <input v-model="allSettings.store_address.line2" type="text">
+                            </sui-form-field>
+                            <sui-form-field :disabled="loading">
+                                <label>Postcode</label>
+                                <input v-model="allSettings.store_address.postcode" type="text">
+                            </sui-form-field>
+                        </div>
+                        <div class="field">
+                            <label>Custom Message</label>
+                            <textarea v-model="allSettings.receipt_message" style="resize:none" cols="30" rows="4" placeholder="This message will be printed at the end of the receipt"></textarea>
+                        </div>
+                    </sui-form-field>
+                </div>
             </div>
             <div class="ui segment">
                 <h2>POS</h2> <hr>
-                <LabeledInput class="input" label="NUMBER OF TABLES" v-model="my_tables_count" type='number' :disabled="loading"/> <br>
-                <LabeledInput class="input" label="NUMBER OF PERSONS PER TABLE" v-model="my_persons_per_table" type='number' :disabled="loading"/> <br>
-                <br>
-                <div class="ui labeled input">
-                    <label class="ui large label">USED ORDER TYPES</label>
-                    <div class="input checks-parent">
-                        <sui-checkbox v-model="my_order_types.table" label="Table Order" />
-                        <sui-checkbox v-model="my_order_types.delivery" label="Delivery Order" />
-                        <sui-checkbox v-model="my_order_types.collection" label="Collection Order" />
+                <div class="ui form">
+                    <div class="two fields">
+                        <sui-form-field :disabled="loading">
+                            <label>Number of Tables</label>
+                            <input v-model="allSettings.tables_count" type="text">
+                        </sui-form-field>
+                        <sui-form-field :disabled="loading">
+                            <label>Number of Persons per Table</label>
+                            <input v-model="allSettings.persons_per_table" type="text">
+                        </sui-form-field>
                     </div>
+                    <sui-form-field :disabled="loading">
+                        <label>Enabled order types</label>
+                        <div class="input checks-parent">
+                            <sui-checkbox v-model="allSettings.order_types.table" :disabled="loading" label="Table Order" />
+                            <sui-checkbox v-model="allSettings.order_types.delivery" :disabled="loading" label="Delivery Order" />
+                            <sui-checkbox v-model="allSettings.order_types.collection" :disabled="loading" label="Collection Order" />
+                        </div>
+                    </sui-form-field>
                 </div>
             </div>
             <div class="ui segment">
@@ -61,14 +108,14 @@ import LabeledInput from '../Elts/inputs/LabeledInput.vue';
     components: {
         LabeledInput,
     },
-    computed: mapState(['vat_number', 'tables_count', 'persons_per_table', 'order_types']),
+    computed: mapState(['vat_number', 'tables_count', 'persons_per_table', 'order_types', 'sharedSettings']),
     watch: {
-        my_tables_count(){
+        'allSettings.tables_count'(tc){
             this.$nextTick().then(() => {
-                if(this.my_tables_count < 1){
-                    this.my_tables_count = 1;
-                }else if(this.my_tables_count > 250){
-                    this.my_tables_count = 250;
+                if(tc < 1){
+                    this.allSettings.tables_count = 1;
+                }else if(tc > 1000){
+                    this.allSettings.tables_count = 1000;
                 }
             })
         },
@@ -117,10 +164,7 @@ import LabeledInput from '../Elts/inputs/LabeledInput.vue';
     }
 })
 export default class SettingTab extends Vue{
-    private my_vat_number: string = '';
-    private my_tables_count: number = 0;
-    private my_persons_per_table: number = 0;
-    private my_order_types: any = {};
+    private allSettings: ant = {};
     
     private bookingSlots = {};
 
@@ -147,7 +191,7 @@ export default class SettingTab extends Vue{
     }
 
     validateForm(){
-        const { table, delivery, collection } = this.my_order_types;
+        const { table, delivery, collection } = this.allSettings.order_types;
         const isValid = table || delivery || collection;
         if(!isValid){
             info('Please select at least one order type.').then(e => e.hide());
@@ -156,12 +200,8 @@ export default class SettingTab extends Vue{
     }
 
     save(){
-        DM.editSettings({
-            vat_number: this.my_vat_number,
-            tables_count: this.my_tables_count,
-            order_types: this.my_order_types,
-            persons_per_table: this.my_persons_per_table
-        }).then(() => {
+        DM.editSettings(this.allSettings)
+        .then(() => {
             this.showSuccessText();
         }).catch(err => {
             Message.info('We could not complete the current action');
@@ -169,10 +209,25 @@ export default class SettingTab extends Vue{
     }
 
     loadValues(){
-        this.my_vat_number = this.vat_number;
-        this.my_tables_count = this.tables_count;
-        this.my_persons_per_table = this.persons_per_table;
-        this.my_order_types = Object.clone(this.order_types);
+        const settings = Object.clone(this.sharedSettings);
+        this.allSettings = {
+            vat_number: '',
+            tables_count: 10,
+            persons_per_table: 4,
+            order_types: {
+                collection: true,
+                delivery: true,
+                table: true,
+            },
+            store_address: {
+                line1: '',
+                line2: '',
+                postcode: '',
+                city: ''
+            },
+            receipt_message: '',
+            ...settings
+        }
     }
 
     showSuccessText(){
@@ -262,7 +317,7 @@ h2{
     margin-left: 0.5rem;
 }
 .checks-parent .checkbox{
-    margin-left: 1rem;
+    margin-right: 1rem;
 }
 .right.segment{
     max-width: 60vw;

@@ -49,7 +49,7 @@ export default class OrdersTab extends Vue{
             classes: item => item.order_details && item.order_details.paid ? 'green' : 'red'
         },
         {name: 'Order value', prop: 'total', filter: 'price_m'},
-        {name: 'Cashier', prop: 'cashier', filter: 'joinnames'},
+        {name: 'Cashier/Waiter', prop: 'cashier', filter: 'joinnames'},
         // {name: '', prop: '@', buttons: [
         //         {name: 'print', text: 'Receipt', icon: 'file alternate'}
         //     ]

@@ -6,6 +6,8 @@ import things from '../prs/things';
 import consts from './consts';
 import config from '../config';
 import store from '../store';
+import { OrderType } from 'murew-core/dist/types';
+import { getDateTimeValue } from 'murew-core/dist/DateUtils';
 
 export default class Receipt{
 
@@ -36,7 +38,7 @@ export default class Receipt{
         return new POSReceiptBuilder({
             currency: config.app.currencySign,
             lineLength: 44,
-            itemInBigText: false,
+            itemInBigText: !showPrices,
             showItemPrice: false,
             showPrices,
         });
@@ -46,6 +48,7 @@ export default class Receipt{
         this.selectBuilder('other');
         this.my_print(order, frod, {
             itemsFilter: item => this.getCatCtype(item) == 2,
+            target: 'bar'
         });
     }
 
@@ -54,6 +57,7 @@ export default class Receipt{
         this.my_print(order, frod, {
             printKitchenMessage: true,
             itemsFilter: item => this.getCatCtype(item) == 1,
+            target: 'kitchen'
         });
     }
 
@@ -63,31 +67,69 @@ export default class Receipt{
     }
 
     static my_print(order: any, frod?: Boolean, options?: any){
-        const { printKitchenMessage, itemsFilter } = options || {};
+        const { printKitchenMessage, itemsFilter, target = 'pos' } = options || {};
         if (frod) order = this.prepareROD(order);
-        const [ date, _, time ] = utils.timestampToDate(order.date_added, 2, true).split(' ');
-        const { order_details, order_type } = order;
+        // const [ date, _, time ] = utils.timestampToDate(order.date_added, 2, true).split(' ');
+        const { order_details, order_details: { preorder }, order_type, totals } = order;
+        const { store_name, store_phone, store_address, receipt_message } = store.state.sharedSettings;
+        const { line1, line2, city, postcode } = store_address || {};
+        const address = [line1, line2, city, postcode].filter(p => !!p);
+        const isOnline = order.no.charAt(0) == 'N';
         const r = this.prb;
         r.clear();
-        r.addHeader({
-            title: 'Zaafran',
-            subtitles: [
-                "Romford,234 Main Rd",
-                "01708743006"
-            ],
-            orderId: order.id,
-            orderNo: order.no,
-            order_type: order.order_type,
-            order_details: order_details,
-            date,
-            time,
-            cashier: order.cashier ? order.cashier.first_name + ' ' + order.cashier.last_name : null,
-            client: (order_details.first_name) ? (order_details.first_name + ' ' + order_details.last_name) : 'WALKIN'
-        }, true);
+        if(target == 'pos'){
+            r.addHeader({
+                title: store_name,
+                subtitles: address.concat(store_phone && ['Tel: ' + store_phone] || [])
+            });
+        }else{
+            r.addHeader({
+                title: target.toUpperCase(),
+                subtitles: []
+            });
+        }
+
+        const ORDER_TYPES_TEXTS = {
+            [OrderType.Table]: 'DINE IN',
+            [OrderType.Collection]: 'PICKUP',
+            [OrderType.Delivery]: 'DELIVERY'
+        }
+        const orderType = ORDER_TYPES_TEXTS[order_type];
+
+        r._fontBig();
+        if(preorder){
+            const action = order_type == OrderType.Collection ? 'Pickup' : 'Delivery';
+            const date = new Date(preorder.date).toLocaleDateString();
+            const time = preorder.time.split(':').slice(0, 2).join(':');
+            // r._line(order_type.toUpperCase(), 'center');
+            r._line(`${action} ${date} at ${time}`, 'center');
+        }
+        r._line(`Order No: ${order.no}`, 'center');
+        if(isOnline){
+            r._line('ONLINE ORDER', 'center');
+        }
+        r._fontNormal();
+        r._separator();
+        r._fontBig();
+        r._line(orderType, 'center');
+        r._fontNormal();
+        r._separator();
+        if(order_details.waiter && order_type == OrderType.Table){
+            r._fontBig();
+            r._line(`Server: ${order_details.waiter}`, 'center');
+            r._fontNormal();
+            r._separator();
+        }
+        r._emptyLine();
+
+        
         
         const items = typeof itemsFilter == 'function' ? order.products.filter(itemsFilter) : order.products;
         if(items.length < 1) return;
         const counts = order.counts;
+        if(target == 'kitchen' || target == 'bar'){
+            r._fontBig();
+        }
         for(let i = 0; i < items.length; i++){
             const p = items[i];
             const c = counts[p.id];
@@ -106,6 +148,82 @@ export default class Receipt{
                 q: 0,
             });
         }
+        r._fontNormal();
+
+
+
+        r.addTotalsItem({
+            name: 'Sub Total',
+            amount: totals.subTotal,
+        });
+
+        if(totals.discount){
+            r.addTotalsItem({
+                name: 'Discount',
+                amount: totals.discount,
+            });
+        }
+        
+        if(totals.foodTotal){
+            r.addTotalsItem({
+                name: 'Food',
+                amount: totals.foodTotal,
+            });
+        }
+
+        if(totals.drinksTotal){
+            r.addTotalsItem({
+                name: 'Drink',
+                amount: totals.drinksTotal,
+            });
+        }
+        
+        if(totals.delivery_cost && order_type == OrderType.Delivery){
+            r.addTotalsItem({
+                name: 'Delivery Charge',
+                amount: totals.delivery_cost,
+            });
+        }
+
+        if(totals.tips){
+            r.addTotalsItem({
+                name: 'Tips',
+                amount: totals.tips,
+            });
+        }
+
+        r.addTotalsItem({
+            name: 'Total to pay',
+            amount: totals.total,
+        });
+        r._emptyLine();
+
+        const paym = order.pay_method;
+        // if(paym == 'cash'){
+        //     r.addTotalsItem({ name: 'Cash', amount: order.totals.paidCash });
+        //     r.addTotalsItem({ name: 'Change', amount: order.totals.changeDue });
+        // }else if(paym == 'card'){
+        //     // r.addTotalsItem({ name: 'Comptant', text: 'Credit or Debit' });
+        // }else if(paym == 'prepaid'){
+        //     r.addTotalsItem({ name: 'Comptant', text: 'CARTE PREPAYEE-' + order.payment.barcode.substr(-5) });
+        // }else if(paym == 'loyalty'){
+        //     r.addTotalsItem({ name: 'Comptant', text: 'CARTE FIDELITE-' + order.payment.barcode.substr(-5) });
+        // }
+
+        if(isOnline){
+            let paymText;
+            if(paym == 'cod'){
+                paymText = `PAY ON ${orderType}`;
+            }else if(paym == 'online_card'){
+                paymText = 'ORDER PAID ONLINE';
+            }
+            if(paymText){
+                r._fontNormal();
+                r._separator();
+                r._fontBig();
+                r._line(paymText, 'center');
+            }
+        }
 
         const { kitchenMessage } = order.order_details;
         if(printKitchenMessage && kitchenMessage){
@@ -115,81 +233,50 @@ export default class Receipt{
             r._paragraph(kitchenMessage);
             r._regularText();
         }
-
-        if(order.totals.discount){
-            r.addTotalsItem({
-                name: 'Discount',
-                amount: this._removeTaxes(order.totals.discount, order.taxes),
-            });
+        if(kitchenMessage){
+            r._fontNormal();
+            r._separator();
+            r._line('Customer notes:');
+            r._paragraph(kitchenMessage);
         }
-
-        r.addTotalsItem({
-            name: 'Sub-total',
-            amount: order.totals.subTotal,
-        });
-
-        if(order.totals.tips){
-            r.addTotalsItem({
-                name: 'Tips',
-                amount: order.totals.tips,
-            });
-        }
-
-        // r.addTotalsItem({ name: 'VAT', amount: order.totals.taxGST, leftPadding: true });
-        // r.addTotalsItem({ name: 'QST', amount: order.totals.taxQST, leftPadding: true });
-
-        r.addTotalsItem({
-            name: 'TOTAL',
-            amount: order.totals.total,
-        });
-
-        const paym = order.pay_method;
-        if(paym == 'cash'){
-            r.addTotalsItem({ name: 'Cash', amount: order.totals.paidCash });
-            r.addTotalsItem({ name: 'Change', amount: order.totals.changeDue });
-        }else if(paym == 'card'){
-            // r.addTotalsItem({ name: 'Comptant', text: 'Credit or Debit' });
-        }else if(paym == 'prepaid'){
-            r.addTotalsItem({ name: 'Comptant', text: 'CARTE PREPAYEE-' + order.payment.barcode.substr(-5) });
-        }else if(paym == 'loyalty'){
-            r.addTotalsItem({ name: 'Comptant', text: 'CARTE FIDELITE-' + order.payment.barcode.substr(-5) });
-        }
-
-        let paymText;
-        if(paym == 'cash'){
-            const label = order_details.paid ? 'Paid' : 'Unpaid';
-            paymText = `Cash (${label})`;
-        }else{
-            paymText = 'Credit/Debit Card';
-        }
-        r.addTotalsItem({ name: 'Payment Method', text: paymText });
 
         if(order_type != 'table'){
-            r.addSpace();
-            r.addSeparator();
-            r.addSpace();
-            const CENTER = 'center';
             const name = order_details.first_name + ' ' + (order_details.last_name || '');
-            r._line('Customer Details:', CENTER);
-            r._line('Name: ' + name, CENTER);
-            if(order_details.phone) r._line(`Phone: ${order_details.phone}`, CENTER);
+            r._fontNormal();
+            r._separator();
+            r._line('Customer Info:');
+            r._emptyLine();
+            r._line(name);
             if(order_type == 'delivery'){
-                r._line(`Delivery post code: ${order_details.postcode}`, CENTER);
-                const addr2 = order_details.address_2 ? ', ' + order_details.address_2 : '';
-                r._line(`Delivery Address:`, CENTER); 
-                r._line(order_details.address_1 + addr2, CENTER);
-                r._line(order_details.city, CENTER);
+                const ds = order_details;
+                [ds.address_1, ds.address_2, ds.city, ds.postcode]
+                .filter(p => !!p).forEach(p => r._line(p));
+            }
+            if(order_details.phone){
+                r._line(`${order_details.phone}`);
             }
         }
 
-        const vat_number = this.state.vat_number.replace(/\s/g, '');
-        if(vat_number){
-            r.addSpace();
-            r.addSeparator();
-            r.addSpace();
-            r._line(`VAT Number: ${vat_number}`, 'center');
-            r.addSpace();
+        if(receipt_message && target == 'pos'){
+            r._emptyLine();
+            r._paragraph(receipt_message, 'center');
+            r._emptyLine();
         }
+
+        const orderTime = getDateTimeValue(new Date(order.date_added * 1000));
+        r._separator();
+        r.addTotalsItem({
+            name: 'Order Time',
+            amount: orderTime
+        }, true);
+        // const vat_number = this.state.vat_number.replace(/\s/g, '');
+        // if(vat_number){
+        //     r.addSpace();
+        //     r.addSeparator();
+        //     r.addSpace();
+        //     r._line(`VAT Number: ${vat_number}`, 'center');
+        //     r.addSpace();
+        // }
 
         return Printer.print(r.getLines());
     }

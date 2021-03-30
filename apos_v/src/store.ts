@@ -21,6 +21,7 @@ const store = new Vuex.Store({
     settings: {
       murewSyncKey: null,
     },
+    sharedSettings: <any>{},
 
     tablesState: {},
 
@@ -67,6 +68,7 @@ const store = new Vuex.Store({
         postcode: '',
         city: '',
         kitchenMessage: '',
+        waiter: ''
       },
       values: {
         fullDiscount: false,
@@ -196,6 +198,10 @@ const store = new Vuex.Store({
     },
     pos: state => state.pos,
     userType: state => state.user.user_type,
+    userName: state => {
+      const { first_name, last_name, username } = state.user;
+      return [first_name, last_name].filter(n => !!n).join(' ') || username;
+    },
     murewCart: (state) => {
       const { itemsCount, orderType, selectedOffer } = state.pos;
       const products = {};
@@ -453,6 +459,7 @@ const store = new Vuex.Store({
         postcode: '',
         city: state.pos.orderDetails.city,
         kitchenMessage: '',
+        waiter: '',
       });
 
       state.app.showOrderTypeDetails = false;

@@ -217,6 +217,7 @@ export default class Comu {
         if (settings.vat_number) state.vat_number = settings.vat_number;
         if (settings.receipt_msg) state.receipt_msg = settings.receipt_msg;
         if (settings.order_types) state.order_types = settings.order_types;
+        state.sharedSettings = Object.clone(settings);
         state.tables_count = parseInt(settings.tables_count) || 10;
         state.persons_per_table = parseInt(settings.persons_per_table) || 4;
     }
@@ -233,13 +234,16 @@ export default class Comu {
     static postOrder() {
         return new Promise((resolve, reject) => {
             const { state, getters } = this.context;
-            const { orderId } = state.pos;
+            const { orderId, orderDetails } = state.pos;
             const { items, itemsCount } = getters.allOrderItems;
             const total = Utils.preparePrice(state.pos.values.total);
+            if(!orderDetails.waiter){
+                orderDetails.waiter = getters.userName;
+            }
             
             const orderData = {
                 order_type: state.pos.orderType,
-                order_details: state.pos.orderDetails,
+                order_details: orderDetails,
                 user_id: state.user.id,
                 client_id: state.client.id,
                 total,
@@ -299,7 +303,7 @@ export default class Comu {
 
     static async postOnlineOrder(order) {
         const state = this.context.state;
-        const { type, total: _total, products, id: onlineOrderId, owner, no, delivery_address, menu, payment_method, preorder, note } = order;
+        const { type, total: _total, products, id: onlineOrderId, owner, no, delivery_address, menu, payment_method, attrs, preorder, note } = order;
         const paymentMethod = payment_method || 'cod';
         const isPOSMenu = menu == 'pos';
         const items = {
@@ -327,6 +331,25 @@ export default class Comu {
             email: owner.email,
             phone: owner.phone
         };
+        const { sub_total, food_total, drinks_total, discount, delivery_cost } = attrs;
+        const totals = {
+            changeDue: 0,
+            discount: discount,
+            drinksTotal: drinks_total,
+            extraCharge: 0,
+            foodTotal: food_total,
+            fullDiscount: false,
+            itemsTotal: sub_total,
+            paidCash: _total,
+            percentDiscount: 0,
+            percentDiscountCType: 1,
+            subTotal: sub_total,
+            taxGST: NaN,
+            taxQST: NaN,
+            tips: 0,
+            delivery_cost,
+            total: _total,
+        };
         const total = Utils.preparePrice(_total);
         const orderData = {
             no: no,
@@ -347,23 +370,7 @@ export default class Comu {
             user_id: 0,
             client_id: 0,
             total,
-            totals: {
-                changeDue: 0,
-                discount: 0,
-                drinksTotal: 0,
-                extraCharge: 0,
-                foodTotal: _total,
-                fullDiscount: false,
-                itemsTotal: _total,
-                paidCash: _total,
-                percentDiscount: 0,
-                percentDiscountCType: 1,
-                subTotal: _total,
-                taxGST: NaN,
-                taxQST: NaN,
-                tips: 0,
-                total: _total,
-            },
+            totals: totals,
             items: items,
             other_data: {
                 client,
