@@ -3,7 +3,7 @@
         <div class="gift button" @click="$emit('giftClick')" :class="{ immutable }" :title="isFree ? 'Remove free item' : 'Make this item free'">
             <i class="gift icon" :class="{active: isFree}"></i>
         </div>
-        <label class="item-name">{{ text }}  - {{minimumCount}}</label>
+        <label class="item-name">{{ text }}</label>
         <label v-if="label" class="label">{{ label }}</label>
         <span v-if="isFree">Free</span>
         <span v-else>{{ amount | price }}</span>
