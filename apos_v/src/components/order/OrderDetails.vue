@@ -52,12 +52,16 @@
                     <sui-table-header>
                         <sui-table-row>
                             <sui-table-headerCell text-align="right">Sub-total</sui-table-headerCell>
-                            <sui-table-headerCell collapsing text-align="right">{{ order.total | price_m }}</sui-table-headerCell>
+                            <sui-table-headerCell collapsing text-align="right">{{ totals.subTotal | price }}</sui-table-headerCell>
                         </sui-table-row>
-                        <!-- <sui-table-row v-if="order.type == OrderType.Delivery">
-                            <sui-table-headerCell text-align="right">Delivery</sui-table-headerCell>
-                            <sui-table-headerCell collapsing text-align="right">{{ attrs.delivery_cost | price }}</sui-table-headerCell>
-                        </sui-table-row> -->
+                        <sui-table-row>
+                            <sui-table-headerCell text-align="right">Discount</sui-table-headerCell>
+                            <sui-table-headerCell collapsing text-align="right">{{ totals.discount | price }}</sui-table-headerCell>
+                        </sui-table-row>
+                        <sui-table-row v-if="order.order_type == OrderType.Delivery">
+                            <sui-table-headerCell text-align="right">Delivery Cost</sui-table-headerCell>
+                            <sui-table-headerCell collapsing text-align="right">{{ totals.delivery_cost | price }}</sui-table-headerCell>
+                        </sui-table-row>
                         <sui-table-row>
                             <sui-table-headerCell text-align="right">Total</sui-table-headerCell>
                             <sui-table-headerCell collapsing text-align="right">{{ order.total | price_m }}</sui-table-headerCell>
@@ -163,6 +167,9 @@ export default {
                 return 'Canceled';
             }
         },
+        totals(){
+            return this.order.totals;
+        },
         items(){
             const { products, counts } = this.order.items;
             return products.map(({ id, name, price, note, extras}) => ({
@@ -183,6 +190,9 @@ export default {
         preorderTime(){
             return this.preorder.time.split(':').slice(0, 2).join(':');
         }
+    },
+    mounted(){
+        console.log(this)
     }
 }
 </script>
