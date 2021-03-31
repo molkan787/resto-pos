@@ -2,7 +2,7 @@
 -- Host:                         127.0.0.1
 -- Server version:               8.0.20 - MySQL Community Server - GPL
 -- Server OS:                    Win64
--- HeidiSQL Version:             11.1.0.6175
+-- HeidiSQL Version:             11.2.0.6213
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -30,6 +30,42 @@ CREATE TABLE IF NOT EXISTS `actions` (
   `__is_deleted` int DEFAULT NULL,
   `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table restopos.bookings
+CREATE TABLE IF NOT EXISTS `bookings` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `no` varchar(20) NOT NULL,
+  `date` varchar(10) NOT NULL,
+  `time` varchar(5) NOT NULL,
+  `number_of_persons` int NOT NULL DEFAULT '0',
+  `category` enum('breakfast','lunch','dinner') NOT NULL,
+  `status` enum('booked','canceled') NOT NULL,
+  `customer_name` varchar(50) NOT NULL DEFAULT '',
+  `customer_phone` varchar(50) NOT NULL DEFAULT '',
+  `comment` varchar(255) NOT NULL DEFAULT '',
+  `client_id` int NOT NULL DEFAULT '0',
+  `updated_at` int NOT NULL,
+  `created_at` int NOT NULL,
+  `__is_deleted` int DEFAULT NULL,
+  `__deleted_time` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `no` (`no`),
+  KEY `datetime` (`date`,`time`),
+  KEY `client` (`client_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table restopos.booking_slots
+CREATE TABLE IF NOT EXISTS `booking_slots` (
+  `day` varchar(10) NOT NULL,
+  `time_slots` json NOT NULL,
+  `__is_deleted` int DEFAULT NULL,
+  `__deleted_time` int DEFAULT NULL,
+  PRIMARY KEY (`day`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
@@ -138,7 +174,7 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `__is_deleted` int DEFAULT NULL,
   `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
@@ -193,7 +229,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
