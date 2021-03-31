@@ -42,7 +42,7 @@ export default class ReportsDownloader{
         }
     }
 
-    static async dailySummary(date: any): string{
+    static async dailySummary(date: any): Promise<string>{
         try {
             const _date = utils.dateToTimestamp(date);
             const response = await axios.post(_url('reports'), {type: dailySummary, day: _date});
@@ -54,7 +54,7 @@ export default class ReportsDownloader{
         }
     }
 
-    static async weeklySummary(date_from: any, date_to: any): string {
+    static async weeklySummary(date_from: any, date_to: any): Promise<string> {
         try {
             const _from = utils.dateToTimestamp(date_from);
             const _to = utils.dateToTimestamp(date_to);
