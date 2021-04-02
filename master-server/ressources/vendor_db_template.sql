@@ -42,20 +42,20 @@ CREATE TABLE IF NOT EXISTS `bookings` (
   `time` varchar(5) NOT NULL,
   `number_of_persons` int NOT NULL DEFAULT '0',
   `category` enum('breakfast','lunch','dinner') NOT NULL,
-  `status` enum('booked','canceled') NOT NULL,
+  `status` enum('booked','canceled','arrived') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `customer_name` varchar(50) NOT NULL DEFAULT '',
   `customer_phone` varchar(50) NOT NULL DEFAULT '',
   `comment` varchar(255) NOT NULL DEFAULT '',
   `client_id` int NOT NULL DEFAULT '0',
-  `updated_at` int NOT NULL,
-  `created_at` int NOT NULL,
+  `updated_at` int NOT NULL DEFAULT '0',
+  `created_at` int NOT NULL DEFAULT '0',
   `__is_deleted` int DEFAULT NULL,
   `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `no` (`no`),
   KEY `datetime` (`date`,`time`),
   KEY `client` (`client_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=136 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `categories` (
   `__is_deleted` int DEFAULT NULL,
   `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
@@ -163,18 +163,18 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `user_id` int NOT NULL,
   `client_id` int NOT NULL,
   `order_type` varchar(50) NOT NULL,
-  `order_details` varchar(300) NOT NULL,
+  `order_details` json NOT NULL,
   `total` int NOT NULL,
   `pay_method` varchar(20) NOT NULL,
-  `totals` varchar(400) NOT NULL,
-  `items` text NOT NULL,
-  `other_data` varchar(1000) DEFAULT NULL,
+  `totals` json NOT NULL,
+  `items` json NOT NULL,
+  `other_data` json DEFAULT NULL,
   `receipt` int NOT NULL DEFAULT '0',
   `date_added` int NOT NULL,
   `__is_deleted` int DEFAULT NULL,
   `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=135 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
@@ -212,7 +212,7 @@ CREATE TABLE IF NOT EXISTS `products` (
   `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `category_id` (`category_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
@@ -281,7 +281,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `__is_deleted` int DEFAULT NULL,
   `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
