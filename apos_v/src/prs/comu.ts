@@ -234,7 +234,7 @@ export default class Comu {
     static postOrder() {
         return new Promise((resolve, reject) => {
             const { state, getters } = this.context;
-            const { orderId, orderDetails } = state.pos;
+            const { orderId, orderDetails, itemsNote } = state.pos;
             const { items, itemsCount } = getters.allOrderItems;
             const total = Utils.preparePrice(state.pos.values.total);
             if(!orderDetails.waiter){
@@ -250,7 +250,8 @@ export default class Comu {
                 totals: state.pos.values,
                 items: {
                     products: items,
-                    counts: itemsCount
+                    counts: itemsCount,
+                    notes: itemsNote
                 },
                 other_data: {
                     ticket: state.ticket,
@@ -308,7 +309,8 @@ export default class Comu {
         const isPOSMenu = menu == 'pos';
         const items = {
             products: [],
-            counts: {}
+            counts: {},
+            notes: {}
         };
         for(let p of products){
             const _id = isPOSMenu ? p.remote_id : p.pid;
@@ -316,13 +318,16 @@ export default class Comu {
                 id: _id,
                 name: p.name,
                 price: p.unit_price,
-                note: p.note,
+                // note: p.note,
                 product_type: 1,
                 date_modified: 0,
                 category_type: p.category_type,
                 extras: p.extras
             });
             items.counts[_id] = p.quantity;
+            if(p.note){
+                items.notes[_id] = p.note;
+            }
         }
         const [first_name, last_name] = owner.fullname.split(' ');
         const client = {
@@ -431,6 +436,7 @@ export default class Comu {
             client: od.other_data.client || {},
             products: od.items.products,
             counts: od.items.counts,
+            notes: od.items.notes,
             totals: od.totals,
             pay_method: od.pay_method,
             payment: {},

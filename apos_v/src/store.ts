@@ -93,6 +93,7 @@ const store = new Vuex.Store({
       },
       items: [],
       itemsCount: {},
+      itemsNote: {},
       minimumItemsCount: {},
       pay_method: 'cash',
       cantUsePrepaid: false,
@@ -386,6 +387,7 @@ const store = new Vuex.Store({
       const values = pos.values;
       pos.items = [];
       pos.itemsCount = {};
+      pos.itemsNote = {};
       pos.minimumItemsCount = {};
       pos.pay_method = 'cash';
       pos.cantUsePrepaid = false;

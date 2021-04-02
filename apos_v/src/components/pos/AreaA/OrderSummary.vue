@@ -4,14 +4,14 @@
 
             <OrderItem v-for="item in pos.items" :key="item.id" :text="item.name"
              :amount="item.price" :count="pos.itemsCount[item.id]" :isFree="item.isFree"
-             :product_id="item.id" @giftClick="giftClick(item)"
-             :minimumCount="getItemMinimumCount(item.id)"/>
+             :product_id="item.id" @giftClick="giftClick(item)" @noteClick="noteClick(item)"
+             :minimumCount="getItemMinimumCount(item.id)" :note="pos.itemsNote[item.id]"/>
 
             <div v-if="pos.items.length == 0" class="empty-text">No items added</div>
 
             <OrderItem v-for="item in offerItems" :key="'offer-' + item.pid" :text="item.name"
              :amount="0" :count="1" :isFree="true" :immutable="true"
-             :product_id="item.pid" :minimumCount="getItemMinimumCount(item.pid)"/>
+             :product_id="item.pid" :minimumCount="getItemMinimumCount(item.pid)" @noteClick="noteClick(item)"/>
 
         </sui-segment>
         <Totals class="totals" />
@@ -26,6 +26,7 @@ import Component from 'vue-class-component';
 import OrderItem from './OrderItem.vue';
 import Totals from './Totals.vue';
 import Things from '@/prs/things.ts';
+import MxHelper from '@/prs/MxHelper.ts';
 import ProductsFactory from '@/prs/productsFactory.ts';
 
 @Component({
@@ -65,6 +66,24 @@ export default class OrderSummary extends Vue{
                 itemId: freeItem.id,
                 count,
             })
+        }
+    }
+
+    async noteClick(item){
+        const note = this.pos.itemsNote[item.id] || '';
+        try {
+            const message = await MxHelper.getReason({
+                title: item.name,
+                inputLabel: 'Note',
+                reason: note,
+                force: false,
+                showClearButton: true,
+            })
+            Vue.set(this.pos.itemsNote, item.id, message.trim());
+        } catch (error) {
+            if(error != 'CANCELED'){
+                console.error(error);
+            }
         }
     }
 

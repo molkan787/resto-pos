@@ -46,10 +46,24 @@
                         <sui-table-cell>{{ item.customer_name | capitalizeAll }}</sui-table-cell>
                         <sui-table-cell>{{ item.customer_phone }}</sui-table-cell>
                         <sui-table-cell>
-                            <sui-button @click="cancelClick(item)" v-if="item.status != 'canceled'" size="tiny">
-                                <sui-icon name="ban" />
-                                Cancel
-                            </sui-button>
+
+                            <template v-if="item.status == 'booked'">
+                                <sui-button @click="cancelClick(item)" size="tiny">
+                                    <sui-icon name="ban" />
+                                    Cancel
+                                </sui-button>
+                                <sui-button @click="arrivedClick(item)" size="tiny" positive>
+                                    <sui-icon name="sign-in" />
+                                    Arrived
+                                </sui-button>
+                            </template>
+                            <template v-else-if="item.status == 'arrived'">
+                                <sui-icon name="check" /> Arrived!
+                            </template>
+                            <template v-else>
+                                {{ item.status | capitalize }}
+                            </template>
+
                         </sui-table-cell>
 
                     </sui-table-row>
@@ -110,19 +124,25 @@ export default {
         bookings: [],
     }),
     methods: {
-        async loadBookings(){
-            this.loading = true;
-            try {
-                this.bookings = await Dl.getBookings({
-                    date: this.selectedDateText
-                });
-            } catch (error) {
-                console.error(error);
+        async arrivedClick(booking){
+            const mr = await Message.ask(`Did customer for booking # ${booking.no} arrived?`, 'Booking');
+            if(mr.answer){
+                mr.loading();
+                try {
+                    await DM.updateBooking(booking.id, { status: 'arrived' });
+                    booking.status = 'arrived';
+                    mr.hide();
+                } catch (error) {
+                    console.error(error);
+                    mr.hide();
+                    Message.info('An error occured, Please try again', 'Error').then(r => r.hide());
+                }
+            }else{
+                mr.hide();
             }
-            this.loading = false;
         },
         async cancelClick(booking){
-            const mr = await Message.ask(`Cancel bookings # ${booking.no} ?`, 'Cancel Booking');
+            const mr = await Message.ask(`Cancel booking # ${booking.no} ?`, 'Cancel Booking');
             if(mr.answer){
                 mr.loading();
                 try {
@@ -137,7 +157,18 @@ export default {
             }else{
                 mr.hide();
             }
-        }
+        },
+        async loadBookings(){
+            this.loading = true;
+            try {
+                this.bookings = await Dl.getBookings({
+                    date: this.selectedDateText
+                });
+            } catch (error) {
+                console.error(error);
+            }
+            this.loading = false;
+        },
     },
     filters: {
         timeText(time){

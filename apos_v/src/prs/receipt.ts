@@ -131,11 +131,9 @@ export default class Receipt{
         
         
         const items = typeof itemsFilter == 'function' ? order.products.filter(itemsFilter) : order.products;
+        const _notes = target == 'pos' ? {} : ( order.notes || {} );
         if(items.length < 1) return;
         const counts = order.counts;
-        if(target == 'kitchen' || target == 'bar'){
-            r._fontBig();
-        }
         for(let i = 0; i < items.length; i++){
             const p = items[i];
             const c = counts[p.id];
@@ -144,7 +142,7 @@ export default class Receipt{
                 name: p.name,// + ' ' + this._getLabel(p),
                 price: this._getPriceWithoutTaxes(p, order.taxes),
                 q: c,
-                note: p.note
+                note: _notes[p.id] || null
             });
         }
         if(order.totals.extraCharge){

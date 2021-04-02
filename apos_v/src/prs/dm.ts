@@ -97,8 +97,9 @@ export default class DM{
         pos.orderType = order_type;
         Object.patch(pos.orderDetails, order_details);
         Object.patch(pos.values, totals);
-        const { products, counts } = items;
+        const { products, counts, notes } = items;
         pos.minimumItemsCount = Object.clone(counts);
+        pos.itemsNote = Object.clone(notes);
         for(let p of products){
             const itemId = p.id;
             const count = counts[itemId] || 0;

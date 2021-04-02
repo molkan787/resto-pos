@@ -1,7 +1,10 @@
 <template>
     <div>
-        <div class="gift button" @click="$emit('giftClick')" :class="{ immutable }" :title="isFree ? 'Remove free item' : 'Make this item free'">
+        <div class="option button" @click="$emit('giftClick')" :class="{ immutable }" :title="isFree ? 'Remove free item' : 'Make this item free'">
             <i class="gift icon" :class="{active: isFree}"></i>
+        </div>
+        <div class="option button" @click="$emit('noteClick')" title="Add note">
+            <i class="edit icon" :class="{active: !!note}"></i>
         </div>
         <label class="item-name">{{ text }}</label>
         <label v-if="label" class="label">{{ label }}</label>
@@ -34,6 +37,7 @@ export default class OrderItem extends Vue{
 
     @Prop({default: ''}) text!: string;
     @Prop({default: ''}) label!: string;
+    @Prop({default: ''}) note!: string;
     @Prop({default: 0}) amount!: number;
     @Prop({default: 1}) count!: number;
     @Prop({default: 0}) minimumCount!: number;
@@ -97,7 +101,7 @@ div.count{
         font-size: 0.8em;
     }
 }
-.gift.button{
+.option.button{
     display: inline-block;
     float: left;
     width: 3rem;
@@ -105,11 +109,14 @@ div.count{
     margin-left: -0.5rem;
     margin-top: -0.5rem;
     cursor: pointer;
-    .gift.icon{
+    .icon{
         opacity: 0.5;
-        &.active{
+        &.gift.active{
             opacity: 1;
             color: #21BA45;
+        }
+        &.edit.active{
+            opacity: 1;
         }
     }
 }

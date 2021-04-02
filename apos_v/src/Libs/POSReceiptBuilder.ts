@@ -105,6 +105,7 @@ class POSReceiptBuilder {
 	}
 
 	addItem(item: any){
+		this.itemInBigText ? this._fontBig() : this._fontNormal();
 		this._boldText();
 		const ltotal = item.q ? item.price * item.q : item.price;
 		this._item({
@@ -113,16 +114,12 @@ class POSReceiptBuilder {
 			price: this._price(item.price, true),
 			total: this._price(ltotal, true)
 		});
-		this._regularText();
+
+		this._fontNormal();
 
 		const { note } = item;
 		if(typeof note == 'string' && note.length > 0){
-			this._item({
-				name: '*' + note,
-				q: '',
-				price: '',
-				total: '',
-			})
+			this._paragraph(note, LEFT);
 		}
 	}
 
@@ -238,7 +235,6 @@ class POSReceiptBuilder {
 		}
 		line += this._block(item.total, this.totalLength, RIGHT);
 
-		this.itemInBigText ? this._fontBig() : this._fontNormal();
 		this._line(line);
 	}
 
