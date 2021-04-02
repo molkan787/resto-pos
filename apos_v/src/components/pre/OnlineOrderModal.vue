@@ -132,7 +132,8 @@ export default {
             { text: '1 Hour 30 Min', value: 90 },
         ],
         beepSound: new Howl({
-            src: [require('@/assets/audio/mixkit-positive-interface-beep-221.wav')]
+            src: [require('@/assets/audio/mixkit-alarm-digital-clock-beep-989.wav')],
+            loop: true
         })
     }),
     computed: {
@@ -158,12 +159,27 @@ export default {
     methods: {
         close(){
             this.isOpen = false;
+            try {
+                this.beepSound.pause();
+            } catch (error) {
+                console.error(error);
+            }
         },
         decline(){
+            try {
+                this.beepSound.pause();
+            } catch (error) {
+                console.error(error);
+            }
             this.loading = 'decline';
             murew.declineOrder(this.order.id);
         },
         accept(){
+            try {
+                this.beepSound.pause();
+            } catch (error) {
+                console.error(error);
+            }
             this.loading = 'accept';
             murew.acceptOrder(this.order.id, this.readyTime);
         },
