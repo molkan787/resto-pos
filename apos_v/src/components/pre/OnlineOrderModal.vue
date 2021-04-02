@@ -112,7 +112,7 @@ import Comu from '@/prs/comu';
 import { MurewActions } from 'murew-core/dist/enums';
 import { OrderType } from 'murew-core/dist/types';
 import { Howl } from 'howler';
-const { murew } = Comu.services.instances;
+const { murew, onlineOrdersInbox } = Comu.services.instances;
 export default {
     components: {
         Modal,
@@ -158,7 +158,11 @@ export default {
     },
     methods: {
         close(){
+            this.stopSound();
             this.isOpen = false;
+            this.$emit('closed');
+        },
+        stopSound(){
             try {
                 this.beepSound.pause();
             } catch (error) {
@@ -166,20 +170,12 @@ export default {
             }
         },
         decline(){
-            try {
-                this.beepSound.pause();
-            } catch (error) {
-                console.error(error);
-            }
+            this.stopSound();
             this.loading = 'decline';
             murew.declineOrder(this.order.id);
         },
         accept(){
-            try {
-                this.beepSound.pause();
-            } catch (error) {
-                console.error(error);
-            }
+            this.stopSound();
             this.loading = 'accept';
             murew.acceptOrder(this.order.id, this.readyTime);
         },
@@ -195,7 +191,7 @@ export default {
                 const order = this.order;
                 if(status == 'accepted'){
                     try {
-                        this.submitOrder(order);
+                        await this.submitOrder(order);
                         await this.dialog.show('Order successfully accepted!');
                     } catch (error) {
                         await this.dialog.show('An error occured when submiting the order to local database.');
@@ -216,9 +212,10 @@ export default {
         }
     },
 
-    mounted(){
-        murew.on(MurewActions.NewOrder, order => this.handleNewOrder(order));
+    created(){
+        // murew.on(MurewActions.NewOrder, order => this.handleNewOrder(order));
         murew.on(MurewActions.OrderStatusChanged, data => this.handleOrderStatusChanged(data));
+        onlineOrdersInbox.setUiModal(this);
     }
 }
 </script>
