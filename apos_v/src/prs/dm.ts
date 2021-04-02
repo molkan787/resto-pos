@@ -57,8 +57,10 @@ export default class DM{
         return axios.put(_url('bookings/sync'), { bookings });
     }
 
-    public static updateBooking(id: number, data: Partial<PosBooking>){
-        return axios.put(_url(`bookings/${id}`), data);
+    public static async updateBooking(id: number, data: Partial<PosBooking>){
+        const response = await axios.put(_url(`bookings/${id}`), data);
+        services.instances.bookingsService.sendBookings().catch(err => console.error(err));
+        return response;
     }
     
     public static async editOffer(offer: Offer){

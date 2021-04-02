@@ -15,8 +15,8 @@ export function mapMurewBookingToPosBooking(booking: MurewBooking): PosBooking{
         client_id: 0,
         customer_name: (owner || {}).fullname || b.customer_name || '',
         customer_phone: (owner || {}).phone || b.customer_phone || '',
-        created_at: createdAt ? Math.floor(new Date(createdAt).getTime() / 1000): 0,
-        updated_at: updatedAt ? Math.floor(new Date(updatedAt).getTime() / 1000): 0,
+        // created_at: createdAt ? Math.floor(new Date(createdAt).getTime() / 1000): 0,
+        // updated_at: updatedAt ? Math.floor(new Date(updatedAt).getTime() / 1000): 0,
     }
 }
 
