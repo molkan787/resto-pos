@@ -127,7 +127,6 @@ class POSReceiptBuilder {
 	}
 
 	addTotalsItem(item: any, skipPriceFormating?: boolean){
-		if(!this.showPrices) return;
 		let nlen = this.tNameLength;
 		let plen = this.tPriceLength;
 		if(item.text){

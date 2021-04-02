@@ -79,7 +79,7 @@ export default class Receipt{
         r.clear();
         if(target == 'pos'){
             r.addHeader({
-                title: store_name,
+                title: store_name || 'Restaurant',
                 subtitles: address.concat(store_phone && ['Tel: ' + store_phone] || [])
             });
         }else{
@@ -114,6 +114,12 @@ export default class Receipt{
         r._line(orderType, 'center');
         r._fontNormal();
         r._separator();
+        if(order_type == OrderType.Table){
+            r._fontBig();
+            r._line(`Table: ${order_details.table}`, 'center');
+            r._fontNormal();
+            r._separator();
+        }
         if(order_details.waiter && order_type == OrderType.Table){
             r._fontBig();
             r._line(`Server: ${order_details.waiter}`, 'center');
@@ -150,65 +156,55 @@ export default class Receipt{
         }
         r._fontNormal();
 
-
-
-        r.addTotalsItem({
-            name: 'Sub Total',
-            amount: totals.subTotal,
-        });
-
-        if(totals.discount){
+        if(target == 'pos'){
             r.addTotalsItem({
-                name: 'Discount',
-                amount: totals.discount,
+                name: 'Sub Total',
+                amount: totals.subTotal,
             });
-        }
-        
-        if(totals.foodTotal){
+    
+            if(totals.discount){
+                r.addTotalsItem({
+                    name: 'Discount',
+                    amount: totals.discount,
+                });
+            }
+            
+            if(totals.foodTotal){
+                r.addTotalsItem({
+                    name: 'Food',
+                    amount: totals.foodTotal,
+                });
+            }
+    
+            if(totals.drinksTotal){
+                r.addTotalsItem({
+                    name: 'Drink',
+                    amount: totals.drinksTotal,
+                });
+            }
+            
+            if(totals.delivery_cost && order_type == OrderType.Delivery){
+                r.addTotalsItem({
+                    name: 'Delivery Charge',
+                    amount: totals.delivery_cost,
+                });
+            }
+    
+            if(totals.tips){
+                r.addTotalsItem({
+                    name: 'Tips',
+                    amount: totals.tips,
+                });
+            }
+    
             r.addTotalsItem({
-                name: 'Food',
-                amount: totals.foodTotal,
+                name: 'Total to pay',
+                amount: totals.total,
             });
+            r._emptyLine();
         }
-
-        if(totals.drinksTotal){
-            r.addTotalsItem({
-                name: 'Drink',
-                amount: totals.drinksTotal,
-            });
-        }
-        
-        if(totals.delivery_cost && order_type == OrderType.Delivery){
-            r.addTotalsItem({
-                name: 'Delivery Charge',
-                amount: totals.delivery_cost,
-            });
-        }
-
-        if(totals.tips){
-            r.addTotalsItem({
-                name: 'Tips',
-                amount: totals.tips,
-            });
-        }
-
-        r.addTotalsItem({
-            name: 'Total to pay',
-            amount: totals.total,
-        });
-        r._emptyLine();
 
         const paym = order.pay_method;
-        // if(paym == 'cash'){
-        //     r.addTotalsItem({ name: 'Cash', amount: order.totals.paidCash });
-        //     r.addTotalsItem({ name: 'Change', amount: order.totals.changeDue });
-        // }else if(paym == 'card'){
-        //     // r.addTotalsItem({ name: 'Comptant', text: 'Credit or Debit' });
-        // }else if(paym == 'prepaid'){
-        //     r.addTotalsItem({ name: 'Comptant', text: 'CARTE PREPAYEE-' + order.payment.barcode.substr(-5) });
-        // }else if(paym == 'loyalty'){
-        //     r.addTotalsItem({ name: 'Comptant', text: 'CARTE FIDELITE-' + order.payment.barcode.substr(-5) });
-        // }
 
         if(isOnline){
             let paymText;
@@ -263,12 +259,23 @@ export default class Receipt{
             r._emptyLine();
         }
 
-        const orderTime = getDateTimeValue(new Date(order.date_added * 1000));
         r._separator();
-        r.addTotalsItem({
-            name: 'Order Time',
-            amount: orderTime
-        }, true);
+
+        if(target == 'pos'){
+            const orderTime = getDateTimeValue(new Date(order.date_added * 1000));
+            r.addTotalsItem({
+                name: 'Order Time',
+                amount: orderTime
+            }, true);
+        }
+
+        if(target == 'kitchen' || target == 'bar'){
+            r.addTotalsItem({
+                name: `Order Sent To ${target.capitalize()}`,
+                amount: getDateTimeValue(new Date())
+            }, true);
+        }
+
         // const vat_number = this.state.vat_number.replace(/\s/g, '');
         // if(vat_number){
         //     r.addSpace();
