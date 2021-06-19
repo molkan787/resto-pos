@@ -11,6 +11,7 @@ module.exports = ({ localMysqlServerPort, remoteDBConfig }) => {
   const CookieParser = require('restify-cookies');
   const corsMiddleware = require('restify-cors-middleware');
   const dbConnection = require('./models/index')(localMysqlServerPort);
+  const { services } = require('./services');
 
   const auth = require('./auth/auth');
   const router = require('./routes/index');
@@ -55,6 +56,8 @@ module.exports = ({ localMysqlServerPort, remoteDBConfig }) => {
   router(server);
 
   server.on('error', err => console.error(err))
+
+  services.init(server);
 
   server.listen(PORT, function() {
       console.log('%s listening at %s', server.name, server.url);

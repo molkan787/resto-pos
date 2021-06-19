@@ -1,0 +1,1 @@
+module.exports = require('./realtime-communication.service');

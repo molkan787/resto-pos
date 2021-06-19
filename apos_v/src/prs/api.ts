@@ -24,6 +24,5 @@ function _url(path: string) {
 export default _url;
 export { prepare };
 
-// @ts-ignore
 window._url = _url;
 window.prepare_api = prepare;

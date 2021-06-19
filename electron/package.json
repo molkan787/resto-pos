@@ -30,6 +30,7 @@
         "restify-errors": "^7.0.0",
         "rimraf": "^3.0.2",
         "serialport": "^9.0.0",
+        "socket.io": "^4.1.2",
         "unzipper": "^0.10.11",
         "xlsx": "^0.16.3"
     },
@@ -37,9 +38,20 @@
         "electron": "^6.0.11",
         "electron-builder": "^20.44.4"
     },
+    "optionalDependencies": {
+        "mssql": "*",
+        "mysql": "*",
+        "pg": "*",
+        "pg-native": "*",
+        "sqlite3": "*",
+        "bufferutil": "*",
+        "utf-8-validate": "*",
+        "libpq": "*"
+    },
     "scripts": {
         "dist": "build",
-        "start": "electron ."
+        "start": "electron .",
+        "postinstall": "electron-builder install-app-deps"
     },
     "build": {
         "appId": "pl.dahmane.resto-pos",
