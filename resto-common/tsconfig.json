@@ -1,0 +1,26 @@
+{
+    "compileOnSave": true,
+    "extends": "@tsconfig/node12/tsconfig.json",
+    "compilerOptions": {
+        "module": "CommonJS",
+        "esModuleInterop": true,
+        "target": "ES2017",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "outDir": "dist",
+        "resolveJsonModule": true,
+        "strict": true,
+        "declaration": true,
+        "declarationMap": true,
+        "types": [
+            "@types/node"
+        ]
+    },
+    "include": [
+      "src/**/*.ts",
+    ],
+    "exclude": [
+      "node_modules",
+      "dist"
+    ]
+}

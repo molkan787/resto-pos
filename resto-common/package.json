@@ -1,0 +1,17 @@
+{
+  "name": "resto-common",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "author": "Dahmane Seghier",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w"
+  },
+  "devDependencies": {
+    "@tsconfig/node12": "^1.0.7",
+    "@types/node": "^12.19.0",
+    "tslint": "^6.1.3",
+    "typescript": "^4.1.3"
+  }
+}
