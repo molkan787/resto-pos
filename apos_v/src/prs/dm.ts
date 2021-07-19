@@ -57,8 +57,17 @@ export default class DM{
         return axios.put(_url('bookings/sync'), { bookings });
     }
 
-    public static async updateBooking(id: number, data: Partial<PosBooking>){
-        const response = await axios.put(_url(`bookings/${id}`), data);
+    /**
+     * @param id Booking id or No
+     * @param data Booking's data to update
+     * @param byNo Whether to refer by booking number instead of id
+     * @returns {Promise<any>}
+     */
+    public static async updateBooking(ref: number | string, data: Partial<PosBooking>, byNo: boolean = false){
+        const response = (
+            byNo ? await axios.put(_url(`bookings/${ref}?byNo=true`), data)
+                 : await axios.put(_url(`bookings/${ref}`), data)
+        )
         services.instances.bookingsService.sendBookings().catch(err => console.error(err));
         return response;
     }

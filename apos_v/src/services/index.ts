@@ -6,7 +6,8 @@ import { MurewSyncService } from './murew-sync';
 import { StockSyncService } from './stock-sync';
 import { BookingsService } from './bookings';
 import { OnlineOrdersInboxService } from './online-orders-inbox';
-import { RealtimeBackendService } from './realtime-backend'
+import { RealtimeBackendService } from './realtime-backend';
+import { TableStateService } from './table-state';
 
 export class AppServices extends EventEmitter implements ServiceHooks{
 
@@ -21,7 +22,8 @@ export class AppServices extends EventEmitter implements ServiceHooks{
         murewSync: new MurewSyncService(this),
         bookingsService: new BookingsService(this),
         onlineOrdersInbox: new OnlineOrdersInboxService(this),
-        realtimeBackend: new RealtimeBackendService(this)
+        realtimeBackend: new RealtimeBackendService(this),
+        tableState: new TableStateService(this)
     };
 
     public allServices(): Service[]{

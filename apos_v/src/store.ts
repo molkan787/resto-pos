@@ -58,6 +58,7 @@ const store = new Vuex.Store({
       orderNo: '',
       orderType: 'table',
       orderDetails: {
+        booking_no: '',
         paid: true,
         table: '',
         first_name: '',
@@ -450,7 +451,8 @@ const store = new Vuex.Store({
       const ots = state.order_types;
       let firstOrderType = ots.table ? 'table' : (ots.delivery ? 'delivery' : 'collection');
       state.pos.orderType = firstOrderType;
-      Vue.set(state.pos, 'orderDetails',{
+      Vue.set(state.pos, 'orderDetails', {
+        booking_no: '',
         paid: true,
         table: '',
         first_name: '',

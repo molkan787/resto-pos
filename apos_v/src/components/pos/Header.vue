@@ -12,7 +12,7 @@
         </span>
         <div class="murew-service-status" :class="murew.status" :title="murewConnected ? 'Connected to online ordering platform' : 'Not connected to online ordering platform'">
             <i class="icon" :class="murewConnected ? 'check circle' : 'ban'"></i>
-            {{ murew.status | capitalize }}
+            <!-- {{ murew.status | capitalize }} -->
         </div>
         <div class="right-side">
             <sui-button @click="$router.push('admin')" :disabled="userType >= 5" title="Admin Panel" compact class="setting">
@@ -306,10 +306,12 @@ $root-h: 4rem;
     float: left;
     margin: 12px;
     background-color: #666;
-    padding: 10px 18px;
-    border-radius: 24px;
+    padding: 10px 9px;
+    border-radius: 50%;
     line-height: 1;
     font-weight: bold;
+    width: 34px;
+    height: 34px;
     &.connected{
         background-color: #21BA45;
     }

@@ -14,9 +14,14 @@
 		},
 		{
 			"path": "."
+		},
+		{
+			"path": "resto-common"
 		}
 	],
-	"settings": {},
+	"settings": {
+		"colorTabs.config": []
+	},
 	"launch": {
 		"version": "0.2.0",
 		"configurations": [

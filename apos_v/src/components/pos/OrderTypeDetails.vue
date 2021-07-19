@@ -3,7 +3,10 @@
         <h2>{{ type }} Order</h2>
         <template v-if="type == 'table'">
             <div class="tables">
-                <sui-button v-for="t in tables" :key="t" @click="setTable(t)" :class="getTableBtnClass(t)">
+                <sui-button v-for="t in tables" :key="t" @click="setTable(t)"
+                    :class="getTableBtnClass(t)" :title="getTableTitle(t)"
+                
+                >
                     {{ t }}
                 </sui-button>
             </div>
@@ -21,6 +24,8 @@
 
 <script>
 import { mapState } from 'vuex';
+import { TableState } from 'resto-common';
+import comu from '../../prs/comu';
 import ClientInfoForm from '../pre/ClientInfoForm.vue';
 export default {
     components: {
@@ -54,20 +59,57 @@ export default {
             if(this.table == number){
                 return 'selected';
             }else{
-                return this.tablesState[number] ? 'occupied' : 'free';
+                return this.getTableState(number);
             }
         },
 
-        setTable(table){
-            if(this.tablesState[table]){
+        async setTable(table){
+            const state = this.getTableState(table);
+            if(state === TableState.OCCUPIED || state === TableState.BOOKED_ARRIVED){
                 info(`Table #${table} is already occupied, Please choose another table.`).then(e => e.hide())
                 return;
+            }else if(state === TableState.BOOKED){
+                const { booking_no, booking_time } = this.tablesState[table] || {}
+                const e = await ask(`Table #${table} is booked,\nBooking No: ${booking_no}\n\nDo you want to mark the booking as "Arrived" and start the order?`);
+                if(e.answer){
+                    e.loading();
+                    try {
+                        await comu.startBookingOrder({ booking_no, booking_time, tableNumber: table });
+                        e.hide();
+                    } catch (error) {
+                        console.error(error);
+                        e.hide();
+                        info('An error occured, Please try again.');
+                    }
+                }else{
+                    e.hide();
+                    return;
+                }
+            }else{
+                this.details.table = table;
+                this.save();
             }
-            this.details.table = table;
-            this.save();
             setTimeout(() => {
                 this.app.showOrderTypeDetails = false;
             }, 500)
+        },
+
+        getTableState(number){
+            return (this.tablesState[number] || {}).state || TableState.FREE;
+        },
+
+        getTableTitle(table){
+            const { state, booking_no, booking_time } = this.tablesState[table] || {}
+            switch (state) {
+                case TableState.BOOKED_ARRIVED:
+                case TableState.OCCUPIED:
+                    return 'This table is occupied';
+                case TableState.BOOKED:
+                    return `This table is booked for ${booking_time}`;
+            
+                default:
+                    return this.table == table ? 'Selected table for the current order' : '';
+            }
         },
 
         saveClick(){
@@ -158,12 +200,15 @@ export default {
             &.selected{
                 background-color: #2185D0;
             }
-            &.occupied{
+            &.occupied, &.booked-arrived{
                 opacity: 0.3;
                 background-color: red;
             }
             &.free{
                 background-color: rgb(51, 192, 98);
+            }
+            &.booked{
+                background-color: rgb(245, 219, 72);
             }
         }
     }

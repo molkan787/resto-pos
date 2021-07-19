@@ -23,8 +23,8 @@ module.exports = class MetaData{
             if(builder._method == 'select' && builder._single && builder._single.table != METADATA_TABLE && !options.skipTables.includes(builder._single.table) && !this.isMyQuery(builder)){
                 builder.whereNull(IS_DELETED_COLUMN);
             }
-            if(builder._method == 'update')
-                console.log(builder.toString());
+            // if(builder._method == 'update' || builder._method == 'select')
+            //     console.log(builder.toString());
         })
     }
 

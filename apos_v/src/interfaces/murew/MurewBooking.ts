@@ -23,4 +23,5 @@ export enum BookingCategory{
 export enum BookingStatus{
     Booked = 'booked',
     Canceled = 'canceled',
+    Arrived = 'arrived'
 }

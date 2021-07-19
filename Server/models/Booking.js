@@ -38,6 +38,14 @@ module.exports = class Booking extends Model{
                     to: 'clients.id'
                 }
             },
+            assigned_tables: {
+                relation: Model.HasManyRelation,
+                modelClass: __dirname + '/BookingAssignedTable',
+                join: {
+                    from: 'bookings.no',
+                    to: 'booking_assigned_tables.booking_no'
+                }
+            }
         };
     }
 

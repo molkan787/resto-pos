@@ -45,7 +45,7 @@
                         <sui-table-cell>{{ item.category | capitalize }}</sui-table-cell>
                         <sui-table-cell>{{ item.customer_name | capitalizeAll }}</sui-table-cell>
                         <sui-table-cell>{{ item.customer_phone }}</sui-table-cell>
-                        <sui-table-cell>
+                        <sui-table-cell class="controls-cell">
 
                             <template v-if="item.status == 'booked'">
                                 <sui-button @click="cancelClick(item)" size="tiny">
@@ -63,6 +63,18 @@
                             <template v-else>
                                 {{ item.status | capitalize }}
                             </template>
+
+                            <sui-button @click="assignTablesClick(item)" size="tiny">
+                                <sui-icon name="edit" />
+                                {{ item.assigned_tables && item.assigned_tables.length > 0 ? 'Change' : 'Assign' }} Table(s)
+                            </sui-button>
+
+                            <div v-if="item.assigned_tables && item.assigned_tables.length > 0">
+                                Assigned Table(s):
+                                <strong>
+                                    {{ item.assigned_tables.map(at => at.table_no).join(', ') }}
+                                </strong>
+                            </div>
 
                         </sui-table-cell>
 
@@ -92,6 +104,7 @@ import Utils from '@/utils';
 import Dl from '@/prs/dl';
 import Message from '@/ccs/Message';
 import DM from '@/prs/dm';
+import MxHelper from '@/prs/MxHelper';
 export default {
     computed: {
         shownItems(){
@@ -124,6 +137,9 @@ export default {
         bookings: [],
     }),
     methods: {
+        assignTablesClick(booking){
+            MxHelper.openAssignTablesModal(booking);
+        },
         async arrivedClick(booking){
             const mr = await Message.ask(`Did customer for booking # ${booking.no} arrived?`, 'Booking');
             if(mr.answer){
@@ -164,6 +180,7 @@ export default {
                 this.bookings = await Dl.getBookings({
                     date: this.selectedDateText
                 });
+                console.dir(this.bookings)
             } catch (error) {
                 console.error(error);
             }
@@ -201,6 +218,14 @@ export default {
         &:last-child{
             float: right;    
         }
+    }
+}
+</style>
+
+<style lang="scss">
+.booking-list{
+    .controls-cell button{
+        margin-bottom: 0.3rem;
     }
 }
 </style>

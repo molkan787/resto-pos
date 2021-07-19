@@ -1,5 +1,6 @@
 const errors = require('restify-errors');
 const Booking = require('../models/Booking');
+const BookingAssignedTable = require('../models/BookingAssignedTable');
 const { generateReferenceNumber } = require('../utils/common');
 
 module.exports.find = async function (req, res, next){
@@ -17,6 +18,7 @@ module.exports.find = async function (req, res, next){
         if(typeof no_client_data == 'undefined'){
             query = query.eager('client');
         }
+        query.eager('assigned_tables');
         const bookings = await query;
         res.send(bookings);
         next();
@@ -45,8 +47,13 @@ module.exports.create = async function (req, res, next){
 
 module.exports.update = async function (req, res, next){
     try {
-        const { body, params: { id } } = req;
-        const booking = await Booking.query().update(body).where('id', id);
+        const { body, params: { id }, query: { byNo } } = req;
+        const searchProp = typeof byNo === 'undefined' ? 'id' : 'no';
+        const booking = await Booking.query().update(body).eager('assigned_tables').where(searchProp, id);
+        if(body.no && body.assigned_tables){
+            await BookingAssignedTable.query().delete().where('booking_no', body.no);
+            await Promise.all(body.assigned_tables.map(at =>  BookingAssignedTable.query().insert(at)))
+        }
         res.send({ booking });
         next();
     } catch (error) {

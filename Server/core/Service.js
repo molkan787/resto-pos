@@ -22,6 +22,10 @@ module.exports.Service = class Service extends EventEmitter{
         console.log(`[${new Date().toLocaleString()}][${this.name}]`, ...args);
     }
 
+    get ls(){
+        return this.services.ls;
+    }
+
     async onDataLoaded(data) {}
     async onMenuChanged() {}
     async onOrderPosted(order) {}

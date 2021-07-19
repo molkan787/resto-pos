@@ -10,11 +10,20 @@ class RealtimeCommunicationService extends Service{
 
     async init(server){
         this.serverSocket = io(server.server);
-        this.serverSocket.on('connection', (client, ...args) => {
-            console.log('client connected!')
-            client.emit('command', 'test', { foo: 'bar' })
-            console.log('command emitted!')
+        this.serverSocket.on('connection', client => {
+            this.emit('clientConnected', client);
+            client.on('command', (name, payload, callback) => this.onCommand(client, name, payload, callback));
         })
+    }
+
+    onCommand(client, name, payload, callback){
+        this.emit(name, payload, client, callback);
+    }
+
+    // ---- Public Methods ----
+
+    emitCommand(name, payload){
+        this.serverSocket.emit('command', name, payload);
     }
 
 }

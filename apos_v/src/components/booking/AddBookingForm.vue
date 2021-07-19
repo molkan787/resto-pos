@@ -179,7 +179,6 @@ export default {
                 }
             }
 
-
             this.disabledDates.days = disabledDays;
             this.disabledDates.dates = disabledDates;
         },

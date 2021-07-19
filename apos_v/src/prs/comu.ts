@@ -23,10 +23,13 @@ import Printers from './printers';
 import Reports from './reports';
 import { services } from '../services';
 import * as srv from '../services';
-import { arrayToObjectMap } from 'murew-core/dist/DataUtils';
 import { mapBookingSlotsArrayToObject } from './helpers';
 import { OrderLogics } from './order';
 import ReportsPrint from './reportsPrint';
+import { services } from '../services';
+import { TableState } from 'resto-common';
+import { BookingStatus } from '@/interfaces/murew/MurewBooking';
+import { sleep } from '@/core-helpers';
 
 console.log(Object.values(srv));
 
@@ -224,6 +227,24 @@ export default class Comu {
 
     // ==================================
 
+    static async startBookingOrder(bookingData){
+        const { booking_no, booking_time, tableNumber } = bookingData;
+        this.reset();
+        const { pos } = this.context.state;
+        pos.orderDetails.table = tableNumber;
+        pos.orderDetails.booking_no = booking_no;
+        services.instances.tableState.setTableState({
+            state: TableState.BOOKED_ARRIVED,
+            tableNumber,
+            orderId: -1,
+            booking_no,
+            booking_time
+        });
+        await DM.updateBooking(booking_no, {
+            status: BookingStatus.Arrived
+        }, true);
+    }
+
     static startSubmission(finalizeOrder) {
         this.context.state.postingOrder = true;
         this.context.state.finalizeOrder = finalizeOrder;
@@ -289,7 +310,7 @@ export default class Comu {
                     this.setCardsBalances(data.balances);
                     this.backupState();
                     this.setToRecentOrders(data.orderId, orderData);
-                    this.setTableState();
+                    this.setTableState(data);
                     resolve(orderData);
                     Reports.loadDailyStats();
                     services.onOrderPosted(orderData);
@@ -451,12 +472,22 @@ export default class Comu {
         }
     }
 
-    static setTableState() {
-        const { tablesState, pos, finalizeOrder } = this.context.state;
-        const { orderDetails, orderType, orderId } = pos;
+    static setTableState(orderData) {
+        const { pos, finalizeOrder } = this.context.state;
+        const { orderDetails: { table, booking_no }, orderType } = pos;
+        const { orderId } = orderData;
         if (orderType != 'table') return;
-        if (!orderDetails.table) return;
-        tablesState[orderDetails.table] = !finalizeOrder;
+        if (!table) return;
+        const occupied = !finalizeOrder;
+        const isBooked = !!booking_no;
+        services.instances.tableState.setTableState({
+            tableNumber: table,
+            state: occupied ? (
+                isBooked ? TableState.BOOKED_ARRIVED : TableState.OCCUPIED
+                ) : TableState.FREE,
+            orderId,
+            booking_no
+        })
     }
 
     static setToRecentOrders(orderId, orderData) {

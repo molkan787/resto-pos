@@ -36,6 +36,7 @@ const { createOffer, updateOffer, deleteOffer } = require('./offers');
 const bookings = require('./bookings');
 const bookingSlots = require('./booking_slots');
 const bookedSlots = require('./booked_slots');
+const bookingTables = require('./booking_tables');
 
 module.exports = server => {
     server.get('/stats', StatsWebPage);
@@ -99,5 +100,7 @@ module.exports = server => {
     server.put('/booking_slots', bookingSlots.put);
 
     server.get('/booked_slots', bookedSlots.get);
+
+    server.get('/booking-tables/booked-tables', bookingTables.getBookedTables);
 
 };

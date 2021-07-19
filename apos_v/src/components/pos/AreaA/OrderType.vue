@@ -27,6 +27,7 @@ export default {
 <style lang="scss" scoped>
 .ot-button{
     height: 100%;
+    overflow: hidden;
 }
 @media only screen and (max-width: 1320px){
     .order-type button{
