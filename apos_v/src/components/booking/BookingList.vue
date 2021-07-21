@@ -23,12 +23,11 @@
                     <sui-table-row>
                         <sui-table-header-cell>NO</sui-table-header-cell>
                         <sui-table-header-cell>Date</sui-table-header-cell>
-                        <sui-table-header-cell>Time</sui-table-header-cell>
-                        <sui-table-header-cell style="white-space: nowrap;">Number of persons</sui-table-header-cell>
-                        <sui-table-header-cell>Status</sui-table-header-cell>
-                        <sui-table-header-cell>Category</sui-table-header-cell>
+                        <sui-table-header-cell>Type</sui-table-header-cell>
                         <sui-table-header-cell>Customer</sui-table-header-cell>
                         <sui-table-header-cell>Phone</sui-table-header-cell>
+                        <sui-table-header-cell>Note</sui-table-header-cell>
+                        <sui-table-header-cell>Status</sui-table-header-cell>
                         <sui-table-header-cell> </sui-table-header-cell>
                     </sui-table-row>
                 </sui-table-header>
@@ -38,13 +37,20 @@
                     <sui-table-row v-for="(item) in shownItems" :key="item.no">
 
                         <sui-table-cell>{{ item.no }}</sui-table-cell>
-                        <sui-table-cell>{{ item.date | localDate }}</sui-table-cell>
-                        <sui-table-cell>{{ item.time | timeText }}</sui-table-cell>
-                        <sui-table-cell collapsing>{{ item.number_of_persons }}</sui-table-cell>
-                        <sui-table-cell>{{ item.status | capitalize }}</sui-table-cell>
-                        <sui-table-cell>{{ item.category | capitalize }}</sui-table-cell>
+                        <sui-table-cell>
+                            {{ item.date | localDate }} <br>
+                            <strong>{{ item.time | timeText }}</strong>
+                        </sui-table-cell>
+                        <sui-table-cell style="white-space: nowrap">
+                            {{ item.category | capitalize }} <br>
+                            <strong>{{ item.number_of_persons }} Persons</strong>
+                        </sui-table-cell>
                         <sui-table-cell>{{ item.customer_name | capitalizeAll }}</sui-table-cell>
                         <sui-table-cell>{{ item.customer_phone }}</sui-table-cell>
+                        <sui-table-cell style="max-width:200px">{{ item.comment || '---' }}</sui-table-cell>
+                        <sui-table-cell>
+                            <strong>{{ item.status | capitalize }}</strong>
+                        </sui-table-cell>
                         <sui-table-cell class="controls-cell">
 
                             <template v-if="item.status == 'booked'">
@@ -206,6 +212,9 @@ export default {
 .table-wrapper{
     height: 500px;
     overflow-y: scroll;
+    td{
+        vertical-align: top;
+    }
 }
 .filters{
     padding-bottom: 2rem;

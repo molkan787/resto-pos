@@ -27,6 +27,7 @@ import { mapState } from 'vuex';
 import { TableState } from 'resto-common';
 import comu from '../../prs/comu';
 import ClientInfoForm from '../pre/ClientInfoForm.vue';
+import DM from '@/prs/dm';
 export default {
     components: {
         ClientInfoForm
@@ -66,8 +67,22 @@ export default {
         async setTable(table){
             const state = this.getTableState(table);
             if(state === TableState.OCCUPIED || state === TableState.BOOKED_ARRIVED){
-                info(`Table #${table} is already occupied, Please choose another table.`).then(e => e.hide())
-                return;
+                const e = await ask(`Table #${table} is already occupied, Do you want to reopen/edit the associated order?.`);
+                if(e.answer){
+                    e.loading();
+                    try {
+                        const { orderId } = this.tablesState[table] || {};
+                        await DM.loadOrder(orderId);
+                        e.hide();
+                    } catch (error) {
+                        console.error(error);
+                        e.hide();
+                        info('An error occured, Please try again.');
+                    }
+                }else{
+                    e.hide();
+                    return;
+                }
             }else if(state === TableState.BOOKED){
                 const { booking_no, booking_time } = this.tablesState[table] || {}
                 const e = await ask(`Table #${table} is booked,\nBooking No: ${booking_no}\n\nDo you want to mark the booking as "Arrived" and start the order?`);

@@ -21,7 +21,7 @@ class BookingTablesService extends Service{
         date.setMinutes(date.getMinutes() - 25);
         const times = Time.getMinutesInBetween(date, 31);
         const today = Time.dateToStr();
-        const bookings = await Booking.query().eager('assigned_tables').where('date', today).whereIn('time', times);
+        const bookings = await Booking.query().eager('assigned_tables').where('date', today).whereIn('time', times).where('status', 'booked');
         console.log('bookings', bookings)
         const bookedTables = [];
         for(let i = 0; i < bookings.length; i++){

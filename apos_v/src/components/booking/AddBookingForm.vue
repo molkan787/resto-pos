@@ -13,6 +13,12 @@
                 :disabled="loading"
                 @changedMonth="onMonthChanged"
             />
+            <sui-form>
+                <sui-form-field class="note-field">
+                    <label>Note</label>
+                    <textarea v-model="booking.comment" rows="2" cols="6" placeholder="Note / Comment"></textarea>
+                </sui-form-field>
+            </sui-form>
         </div>
         <div>
             <div class="ui form">
@@ -210,6 +216,10 @@ export default {
         // &:last-child{
         //     padding-left: 1rem;
         // }
+    }
+    .note-field{
+        margin-right: 39px;
+        margin-top: 8px;
     }
 }
 </style>

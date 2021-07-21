@@ -29,7 +29,8 @@ export default {
             number_of_persons: 2,
             category: 'dinner',
             customer_name: '',
-            customer_phone: ''
+            customer_phone: '',
+            comment: ''
         }
     }),
     methods: {
@@ -44,7 +45,8 @@ export default {
                 number_of_persons: 2,
                 category: 'dinner',
                 customer_name: '',
-                customer_phone: ''
+                customer_phone: '',
+                comment: ''
             };
         },
         validateForm(){
@@ -66,7 +68,6 @@ export default {
                 ...data,
                 date: Utils.getDateValueFromDate(date),
                 status: 'booked',
-                comment: '',
                 client_id: 0
             }
         },
