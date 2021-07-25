@@ -2,7 +2,7 @@
 -- Host:                         127.0.0.1
 -- Server version:               8.0.20 - MySQL Community Server - GPL
 -- Server OS:                    Win64
--- HeidiSQL Version:             11.2.0.6213
+-- HeidiSQL Version:             11.3.0.6295
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `bookings` (
   `time` varchar(5) NOT NULL,
   `number_of_persons` int NOT NULL DEFAULT '0',
   `category` enum('breakfast','lunch','dinner') NOT NULL,
-  `status` enum('booked','canceled','arrived') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `status` enum('booked','canceled','arrived') NOT NULL,
   `customer_name` varchar(50) NOT NULL DEFAULT '',
   `customer_phone` varchar(50) NOT NULL DEFAULT '',
   `comment` varchar(255) NOT NULL DEFAULT '',
@@ -55,17 +55,30 @@ CREATE TABLE IF NOT EXISTS `bookings` (
   UNIQUE KEY `no` (`no`),
   KEY `datetime` (`date`,`time`),
   KEY `client` (`client_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=136 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table restopos.booking_assigned_tables
+CREATE TABLE IF NOT EXISTS `booking_assigned_tables` (
+  `booking_no` varchar(50) DEFAULT NULL,
+  `table_no` smallint DEFAULT NULL,
+  `__is_deleted` int DEFAULT NULL,
+  `__deleted_time` int DEFAULT NULL,
+  KEY `booking_no` (`booking_no`),
+  KEY `table_no` (`table_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Data exporting was unselected.
 
 -- Dumping structure for table restopos.booking_slots
 CREATE TABLE IF NOT EXISTS `booking_slots` (
   `day` varchar(10) NOT NULL,
-  `time_slots` json NOT NULL,
+  `time_slots` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `__is_deleted` int DEFAULT NULL,
   `__deleted_time` int DEFAULT NULL,
-  PRIMARY KEY (`day`)
+  PRIMARY KEY (`day`),
+  CONSTRAINT `booking_slots_chk_1` CHECK (json_valid(`time_slots`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
@@ -83,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `categories` (
   `__is_deleted` int DEFAULT NULL,
   `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
@@ -100,7 +113,7 @@ CREATE TABLE IF NOT EXISTS `clients` (
   `__is_deleted` int DEFAULT NULL,
   `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
@@ -140,18 +153,20 @@ CREATE TABLE IF NOT EXISTS `offers` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL DEFAULT '0',
   `expires` varchar(30) DEFAULT NULL,
-  `condition` json NOT NULL,
+  `condition` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `available_on_delivery` tinyint NOT NULL DEFAULT '0',
   `available_on_pickup` tinyint NOT NULL DEFAULT '0',
   `available_on_website` tinyint NOT NULL DEFAULT '0',
   `available_on_pos` tinyint NOT NULL DEFAULT '0',
-  `benefits` json NOT NULL,
+  `benefits` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `activated_by_promo_code` tinyint NOT NULL DEFAULT '0',
   `promo_code` varchar(50) NOT NULL DEFAULT '0',
   `__is_deleted` int DEFAULT NULL,
   `__deleted_time` int DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`),
+  CONSTRAINT `offers_chk_1` CHECK (json_valid(`condition`)),
+  CONSTRAINT `offers_chk_2` CHECK (json_valid(`benefits`))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
@@ -163,18 +178,22 @@ CREATE TABLE IF NOT EXISTS `orders` (
   `user_id` int NOT NULL,
   `client_id` int NOT NULL,
   `order_type` varchar(50) NOT NULL,
-  `order_details` json NOT NULL,
+  `order_details` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `total` int NOT NULL,
   `pay_method` varchar(20) NOT NULL,
-  `totals` json NOT NULL,
-  `items` json NOT NULL,
-  `other_data` json DEFAULT NULL,
+  `totals` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `items` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `other_data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
   `receipt` int NOT NULL DEFAULT '0',
   `date_added` int NOT NULL,
   `__is_deleted` int DEFAULT NULL,
   `__deleted_time` int DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=135 DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`),
+  CONSTRAINT `orders_chk_1` CHECK (json_valid(`order_details`)),
+  CONSTRAINT `orders_chk_2` CHECK (json_valid(`totals`)),
+  CONSTRAINT `orders_chk_3` CHECK (json_valid(`items`)),
+  CONSTRAINT `orders_chk_4` CHECK (json_valid(`other_data`))
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
@@ -212,7 +231,7 @@ CREATE TABLE IF NOT EXISTS `products` (
   `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `category_id` (`category_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
@@ -229,7 +248,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `__deleted_time` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 -- Data exporting was unselected.
 
