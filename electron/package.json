@@ -12,6 +12,7 @@
         "comet-parser": "^1.0.0",
         "compare-versions": "^3.6.0",
         "electron-download-manager": "^2.3.0",
+        "eventemitter3": "^4.0.7",
         "evilscan": "^1.7.5",
         "excel4node": "^1.7.2",
         "knex": "^0.21.1",
@@ -64,6 +65,13 @@
                     "ia32"
                 ]
             }
-        }
+        },
+        "asar": false,
+        "extraResources": [
+            {
+                "from": "../resto-common",
+                "to": "./app/node_modules/resto-common"
+            }
+        ]
     }
 }
