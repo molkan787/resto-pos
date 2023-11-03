@@ -11,7 +11,10 @@
             <CategoryItem v-for="child in data.childs" :key="child.id"
                 @itemClick="childItemClick" @deleteClick="childItemDeleteClick" @editClick="childItemEditClick"
                 :data="child" :deepLevel="deepLevel + 1" :currentCatId="currentCatId" />
-            <a href="#" class="add-btn" @click="addClick">Add sub-caregory</a>
+            <a href="#" class="add-btn" @click="addClick">
+                <sui-icon name="plus" />
+                Add sub-caregory
+            </a>
         </div>
     </div>
 </template>

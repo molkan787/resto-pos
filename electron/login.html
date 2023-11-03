@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Resto POS - Initial Setup</title>
+    <link rel="stylesheet" href="resources/ui/setup_page_styles.css">
     <script>
         const electron = require('electron');
         const remote = electron.remote;
@@ -14,40 +15,29 @@
         function toggleDimmer(visible){
             document.getElementById('dimmer').style.display = visible ? 'block' : 'none';
         }
-        function loginClick(){
-            const vendor_id = getVal('vendor_id');
-            const password = getVal('password');
-            if(vendor_id.length < 2 || password.length < 2){
-                alert('Please enter all login details.');
-                return;
-            }
-            toggleDimmer(true);
-            electron.ipcRenderer.send('login', {
-                vendor_id,
-                password,
-            });
-        }
-        function loginFailed(){
-            toggleDimmer(false);
-            alert('Login failed, Please make sure both Vendor ID and Password are correctly typed.');
-        }
-        function loginError(){
-            toggleDimmer(false);
-            alert('An error occured, Please make sure you are connected to the internet and try again.');
-        }
-        function setupSlaveClick(){
-          const question = 'Setup POS in Slave Mode? This mode require another instance of the app to be running in normal mode on the same local network as this PC';
-          if(confirm(question)){
-            toggleDimmer(true);
-            electron.ipcRenderer.send('setup_slave');
-          }
-        }
         window.onkeypress = function(e) {
           if(e.keyCode == 9){
             const currentWindow = require('electron').remote.getCurrentWindow()
             currentWindow.openDevTools();
           }
         }
+        
+        function setupClick(mode){
+          if(mode == "station"){
+            const question = 'Setup POS in STATION Mode? Only one instance of the app with Station mode is required.';
+            if(confirm(question)){
+              toggleDimmer(true);
+              electron.ipcRenderer.send('setup', { mode: 'station' });
+            }
+          }else if(mode == "user"){
+            const question = 'Setup POS in USER Mode? This mode require another instance of the app to be running in Station mode on the same local network as this computer.';
+            if(confirm(question)){
+              toggleDimmer(true);
+              electron.ipcRenderer.send('setup', { mode: 'user' });
+            }
+          }
+        }
+
     </script>
   </head>
   <body>
@@ -146,12 +136,8 @@
       }
       .myform button{
         grid-column: 2 span;
-        padding: 4px;
-      }
-      .myform input{
-        padding: 4px;
-        border-radius: 2px;
-        border: 1px solid #b7b7b7;
+        padding: 15px;
+      font-size: 16px;
       }
       #dimmer{
         position: fixed;
@@ -171,16 +157,10 @@
             <span class="slogo">Resto POS</span> <br> <br>
             <br>
             <span>
-                <h3>Login into admin account to setup Resto POS</h3>
+                <h3>Choose setup option</h3>
                 <div class="myform">
-                    <label for="vendor_id">Vendor ID</label>
-                    <input type="text" id="vendor_id" placeholder="Vendor ID">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" value="admin" disabled>
-                    <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Password">
-                    <button onclick="loginClick()">Login</button>
-                    <button onclick="setupSlaveClick()" style="margin-top: 90px">Setup in Slave Mode (ex: Waitress tablet)</button>
+                    <button onclick="setupClick('station')" class="button-9">Setup in Station Mode (For cash register, or back-office)</button>
+                    <button onclick="setupClick('user')" class="button-9g" style="margin-bottom: 90px">Setup in User Mode (ex: Waitress tablet)</button>
                 </div>
             </span>
         </div>

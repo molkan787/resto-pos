@@ -14,22 +14,6 @@ module.exports = function (serverPort){
         },
     });
 
-    Model.beforeDelete = async function (args){
-        if(Config.dbSyncSkipTables.includes(this.tableName)){
-            return;
-        }
-
-        await args.asFindQuery().patch({
-            [SqlSyncerMetaData.IS_DELETED_COLUMN]: 1,
-            [SqlSyncerMetaData.DELETED_TIME_COLUMN]: time.now(),
-        });
-        args.cancelQuery();
-    }
-
-    Model.afterFind = async function (args){
-        // console.log(args.context)
-    }
-
     Model.knex(knex);
 
     console.log('MySQL: Connected');

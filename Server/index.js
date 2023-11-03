@@ -61,7 +61,7 @@ module.exports = ({ localMysqlServerPort, remoteDBConfig }) => {
 
   server.listen(PORT, function() {
       console.log('%s listening at %s', server.name, server.url);
-      initDataSyncer();
+      // initDataSyncer();
   });
 
   function initDataSyncer(){

@@ -18,5 +18,8 @@
     "recursive-copy": "^2.0.10",
     "rimraf": "^3.0.2",
     "tree-kill": "^1.2.2"
+  },
+  "engines": {
+      "node": "12.4.0"
   }
 }

@@ -18,16 +18,23 @@ module.exports = class FileExtractor {
         return _destDir;
     }
 
+    /**
+     * @param {string[]} files list if files (basenames only)
+     * @returns {string[]} Returns list of absolute filepaths of the extracted files
+     */
     static async extractIfNotExist(files){
+        const result = []
         const baseDir = this.getBaseFolderPath();
         await this.prepareFolder(baseDir);
         for(let file of files){
             const filename = path.join(baseDir, file);
+            result.push(filename)
             const exist = await this.fileExist(filename);
             if(!exist){
                 await this.extract(file, filename);
             }
         }
+        return result
     }
 
     static prepareFolder(path) {

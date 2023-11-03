@@ -4,7 +4,10 @@
         <hr>
         <!-- <Switcher class="type-switcher" v-model="catType" leftText="Regular" rightText="Prepaid"
             @changed="reset"/> -->
-        <a href="#" class="add-btn" @click="addCategory(null)">Add Caregory</a>
+        <a href="#" class="add-btn" @click="addCategory(null)">
+            <sui-icon name="plus" />
+            Add Caregory
+        </a>
         <div class="items">
             <CategoryItem v-for="category in categories" :key="category.id"
             :data="category" @itemClick="itemClick" :currentCatId="cat"

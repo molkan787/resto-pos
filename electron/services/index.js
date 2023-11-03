@@ -21,15 +21,19 @@ async function init(){
 }
 
 async function setup(){
+    console.log("Setting up Mysql Server...")
     await MysqlServer.setup();
     await sleep(200);
     await MysqlServer.start();
     await sleep(10000); // Giving time to mysql server to start listening
     await MysqlServer.prepare();
     await sleep(200);
-    const sqlFile = RemoteData.filename;
+    console.log("Initializing Database...")
+    const [sqlFile] = await FileExtractor.extractIfNotExist(['vendor_db_template.sql'])
+    console.log('sqlFile', sqlFile)
     await MysqlServer.importDatabase('restopos', sqlFile);
     await sleep(200);
+    console.log("Writing check file...")
     await fs.writeFile(CHECK_FILENAME, '1');
 }
 
@@ -37,7 +41,7 @@ async function start(){
     await MysqlServer.start();
 }
 
-async function setupSlave(){
+async function setupUserMode(){
     await fs.writeFile(IS_SLAVE_FILENAME, '1');
     await fs.writeFile(CHECK_FILENAME, '1');
 }
@@ -54,7 +58,7 @@ module.exports = {
     MysqlServer,
     init,
     setup,
-    setupSlave,
+    setupSlave: setupUserMode,
     start,
     isFirstLaunch,
     RemoteData,

@@ -2,14 +2,14 @@
     <div class="products-root">
         <h2>
             {{ headerText }}
-            <sui-button :disabled="!catID" class="add" icon="plus circle" @click="addNew"></sui-button>
+            <sui-button :disabled="!catID" class="add" icon="plus circle" @click="addNew">Add Item</sui-button>
         </h2>
         <hr>
         <div class="items">
             <ProductItem v-for="(item, index) in items" :key="index"
             :item="item" @editClick="editClick" @deleteClick="deleteClick"/>
             
-            <div v-if="noCat" class="empty-text">No Category Selected.</div>
+            <div v-if="noCat" class="empty-text">Select a category to display it's products</div>
             <div v-else-if="items.length == 0" class="empty-text">This Category is empty!</div>
         </div>
     </div>
@@ -34,7 +34,7 @@ import ProductItem from './ProductItem.vue';
         ...mapState(['products', 'productsByIds', 'categoriesByIds']),
         headerText(){
             const cat = this.categoriesByIds[this.catID];
-            return cat ? cat.name.toUpperCase() + ': Products' : 'Products';
+            return cat ? cat.name.toUpperCase() + ': Items' : 'Items';
         }
     },
 })

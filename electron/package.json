@@ -23,13 +23,13 @@
         "node-persist": "^3.1.0",
         "node-thermal-printer": "^4.1.2",
         "objection": "^2.2.1",
-        "printer": "^0.4.0",
         "randomstring": "^1.1.5",
         "request": "^2.88.2",
         "restify": "^8.1.1",
         "restify-cookies": "^0.2.6",
         "restify-cors-middleware": "^1.1.1",
         "restify-errors": "^7.0.0",
+        "resto-common": "../resto-common",
         "rimraf": "^3.0.2",
         "serialport": "^9.0.0",
         "socket.io": "^4.1.2",
@@ -39,16 +39,6 @@
     "devDependencies": {
         "electron": "^6.0.11",
         "electron-builder": "^20.44.4"
-    },
-    "optionalDependencies": {
-        "bufferutil": "*",
-        "libpq": "*",
-        "mssql": "*",
-        "mysql": "*",
-        "pg": "*",
-        "pg-native": "*",
-        "sqlite3": "*",
-        "utf-8-validate": "*"
     },
     "scripts": {
         "dist": "build",
@@ -73,5 +63,8 @@
                 "to": "./app/node_modules/resto-common"
             }
         ]
+    },
+    "engines": {
+        "node": "12.4.0"
     }
 }

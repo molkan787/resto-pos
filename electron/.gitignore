@@ -2,7 +2,6 @@ node_modules
 dist
 app
 server
-files/*
 lsdata
 
 package-lock.json

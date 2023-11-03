@@ -99,27 +99,34 @@ async function startServices(){
   if(firstlaunch || isSlaveMode) return;
   console.log('Starting services...');
   await services.start();
-  const remoteDB = await services.RemoteData.getRemoteDatabaseConfig();
+  // const remoteDB = await services.RemoteData.getRemoteDatabaseConfig();
   backendServer({
     localMysqlServerPort: services.MysqlServer.PORT,
     remoteDBConfig: {
-      host: config.master_host,
-      user: remoteDB.user,
-      password: remoteDB.password,
-      database: remoteDB.name
+      // host: config.master_host,
+      // user: remoteDB.user,
+      // password: remoteDB.password,
+      // database: remoteDB.name
     }
   })
 }
 
-async function doSetup(slaveMode){
-  console.log('Setting up services...' + (slaveMode ? ' (Slave Mode)' : ''));
+async function doSetup(mode){
+  const userMode = mode === 'user'
+  console.log('Setting up services...' + (userMode ? ' (User Mode)' : ''));
   try {
-    if(slaveMode){
-      await services.setupSlave();
+    if(userMode){
+      await services.setupUserMode();
     }else{
+      win.loadFile('setup_wait.html');
       await services.setup();
     }
     console.log('Setup completed!');
+    dialog.showMessageBoxSync(win, {
+      type: 'info',
+      title: 'Setup Completed',
+      message: 'Setup was successfully completed, On the next screen login into the app using the following credentials:\n\nUsername: admin\nPassword: 123456',
+    })
     app.relaunch();
   } catch (error) {
     console.error(error);
@@ -137,28 +144,10 @@ async function doSetup(slaveMode){
 
 function handleWindowIpcMessage(channel, data){
   console.log('ipc message:', channel, data);
-  if(channel == 'login'){
-    handleUserLogin(data);
+  if(channel == 'setup'){
+    doSetup(data.mode);
   }else if(channel == 'update'){
     updater.handle(data);
-  }else if(channel == 'setup_slave'){
-    doSetup(true);
-  }
-}
-
-async function handleUserLogin(data){
-  try {
-    const success = await services.RemoteData.getDataBaseDump(data);
-    if(success){
-      console.log('DB dump downloaded successfully, Start setup...');
-      win.loadFile('setup_wait.html');
-      doSetup();
-    }else{
-      win.webContents.executeJavaScript('loginFailed()');
-    }
-  } catch (error) {
-    win.webContents.executeJavaScript('loginError()');
-    console.error(error);
   }
 }
 

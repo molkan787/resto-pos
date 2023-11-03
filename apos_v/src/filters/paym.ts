@@ -6,6 +6,7 @@ const pay_methods: any = {
     card: 'Credit/Debit Card',
     other: 'Other / Free',
     cod: 'Cash on Delivery',
+    online_card: 'Online Payment',
 }
 export function paym(name: string){
     return pay_methods[name] || '';

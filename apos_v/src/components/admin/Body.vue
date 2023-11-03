@@ -20,7 +20,7 @@
             <ClientsTab />
         </sui-tab-pane>
 
-        <sui-tab-pane title="Products" icon="box" v-if="userType < 4">
+        <sui-tab-pane title="Menu" icon="box" v-if="userType < 4">
             <ProductsTab />
         </sui-tab-pane>
 
