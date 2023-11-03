@@ -21,6 +21,12 @@ export default class Message{
         });
     }
 
+    static async quickAsk(text: string, title?: string){
+        const result = await this.ask(text, title)
+        result.hide()
+        return result.answer
+    }
+
     // ---------------------------
 
     static register(component: any){
@@ -31,3 +37,4 @@ export default class Message{
 
 window.info = function() { return Message.info(...arguments) };
 window.ask = function() { return Message.ask(...arguments) };
+window.quickAsk = function() { return Message.quickAsk(...arguments) };
