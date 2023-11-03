@@ -20,18 +20,18 @@ export class MurewSyncService extends Service{
     }
 
     async init(){
-        this.murew.on(MurewStatus.Connected, () => this.syncMenu());
+        this.murew.on(MurewStatus.Connected, () => console.log('Connected to Murew Platform.'));
     }
 
     public async onDataLoaded(){
         this.log('data loaded');
-        if(this.murew.status == MurewStatus.Connected){
-            this.syncMenu();
-        }
+        // if(this.murew.status == MurewStatus.Connected){
+        //     this.sendMenu();
+        // }
     }
     
     public async onMenuChanged(){
-        this.syncMenu();
+        // this.sendMenu();
     }
 
     public onStockSynced(stocks){
@@ -41,19 +41,23 @@ export class MurewSyncService extends Service{
     }
 
 
-    private syncMenu(){
-        if(!this.murew.isConnected || !this.services.dataLoaded) return;
-        this.log('Syncing menu...');
+    public sendMenu(){
+        if(!this.murew.isConnected || !this.services.dataLoaded){
+            this.log('Cannot send menu.');
+            return;
+        }
+        this.log('Sending menu...');
         const categories = store.state.allCategories;
         const products = store.state.productsArray;
         const menu = mapPosMenuToMurewTreeMenu(categories, products);
-        return this.sendMenu(menu, store.state.offers);  
+        return this.sendMenuData(menu, store.state.offers);  
     }
 
-    private sendMenu(menu: MurewCategory[], offers: Offer[]) {
+    private sendMenuData(menu: MurewCategory[], offers: Offer[]) {
         return this.murew.sendAction(MurewActions.SetMenu, {
             menu,
-            offers
+            offers,
+            replace: true
         });
     }
 
