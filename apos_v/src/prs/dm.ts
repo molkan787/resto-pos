@@ -98,7 +98,13 @@ export default class DM{
 
     public static async loadOrder(orderId){
         const { data } = await axios.get(_url(`pos/get_order/${orderId}`));
+        console.log('loadOrder:', data.order)
         const { id, no, client_id, order_details, order_type, pay_method, totals, items, other_data } = data.order;
+        for(let p of items.products){
+            if(typeof p.id === 'string' && p.id.length > 15){
+                Vue.set(this.context.state.productsByIds, p.id, p)
+            }
+        }
         this.comu.reset();
         const { pos, client } = this.context.state;
         client.id = client_id;

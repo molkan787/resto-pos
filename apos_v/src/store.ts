@@ -629,6 +629,7 @@ function setItemCount(context: any, itemId: number, amount: number, forceAmount:
   const itemsCount = context.state.pos.itemsCount;
   const product = context.state.productsByIds[itemId];
   const items = context.state.pos.items;
+  console.log(items)
   
   let count = itemsCount[itemId];
   if(forceAmount) count = 0;

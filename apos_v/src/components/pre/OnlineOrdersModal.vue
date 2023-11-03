@@ -59,6 +59,7 @@ export default {
                 await DM.loadOrder(item.id);
                 this.open = false;
             } catch (error) {
+                console.error(error)
                 this.dialog.show('An error occured, Please try again');
             }
             this.loading = false;
