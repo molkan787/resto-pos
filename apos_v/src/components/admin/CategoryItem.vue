@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="top-wrapper" :class="{ expanded }">
         <sui-button class="item" :class="myclasses" @click="itemClick">
             <sui-icon name="left trash" title="Delete"></sui-icon>
             <sui-icon name="left edit" title="Edit"></sui-icon>
@@ -40,15 +40,28 @@ export default {
         childsType(){
             return this.data.childs_type;
         },
+        isCurrent(){
+            return this.data.id == this.currentCatId;
+        },
         myclasses(){
-            const isCurrent = this.data.id == this.currentCatId;
-            const levelClass = 'level-' + this.deepLevel;
-            return levelClass + (isCurrent ? ' blue': '')
+            return {
+                ['level-' + this.deepLevel]: true,
+                blue: this.isCurrent,
+            }
+        },
+        expanded(){
+            return this.isCurrent || this.childIsActive
+        },
+        childIsActive(){
+            const childs = this.data.childs || []
+            for(let i = 0; i < childs.length; i++){
+                if(childs[i].id.toString() === this.currentCatId.toString()){
+                    return true
+                }
+            }
+            return false
         }
     },
-    data:() => ({
-        expanded: false,
-    }),
     methods: {
         addClick(){
             this.$emit('addClick', this.data);
@@ -89,6 +102,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.top-wrapper{
+    border-radius: 3px;
+    &.expanded{
+        background-color: #a7c2ff;
+    }
+}
 .item{
     width: 100%;
     margin-bottom: 0.3rem;
@@ -112,12 +131,13 @@ export default {
 }
 .childs{
     width: calc(100% - 3rem);
-    margin-left: 3rem;
-    margin-bottom: 1rem;
+    margin: 1.5rem;
 }
 .add-btn{
     display: inline-block;
     padding: 0.5rem;
     font-size: 1.1rem;
+    color: black;
+    margin-bottom: 0.4rem;
 }
 </style>

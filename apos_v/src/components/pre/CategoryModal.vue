@@ -2,12 +2,12 @@
     <Modal v-model="open" :title="title" :loading="loading" :dialog="dialog" >
         <sui-form @submit="$event.preventDefault()">
             <sui-form-field>
-                <label>Will contains?</label>
+                <label>Type</label>
                 <Switcher v-model="ctype" class="my-switcher" leftText="Food" rightText="Drinks"/>
             </sui-form-field>
             <sui-form-field>
-                <label>{{ inputName }}</label>
-                <input v-model="categoryName" :placeholder="inputName" >
+                <label>Name</label>
+                <input v-model="categoryName" placeholder="Name" >
             </sui-form-field>
             <sui-form-field>
                 <label>Sort No</label>
@@ -45,9 +45,6 @@ import ModalDialog from '@/ccs/ModalDialog';
             }else{
                 return `Add ${objectName}`;
             }
-        },
-        inputName(){
-            return this.parentCategory ? 'Sub-Category Name' : 'Category Name';
         }
     }
 })

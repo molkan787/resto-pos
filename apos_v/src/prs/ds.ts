@@ -120,7 +120,7 @@ export default class DS{
                 const parent = state.categoriesByIds[parent_id];
                 parent.childs.push(cat);
             }else{
-                cat.childs = [];
+                Vue.set(cat, 'childs', []);
                 state.categories.push(cat);
             }
             state.allCategories.push(cat);
