@@ -32,9 +32,9 @@
                     Upload Menu
                 </sui-button>
                 <br>
-                <sui-button :disabled="!murewConnected" class="save-btn" icon="arrow down" color="blue" :loading="pullingMenu" @click="pullMenuClick">
+                <!-- <sui-button :disabled="!murewConnected" class="save-btn" icon="arrow down" color="blue" :loading="pullingMenu" @click="pullMenuClick">
                     Pull Menu
-                </sui-button>
+                </sui-button> -->
             </div>
         </div>
     </div>
