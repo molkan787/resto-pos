@@ -91,12 +91,16 @@ export class MurewService extends Service{
                 reject('No sync key');
                 return;
             }
-            const syncHost = new URL(syncKey.endpoint).host;
+            const epURL = new URL(syncKey.endpoint)
+            const syncHost = epURL.host;
+            const wsProtocol = epURL.protocol === 'https:' ? 'wss' : 'ws'
             if(!syncHost){
                 reject('Invalid key');
                 return;
             }
-            const client = this._client = new WebSocket(`ws://${syncHost}/${syncKey.key_id}`, 'murew-protocol');
+            const remoteURL = `${wsProtocol}://${syncHost}/${syncKey.key_id}`
+            console.log('murew sync ws url:', remoteURL)
+            const client = this._client = new WebSocket(remoteURL, 'murew-protocol');
             client.onmessage = msg => this.onMessage(msg);
             client.onopen = () => {
                 this.log('WebSocket connected!');

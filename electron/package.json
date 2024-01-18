@@ -1,6 +1,6 @@
 {
     "name": "pl.dahmane.resto-pos",
-    "version": "1.6.1",
+    "version": "1.6.2",
     "author": {
         "name": "Seghier Dahmane",
         "email": "contact@dahmane.pl"
@@ -12,6 +12,8 @@
         "comet-parser": "^1.0.0",
         "compare-versions": "^3.6.0",
         "electron-download-manager": "^2.3.0",
+        "escpos": "^3.0.0-alpha.6",
+        "escpos-usb": "^3.0.0-alpha.4",
         "eventemitter3": "^4.0.7",
         "evilscan": "^1.7.5",
         "excel4node": "^1.7.2",
@@ -38,7 +40,7 @@
     },
     "devDependencies": {
         "electron": "^6.0.11",
-        "electron-builder": "^20.44.4"
+        "electron-builder": "^24.6.4"
     },
     "scripts": {
         "dist": "build",
@@ -65,6 +67,6 @@
         ]
     },
     "engines": {
-        "node": "12.4.0"
+        "node": "14.21.2"
     }
 }
