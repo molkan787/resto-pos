@@ -28,9 +28,14 @@ export class OnlineOrdersInboxService extends Service{
         }
     }
 
+    removeFromQueue(order){
+        const index = this.ordersQueue.findIndex(o => o.id === order.id);
+        this.ordersQueue.splice(index, 1)
+    }
+
     showNextOrder(){
         if(this.isUiModalOpen()) return;
-        const order = this.ordersQueue.shift();
+        const order = this.ordersQueue[0];
         if(order){
             (<any>this.uiModal).handleNewOrder(order);
         }
@@ -43,6 +48,7 @@ export class OnlineOrdersInboxService extends Service{
     public setUiModal(el: Vue){
         this.uiModal = el;
         el.$on('closed', () => {
+            this.removeFromQueue(this.uiModal.$data.order)
             setTimeout(() => this.showNextOrder(), 500);
         });
     }
