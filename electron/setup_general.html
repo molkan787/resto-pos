@@ -7,6 +7,7 @@
     <script>
         const electron = require('electron');
         const remote = electron.remote;
+        const prompt = require('electron-prompt');
         window.alert = text => remote.dialog.showMessageBoxSync(remote.BrowserWindow.getFocusedWindow(), {title: 'Resto POS', message: text})
         window.confirm = text => remote.dialog.showMessageBoxSync(remote.BrowserWindow.getFocusedWindow(), {type: 'question', title: 'Resto POS', message: text, buttons: ['Cancel', 'Ok']})
         function getVal(elId){
@@ -22,12 +23,19 @@
           }
         }
         
-        function setupClick(mode){
+        async function setupClick(mode){
           if(mode == "station"){
             const question = 'Setup POS in STATION Mode? Only one instance of the app with Station mode is required.';
             if(confirm(question)){
+              const keyPromptResult = await prompt({
+                title: 'Online Ordering Platform',
+                label: 'Sync Key (leave empty to setup later)',
+                value: '',
+                type: 'input',
+                height: 180
+              }, remote.getCurrentWindow())
               toggleDimmer(true);
-              electron.ipcRenderer.send('setup', { mode: 'station' });
+              electron.ipcRenderer.send('setup', { mode: 'station', syncKey: keyPromptResult });
             }
           }else if(mode == "user"){
             const question = 'Setup POS in USER Mode? This mode require another instance of the app to be running in Station mode on the same local network as this computer.';

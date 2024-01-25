@@ -59,7 +59,7 @@ function createSetupWindow(){
   });
   win.setMenu(null);
   win.webContents.on('did-finish-load', () => win.show());
-  win.loadFile('login.html')
+  win.loadFile('setup_general.html')
   win.webContents.on('ipc-message', (event, channel, data) => handleWindowIpcMessage(channel, data));
   if (DEV) win.webContents.openDevTools()
 }
@@ -111,15 +111,15 @@ async function startServices(){
   })
 }
 
-async function doSetup(mode){
-  const userMode = mode === 'user'
+async function doSetup(payload){
+  const userMode = payload.mode === 'user'
   console.log('Setting up services...' + (userMode ? ' (User Mode)' : ''));
   try {
     if(userMode){
       await services.setupUserMode();
     }else{
       win.loadFile('setup_wait.html');
-      await services.setup();
+      await services.setup(payload);
     }
     console.log('Setup completed!');
     dialog.showMessageBoxSync(win, {
@@ -145,7 +145,7 @@ async function doSetup(mode){
 function handleWindowIpcMessage(channel, data){
   console.log('ipc message:', channel, data);
   if(channel == 'setup'){
-    doSetup(data.mode);
+    doSetup(data);
   }else if(channel == 'update'){
     updater.handle(data);
   }

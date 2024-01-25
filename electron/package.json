@@ -12,6 +12,7 @@
         "comet-parser": "^1.0.0",
         "compare-versions": "^3.6.0",
         "electron-download-manager": "^2.3.0",
+        "electron-prompt": "^1.7.0",
         "escpos": "^3.0.0-alpha.6",
         "eventemitter3": "^4.0.7",
         "evilscan": "^1.7.5",

@@ -3,6 +3,8 @@ import { Service } from "@/core/Service";
 import LocalSetting from "@/prs/localSettings";
 import { AppServices } from "..";
 import { MurewActions } from "murew-core/dist/enums";
+import path from 'path'
+import { deleteFile, readFile } from "@/core-helpers";
 
 export const MUREW_SYNC_KEY_LSK = 'murew-sync-key';
 const MAX_RETRY_INTERVAL = 5 * 60 * 1000; // 5 minutes
@@ -59,6 +61,7 @@ export class MurewService extends Service{
     // ----------------- Internal -----------------
 
     public async init(){
+        await this.loadKeyFromDisk()
         if(this.syncKey){
             this.log('Connecting to murew sync service...');
             this.connect().catch(err => {
@@ -67,6 +70,22 @@ export class MurewService extends Service{
             });
         }else{
             this.log('Murew Sync Key not found.');
+        }
+    }
+
+    private async loadKeyFromDisk(){
+        try {
+            const electron = imp('electron')
+            const userDataDir = electron.app.getPath('userData')
+            const keyFilename = path.join(userDataDir, 'murew_sync_key')
+            const keyValue = await readFile(keyFilename, { encoding: 'utf8' })
+            await deleteFile(keyFilename)
+            if(keyValue){
+                LocalSetting.setItem(MUREW_SYNC_KEY_LSK, keyValue)
+            }
+        } catch (error) {
+            console.error('loadKeyFromDisk(): An error occured while trying to load sync key')
+            console.error(error)
         }
     }
 

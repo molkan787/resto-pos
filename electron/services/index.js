@@ -10,6 +10,7 @@ const Updater = require('./updater');
 const DATA_BASE_DIR = app.getPath('userData');
 const CHECK_FILENAME = path.join(DATA_BASE_DIR, 'setup_done');
 const IS_SLAVE_FILENAME = path.join(DATA_BASE_DIR, 'slave_mode');
+const SYNCKEY_FILENAME = path.join(DATA_BASE_DIR, 'murew_sync_key');
 
 async function init(){
     const mysqlBaseDir = path.join(DATA_BASE_DIR, 'mysql');
@@ -20,8 +21,11 @@ async function init(){
     Updater.init(DATA_BASE_DIR);
 }
 
-async function setup(){
+async function setup({ syncKey }){
     console.log("Setting up Mysql Server...")
+    if(syncKey){
+        await fs.writeFile(SYNCKEY_FILENAME, syncKey);
+    }
     await MysqlServer.setup();
     await sleep(200);
     await MysqlServer.start();
