@@ -83,6 +83,10 @@
                         <h5 style="margin: 0.5rem 0"><span class="low-importance">Date:</span> {{ preorderDate }}</h5>
                         <h5 style="margin: 0.5rem 0"><span class="low-importance">Time:</span> {{ preorderTime }}</h5>
                     </template>
+                    <div>
+                        <h4 class="low-importance">Note:</h4>
+                        <textarea readonly cols="30" rows="2" placeholder="(empty)">{{ order.note }}</textarea>
+                    </div>
                 </div>
             </sui-segment>
 
