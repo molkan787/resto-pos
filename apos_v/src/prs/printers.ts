@@ -1,6 +1,6 @@
 import Printer from '../drivers/printer';
 // @ts-ignore
-// const PrinterDriver = imp('printer'); // FIX-BACK
+const PrinterDriver = imp('printer');
 const STORAGE_KEY_LIST = 'app_printers_list';
 export default class Printers{
 
@@ -39,8 +39,7 @@ export default class Printers{
     }
 
     public static getAvailableUsbPrinters(){
-        // return PrinterDriver.getPrinters(); // FIX-BACK
-        return []
+        return PrinterDriver.getPrinters();
     }
 
     public static get list(){

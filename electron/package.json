@@ -25,6 +25,7 @@
         "node-persist": "^3.1.0",
         "node-thermal-printer": "^4.1.2",
         "objection": "^2.2.1",
+        "printer": "^0.4.0",
         "randomstring": "^1.1.5",
         "request": "^2.88.2",
         "restify": "^8.1.1",
@@ -40,7 +41,7 @@
     },
     "devDependencies": {
         "electron": "^6.0.11",
-        "electron-builder": "^24.9.1"
+        "electron-builder": "20.44.4"
     },
     "scripts": {
         "build": "electron-builder",
@@ -67,6 +68,6 @@
         ]
     },
     "engines": {
-        "node": "14.21.2"
+        "node": "12.4.0"
     }
 }

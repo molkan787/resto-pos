@@ -3,7 +3,7 @@ const ThermalPrinter = imp('node-thermal-printer').printer;
 // @ts-ignore
 const PrinterTypes = imp('node-thermal-printer').types;
 // @ts-ignore
-// const printer = imp('printer'); // FIX-BACK
+const printer = imp('printer');
 
 class Printer{
 
@@ -27,7 +27,7 @@ class Printer{
         const p = new ThermalPrinter({
             type: PrinterTypes.EPSON,          
             interface: this.printerInterface,
-            driver: null, //printer,// FIX-BACK
+            driver: printer,
             characterSet: 'SLOVENIA',          
             removeSpecialCharacters: false,        
             options: {                         
