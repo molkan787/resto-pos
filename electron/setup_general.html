@@ -34,6 +34,7 @@
                 type: 'input',
                 height: 180
               }, remote.getCurrentWindow())
+              if(keyPromptResult === null) return
               toggleDimmer(true);
               electron.ipcRenderer.send('setup', { mode: 'station', syncKey: keyPromptResult });
             }
