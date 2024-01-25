@@ -1,9 +1,9 @@
 {
-    "name": "pl.dahmane.resto-pos",
+    "name": "com.seghierdahmane.resto-pos",
     "version": "1.6.2",
     "author": {
         "name": "Seghier Dahmane",
-        "email": "contact@dahmane.pl"
+        "email": "seghier.dahmane@outlook.com"
     },
     "main": "main.js",
     "dependencies": {
@@ -48,7 +48,7 @@
         "postinstall": "electron-builder install-app-deps"
     },
     "build": {
-        "appId": "pl.dahmane.resto-pos",
+        "appId": "com.seghierdahmane.resto-pos",
         "productName": "Resto POS",
         "win": {
             "target": {
