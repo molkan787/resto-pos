@@ -7,12 +7,17 @@ To build production version run `node build.js` in the root directory
 - Electron: 6.0.11
 
 
-#### Important
-To properly install and build `printer` package you need to install "Visual Studio Build Tools 2017" and Python 3.10, thus exact versions must be installed, If you have multiple versions of python installed make sure to set path to version 3.10 to "npm_config_python" env variable.
-In case of any other issues/errors check out node-gyp guide at https://www.npmjs.com/package/node-gyp/v/6.1.0
-
 
 ### Build Instruction
+
+#### Native Node Add-ons
+To properly install and build `printer` package you need to:
+- Install "Visual Studio Build Tools 2017" and Python 3.10, thus exact versions must be installed, If you have multiple versions of python installed make sure to set path to version 3.10 to "npm_config_python" env variable.
+- Set env variable "npm_config_dist_url" to "https://www.electronjs.org/headers/" globally or in locally
+
+In case of any other issues/errors check out node-gyp guide at https://www.npmjs.com/package/node-gyp/v/6.1.0
+
+These steps must also be performed for development
 
 #### Resources Preparation
 - Download MySQL Server community edition in "zip" format, name it "mysql-server.zip" and place it in "electron/files", mysql will be auto extracted and installed when performing initial setup of the pos after the instalation
