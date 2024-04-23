@@ -6,6 +6,7 @@ const Settings = require('../models/Settings');
 const Order = require('../models/Order');
 const Offer = require('../models/Offer');
 const BookingSlot = require('../models/BookingSlot');
+const time = require('../utils/time');
 
 module.exports = async (req, res, next) => {
     try {
@@ -16,6 +17,7 @@ module.exports = async (req, res, next) => {
         const settings = await Settings.getValues();
         const orderPtr = await Order.getPtr();
         const bookingSlots = await BookingSlot.query();
+        const recentOrders = await Order.query().where('date_added', '>', time.now() - 3600 * 24 * 30).orderBy('date_added', 'DESC')
         res.send({
             categories,
             products: products,
@@ -24,7 +26,8 @@ module.exports = async (req, res, next) => {
             companies,
             settings,
             orderPtr,
-            bookingSlots
+            bookingSlots,
+            recentOrders
         });
         next();
     } catch (error) {

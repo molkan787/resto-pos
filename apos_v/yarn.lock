@@ -5535,7 +5535,7 @@ multicast-dns@^6.0.1:
     dns-packet "^1.3.1"
     thunky "^1.0.2"
 
-"murew-core@file:../../resto-e-commerce/murew-core":
+murew-core@../../resto-e-commerce/murew-core:
   version "1.0.0"
 
 mute-stream@0.0.7:
@@ -7035,7 +7035,7 @@ resolve@^1.10.0, resolve@^1.12.0, resolve@^1.3.2, resolve@^1.4.0, resolve@^1.8.1
   dependencies:
     path-parse "^1.0.6"
 
-"resto-common@file:D:\\projects\\resto-pos\\resto-common":
+"resto-common@file:../resto-common":
   version "1.0.0"
 
 restore-cursor@^2.0.0:

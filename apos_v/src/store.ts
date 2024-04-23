@@ -30,6 +30,7 @@ const store = new Vuex.Store({
     allCategories: [],
     products: {},
     productsByIds: {},
+    orderProductsByIds: {},
     productsArray: [],
     offers: [],
 
@@ -627,7 +628,7 @@ const store = new Vuex.Store({
 
 function setItemCount(context: any, itemId: number, amount: number, forceAmount: boolean){
   const itemsCount = context.state.pos.itemsCount;
-  const product = context.state.productsByIds[itemId];
+  const product = context.state.orderProductsByIds[itemId] || context.state.productsByIds[itemId];
   const items = context.state.pos.items;
   console.log(items)
   
@@ -637,7 +638,7 @@ function setItemCount(context: any, itemId: number, amount: number, forceAmount:
   if(count) count += amount;
   else count = amount;
   if(count < 0) count = 0;
-  else if(count > 99) count = 99;
+  else if(count > 999) count = 999;
 
   if(product.stock_enabled && count > product.stock){
     count = product.stock;

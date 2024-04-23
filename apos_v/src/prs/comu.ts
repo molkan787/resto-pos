@@ -179,6 +179,7 @@ export default class Comu {
                 state.nextOrderId = data.orderPtr;
                 state.companies = Clients.prepareData(data.companies);
                 state.bookingSlots = mapBookingSlotsArrayToObject(data.bookingSlots)
+                this.setRecentOrders(data.recentOrders)
                 this.putSettings(data.settings);
                 services.onDataLoaded(data);
                 resolve(true);
@@ -324,6 +325,7 @@ export default class Comu {
     }
 
     static async postOnlineOrder(order) {
+        console.log('postOnlineOrder():', order)
         const state = this.context.state;
         const { type, total: _total, products, id: onlineOrderId, owner, no, delivery_address, menu, payment_method, attrs, preorder, note } = order;
         const paymentMethod = payment_method || 'cod';
@@ -332,7 +334,7 @@ export default class Comu {
             products: [],
             counts: {},
             notes: {}
-        };
+        }
         for(let p of products){
             const _id = isPOSMenu ? p.remote_id : p.pid;
             items.products.push({
@@ -352,10 +354,10 @@ export default class Comu {
         }
         const [first_name, last_name] = owner.fullname.split(' ');
         const client = {
-            first_name,
-            last_name,
-            email: owner.email,
-            phone: owner.phone
+            first_name: first_name || '',
+            last_name: last_name || '',
+            email: owner.email || '',
+            phone: owner.phone || ''
         };
         const { sub_total, food_total, drinks_total, discount, delivery_cost } = attrs;
         const totals = {
@@ -381,8 +383,8 @@ export default class Comu {
             no: no,
             order_type: type,
             order_details: {
-                first_name: first_name,
-                last_name: last_name,
+                first_name: first_name || '',
+                last_name: last_name || '',
                 phone: owner.phone || '',
                 address_1: delivery_address.line1 || '',
                 address_2: delivery_address.line2 || '',
@@ -488,6 +490,12 @@ export default class Comu {
             orderId,
             booking_no
         })
+    }
+
+    static setRecentOrders(orders){
+        for(let order of orders){
+            this.setToRecentOrders(order.id, order)
+        }
     }
 
     static setToRecentOrders(orderId, orderData) {

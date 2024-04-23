@@ -56,7 +56,8 @@ export default {
         async itemEditClick(item){
             this.loading = true;
             try {
-                await DM.loadOrder(item.id);
+                // await DM.loadOrder(item.id);
+                window.editOnlineOrder(item.no)
                 this.open = false;
             } catch (error) {
                 console.error(error)

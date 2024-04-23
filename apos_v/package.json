@@ -19,7 +19,7 @@
     "liquor-tree": "^0.2.70",
     "luxon": "^1.15.0",
     "md5": "^2.2.1",
-    "murew-core": "file:D:\\projects\\resto-e-commerce\\murew-core",
+    "murew-core": "../../resto-e-commerce/murew-core",
     "portal-vue": "^2.1.4",
     "query-string": "^6.4.2",
     "resto-common": "file:D:\\projects\\resto-pos\\resto-common",

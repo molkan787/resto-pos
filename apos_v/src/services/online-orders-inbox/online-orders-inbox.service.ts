@@ -2,6 +2,7 @@ import Vue from "*.vue";
 import { Service } from "@/core/Service";
 import { MurewActions } from "murew-core/dist/enums";
 import { AppServices } from "..";
+import { MurewStatus } from "../murew";
 
 export class OnlineOrdersInboxService extends Service{
 
@@ -11,10 +12,15 @@ export class OnlineOrdersInboxService extends Service{
 
     public async init(){
         this.services.instances.murew.on(MurewActions.NewOrder, order => this.onNewOrder(order));
+        // this.services.instances.murew.on(MurewStatus.Connected, () => this.requestOnGoingOrders());
     }
 
     private uiModal: Vue;
     private ordersQueue: any[] = [];
+
+    requestOnGoingOrders(){
+        this.services.instances.murew.sendAction(MurewActions.RequestOnGoingOrdersList, {})
+    }
 
     onNewOrder(order: any){
         this.queueOrder(order);

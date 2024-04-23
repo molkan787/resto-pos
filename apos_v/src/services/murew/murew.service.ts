@@ -16,6 +16,19 @@ export class MurewService extends Service{
     private _status: MurewStatus = MurewStatus.Disconnected;
     private _client: WebSocket;
     private _retryInterval: number = 1000;
+    private _syncUrl: string = ''
+    public get syncUrl(){
+        return this._syncUrl
+    }
+
+
+    private get rawSyncKey(){
+        const rawSyncKey = LocalSetting.getItem(MUREW_SYNC_KEY_LSK);
+        if(rawSyncKey){
+            return rawSyncKey
+        }
+        return null;
+    }
 
     private get syncKey(){
         const rawSyncKey = LocalSetting.getItem(MUREW_SYNC_KEY_LSK);
@@ -63,6 +76,11 @@ export class MurewService extends Service{
     public async init(){
         await this.loadKeyFromDisk()
         if(this.syncKey){
+            this._syncUrl = this.syncKey.endpoint
+            if(this._syncUrl.endsWith('/')){
+                this._syncUrl = this._syncUrl.substring(0, this._syncUrl.length - 1)
+            }
+
             this.log('Connecting to murew sync service...');
             this.connect().catch(err => {
                 console.error(err);
@@ -170,6 +188,7 @@ export class MurewService extends Service{
     }
 
     public sendAction(actionName: string, data: any){
+        console.log('Sending Action:', actionName)
         if(!this.isConnected) return;
         const _data = {
             action: actionName,

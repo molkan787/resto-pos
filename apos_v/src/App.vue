@@ -28,6 +28,7 @@
     <AddBookingModal />
     <OrderDetailsModal />
     <AssignTablesModal />
+    <OnlineOrderModalEditModal />
     
     <div class="demo-label" v-if="demoMode">
       DEMO / TESTING
@@ -67,6 +68,7 @@ import AddBookingModal from './components/booking/AddBookingModal.vue';
 import AssignTablesModal from './components/booking/AssignTablesModal.vue';
 import EditOfferModal from './components/pre/EditOfferModal.vue';
 import OrderDetailsModal from './components/pre/OrderDetailsModal.vue';
+import OnlineOrderModalEditModal from './components/pre/OnlineOrderModalEditModal.vue';
 
 export default Vue.extend({
   components: {
@@ -94,7 +96,8 @@ export default Vue.extend({
     AddBookingModal,
     EditOfferModal,
     OrderDetailsModal,
-    AssignTablesModal
+    AssignTablesModal,
+    OnlineOrderModalEditModal,
   },
   methods: {
     ...mapActions(['setup'])

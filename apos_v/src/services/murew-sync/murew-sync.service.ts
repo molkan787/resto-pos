@@ -7,6 +7,7 @@ import { ServiceEvents } from "../events";
 import { MurewActions } from "murew-core/dist/enums";
 import { MurewService, MurewStatus } from "../murew/murew.service";
 import { Offer } from "murew-core/dist/interfaces";
+import axios from 'axios';
 
 export class MurewSyncService extends Service{
 
@@ -59,6 +60,18 @@ export class MurewSyncService extends Service{
             offers,
             replace: true
         });
+    }
+
+    public async getOrder(orderNo){
+        const response = await axios.get(
+            `${this.murew.syncUrl}/pos-sync/order/${orderNo}`,
+            {
+                headers: {
+                    'sync-key': this.murew.rawSyncKey
+                }
+            }
+        )
+        return response.data
     }
 
 }

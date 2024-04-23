@@ -1,9 +1,14 @@
 <template>
   <sui-modal v-model="value" :class="{hideOverflow: dialog.open, 'high-layer': highLayer }" :animationDuration="300" :fullscreen="fullscreen" :size="size" :closable="false">
     <sui-modal-header style="user-select: none" v-if="title">{{ title }}</sui-modal-header>
-    <sui-modal-content>
+    <sui-modal-content style="position: relative">
       <sui-modal-description>
         <slot></slot>
+      <transition name="fade">
+        <div v-if="contentOnlyDimmer && loading" class="ui active inverted dimmer dialogBoxCon">
+          <div class="ui loader"></div>
+        </div>
+      </transition>
       </sui-modal-description>
     </sui-modal-content>
     <sui-modal-actions v-if="!hideActions" class="modal-buttons">
@@ -12,7 +17,7 @@
     </sui-modal-actions>
 
     <transition name="fade">
-      <div class="ui active inverted dimmer dialogBoxCon" v-if="loading">
+      <div v-if="!contentOnlyDimmer && loading" class="ui active inverted dimmer dialogBoxCon">
         <div class="ui loader"></div>
       </div>
     </transition>
@@ -53,6 +58,7 @@ export default class Modal extends Vue {
   @Prop({ default: false }) defaultButton!: boolean;
   @Prop({ default: false }) hideActions!: boolean;
   @Prop({ default: false }) loading!: boolean;
+  @Prop({ default: false }) contentOnlyDimmer!: boolean;
   @Prop({
     default: () => ({
       open: false,

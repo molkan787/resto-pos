@@ -43,6 +43,7 @@ export default class CometCallerId extends EventEmitter{
 
     async _start(){
         const portname = await this._findPort();
+        if(!portname) return
         const port = await this._openPort(portname);
         const parser = port.pipe(new InterByteTimeout({interval: 50}));
         parser.on('data', data => this.handleData(data));
@@ -86,7 +87,7 @@ export default class CometCallerId extends EventEmitter{
                 return device.path;
             }
         }
-        throw new Error('Comet device not found');
+        return null
     }
 
 }
