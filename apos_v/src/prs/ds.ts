@@ -134,6 +134,34 @@ export default class DS{
         return true;
     }
 
+    static async addBulkCategories(items){
+        const state = this.context.state;
+        for(let item of items){
+            const { childs, ...itemData } = item
+            const resp: any = await postData('category/edit', itemData);
+            const cat = resp.data;
+            const { id, parent_id } = cat;
+            Vue.set(state.categoriesByIds, id, cat);
+            Vue.set(state.products, id, []);
+            if(parent_id){
+                const parent = state.categoriesByIds[parent_id];
+                parent.childs.push(cat);
+            }else{
+                Vue.set(cat, 'childs', []);
+                state.categories.push(cat);
+            }
+            state.allCategories.push(cat);
+            for(let product of item.childs){
+                product.category_id = cat.id
+                this.prepareProductData(product);
+                const res: any = await postData('product', product)
+                this.updateLocalProduct(product, res.data);
+            }
+        }
+        services.onMenuChanged();
+        return true;
+    }
+
     static async deleteCategory(data){
         await deleteData('category/' + data.id);
         const state = this.context.state;

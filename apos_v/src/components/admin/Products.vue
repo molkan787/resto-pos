@@ -95,7 +95,7 @@ export default class Products extends Vue{
 
 <style lang="scss" scoped>
 .products-root{
-    height: calc(100vh - 8rem);
+    height: calc(100vh - 15rem);
 }
 .items{
     height: calc(100% - 7rem);

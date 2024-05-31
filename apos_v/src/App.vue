@@ -29,6 +29,7 @@
     <OrderDetailsModal />
     <AssignTablesModal />
     <OnlineOrderModalEditModal />
+    <MenuLoadModal /> 
     
     <div class="demo-label" v-if="demoMode">
       DEMO / TESTING
@@ -69,7 +70,7 @@ import AssignTablesModal from './components/booking/AssignTablesModal.vue';
 import EditOfferModal from './components/pre/EditOfferModal.vue';
 import OrderDetailsModal from './components/pre/OrderDetailsModal.vue';
 import OnlineOrderModalEditModal from './components/pre/OnlineOrderModalEditModal.vue';
-
+import MenuLoadModal from './components/pre/MenuLoadModal.vue'
 export default Vue.extend({
   components: {
     CustomValueModal,
@@ -98,6 +99,7 @@ export default Vue.extend({
     OrderDetailsModal,
     AssignTablesModal,
     OnlineOrderModalEditModal,
+    MenuLoadModal,
   },
   methods: {
     ...mapActions(['setup'])

@@ -81,7 +81,7 @@ export default class Categories extends Vue{
 
 <style scoped>
 .categories-root{
-    height: calc(100vh - 8rem);
+    height: calc(100vh - 15rem);
 }
 .items{
     height: calc(100% - 9rem);

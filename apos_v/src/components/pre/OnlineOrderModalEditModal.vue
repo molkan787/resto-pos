@@ -1,15 +1,20 @@
 <template>
-    <Modal v-model="isOpen" :title="title" :dialog="dialog" :loading="loading" :contentOnlyDimmer="true" size="large">
+    <Modal v-model="isOpen" :title="title" :dialog="dialog" :loading="loading === 'data'" :contentOnlyDimmer="true" size="large">
 
-        <OnlineOrderDetailsViewPanel :order="order" />
-
-        <hr>
-        <sui-button-group class="order-type buttons-group">
-            <sui-button class="ot-button" icon="arrow alternate circle down" @click="setStatus('accepted')" :color="status == 'accepted' ? 'green' : null">Accepted</sui-button>
-            <sui-button class="ot-button" icon="clock" @click="setStatus('preparing')" :color="status == 'preparing' ? 'green' : null">Preparing</sui-button>
-            <sui-button class="ot-button" icon="box" @click="setStatus('ready')" :color="status == 'ready' ? 'green' : null">Ready</sui-button>
-            <sui-button class="ot-button" icon="check circle" @click="setStatus('completed')" :color="status == 'completed' ? 'green' : null">Completed</sui-button>
-        </sui-button-group>
+        <OnlineOrderDetailsViewPanel :order="order">
+            <template v-slot:bottom-right>
+                <h4 class="low-importance">Set Order Status:</h4>
+                <sui-button-group class="order-status buttons-group">
+                    <sui-button class="ot-button" icon="arrow alternate circle down" @click="setStatus('accepted')" :color="status == 'accepted' ? 'blue' : null">Accepted</sui-button>
+                    <i class="gli chevron right icon"></i>
+                    <sui-button class="ot-button" icon="clock" @click="setStatus('preparing')" :color="status == 'preparing' ? 'blue' : null">Preparing</sui-button>
+                    <i class="gli chevron right icon"></i>
+                    <sui-button class="ot-button" icon="box" @click="setStatus('ready')" :color="status == 'ready' ? 'blue' : null">Ready</sui-button>
+                    <i class="gli chevron right icon"></i>
+                    <sui-button class="ot-button" icon="check circle" @click="setStatus('completed')" :color="status == 'completed' ? 'blue' : null">Completed</sui-button>
+                </sui-button-group>
+            </template>
+        </OnlineOrderDetailsViewPanel>
 
         <template v-slot:buttons>
             <button class="ui button" @click="close" style="float: left;">CLOSE</button>
@@ -33,7 +38,7 @@ export default {
     },
     data: () => ({
         isOpen: false,
-        loading: true,
+        loading: null,
         dialog: new ModalDialog(),
         order: { owner: {}, attrs: {} },
         orderNo: '',
@@ -52,13 +57,19 @@ export default {
             this.isOpen = false;
             this.$emit('closed');
         },
-        update(){
-            this.loading = 'update';
-            murew.acceptOrder(this.order.id, this.readyTime);
+        async update(){
+            try {
+                this.loading = 'update';
+                await murewSync.setOrderStatus(this.order.no, this.status)
+                this.close()
+            } catch (error) {
+                console.error(error)
+                await this.dialog.show('An error occured while updating order data, Please make sure you are connected to the internet.')
+            }     
         },
         handleOrder(orderNo){
             this.orderNo = orderNo
-            this.loading = true;
+            this.loading = 'data';
             this.isOpen = true;
             this.loadOrderData(orderNo)
         },
@@ -67,7 +78,8 @@ export default {
                 const order = await murewSync.getOrder(orderNo)
                 console.log('online order:', order)
                 this.order = order
-                this.loading = false
+                this.status = order.status
+                this.loading = null
             } catch (error) {
                 console.error(error)
                 await this.dialog.show('An error occured while loading order data, Please make sure you are connected to the internet.')
@@ -106,5 +118,15 @@ export default {
     flex: 2;
     display: flex;
     flex-direction: column;
+}
+</style>
+
+<style lang="scss">
+.order-status{
+    i{
+        position: relative;
+        top: 3px;
+        right: 6px;
+    }
 }
 </style>

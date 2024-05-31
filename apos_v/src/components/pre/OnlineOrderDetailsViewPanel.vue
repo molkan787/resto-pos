@@ -1,7 +1,7 @@
 <template>
     <sui-segments horizontal>
 
-        <sui-segment>
+        <sui-segment style="flex: 1;">
             <div class="ui form">
                 <h4 class="low-importance">Products</h4>
                 <sui-table celled striped>
@@ -48,7 +48,7 @@
             </div>
         </sui-segment>
 
-        <sui-segment>
+        <sui-segment style="flex: 1;">
             <div class="ui form">
                 <h4 class="low-importance">Customer</h4>
                 <div class="inline fields">
@@ -87,6 +87,10 @@
                 <div>
                     <h4 class="low-importance">Note:</h4>
                     <textarea readonly cols="30" rows="2" placeholder="(empty)">{{ order.note }}</textarea>
+                </div>
+                <br>
+                <div>
+                    <slot name="bottom-right"></slot>
                 </div>
             </div>
         </sui-segment>

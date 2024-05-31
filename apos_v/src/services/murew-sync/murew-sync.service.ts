@@ -67,7 +67,25 @@ export class MurewSyncService extends Service{
             `${this.murew.syncUrl}/pos-sync/order/${orderNo}`,
             {
                 headers: {
-                    'sync-key': this.murew.rawSyncKey
+                    'sync-key': this.murew.rawSyncKey,
+                    'Authorization': ''
+                }
+            }
+        )
+        return response.data
+    }
+
+    public async setOrderStatus(orderNo, statusId){
+        const response = await axios.patch(
+            `${this.murew.syncUrl}/pos-sync/set-order-status`,
+            {
+                orderNo: orderNo,
+                statusId: statusId,
+            },
+            {
+                headers: {
+                    'sync-key': this.murew.rawSyncKey,
+                    'Authorization': ''
                 }
             }
         )

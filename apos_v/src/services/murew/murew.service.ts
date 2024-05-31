@@ -22,7 +22,7 @@ export class MurewService extends Service{
     }
 
 
-    private get rawSyncKey(){
+    public get rawSyncKey(){
         const rawSyncKey = LocalSetting.getItem(MUREW_SYNC_KEY_LSK);
         if(rawSyncKey){
             return rawSyncKey
