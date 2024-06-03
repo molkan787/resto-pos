@@ -76,11 +76,7 @@ export class MurewService extends Service{
     public async init(){
         await this.loadKeyFromDisk()
         if(this.syncKey){
-            this._syncUrl = this.syncKey.endpoint
-            if(this._syncUrl.endsWith('/')){
-                this._syncUrl = this._syncUrl.substring(0, this._syncUrl.length - 1)
-            }
-
+            this.updateSyncUrlCache()
             this.log('Connecting to murew sync service...');
             this.connect().catch(err => {
                 console.error(err);
@@ -88,6 +84,13 @@ export class MurewService extends Service{
             });
         }else{
             this.log('Murew Sync Key not found.');
+        }
+    }
+
+    private updateSyncUrlCache(){
+        this._syncUrl = this.syncKey.endpoint
+        if(this._syncUrl.endsWith('/')){
+            this._syncUrl = this._syncUrl.substring(0, this._syncUrl.length - 1)
         }
     }
 
@@ -128,6 +131,7 @@ export class MurewService extends Service{
                 reject('No sync key');
                 return;
             }
+            this.updateSyncUrlCache()
             const epURL = new URL(syncKey.endpoint)
             const syncHost = epURL.host;
             const wsProtocol = epURL.protocol === 'https:' ? 'wss' : 'ws'
