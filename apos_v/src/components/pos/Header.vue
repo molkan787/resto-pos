@@ -10,10 +10,6 @@
                 Downloading update{{ downloadStatusDots }}
             </span>
         </span>
-        <div class="murew-service-status" :class="murew.status" :title="murewConnected ? 'Connected to online ordering platform' : 'Not connected to online ordering platform'">
-            <i class="icon" :class="murewConnected ? 'check circle' : 'ban'"></i>
-            <!-- {{ murew.status | capitalize }} -->
-        </div>
         <div class="right-side">
             <sui-button @click="$router.push('admin')" :disabled="userType >= 5" title="Admin Panel" compact class="setting">
                 <i class="setting icon"></i>
@@ -39,6 +35,10 @@
             <sui-button compact class="ml1 free-width" title="Search Products" @click="openOnlineOrders">
                 <i class="globe icon"></i>Online Orders
             </sui-button>
+            <div class="murew-service-status" :class="murew.status" :title="murewConnected ? 'Connected to online ordering system' : 'Not connected to online ordering system'">
+                <i class="icon" :class="murewConnected ? 'check circle' : 'ban'"></i>
+                <!-- {{ murew.status | capitalize }} -->
+            </div>
         </div>
         <!-- <div v-if="message.visible" class="ui icon message message1">
             <i :class="message.icon"></i>
@@ -303,8 +303,8 @@ export default class Header extends Vue {
 $root-h: 4rem;
 
 .murew-service-status{
-    float: left;
-    margin: 12px;
+    float: right;
+    margin: 3px;
     background-color: #666;
     padding: 10px 9px;
     border-radius: 50%;
@@ -340,7 +340,7 @@ div.m-el{
     margin-top: $root-h * 0.25;
 }
 .right-side{
-    width: 48rem;
+    width: 52rem;
     float: right;
     padding: 0.5rem;
     margin-right: 0rem;
@@ -359,7 +359,7 @@ div.m-el{
             float: left;
         }
     }
-    div{
+    div.vertical-divider{
         float: left;
         margin-bottom: 6px;
     }
