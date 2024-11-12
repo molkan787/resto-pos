@@ -4,7 +4,7 @@
   "description": "Builder Script",
   "main": "index.js",
   "repository": "null",
-  "author": "Dahmane Seghier <worw787@gmail.com>",
+  "author": "Seghier Dahmane <seghier.dahmane@outlook.com>",
   "license": "MIT",
   "scripts": {
     "dev": "node serve.js",

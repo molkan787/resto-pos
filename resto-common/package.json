@@ -2,7 +2,7 @@
   "name": "resto-common",
   "version": "1.0.0",
   "main": "dist/index.js",
-  "author": "Dahmane Seghier",
+  "author": "Seghier Dahmane <seghier.dahmane@outlook.com>",
   "license": "MIT",
   "scripts": {
     "build": "tsc",

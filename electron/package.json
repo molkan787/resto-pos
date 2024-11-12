@@ -1,10 +1,8 @@
 {
     "name": "com.seghierdahmane.resto-pos",
     "version": "1.6.5",
-    "author": {
-        "name": "Seghier Dahmane",
-        "email": "seghier.dahmane@outlook.com"
-    },
+    "author": "Seghier Dahmane <seghier.dahmane@outlook.com>",
+    "license": "MIT",
     "main": "main.js",
     "dependencies": {
         "@serialport/parser-inter-byte-timeout": "^9.0.0",

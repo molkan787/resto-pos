@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
-  "author": "DrmStudio (Seghier Dahmane)",
-  "license": "ISC",
+  "author": "Seghier Dahmane <seghier.dahmane@outlook.com>",
+  "license": "MIT",
   "dependencies": {
     "eventemitter3": "^4.0.7",
     "excel4node": "^1.7.1",
